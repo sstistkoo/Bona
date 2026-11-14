@@ -25,8 +25,8 @@
         'Menu Select → Program (správa programů) → softklávesa CIMCO.',
         'Otevřít složku Down – je v ní program odeslaný z PC. Zatím je jen přijatý, v paměti stroje ještě není. (Složka Up je opačně: sem se dává program, který se má poslat do PC.)',
         'Označit program → Kopírovat → softklávesa Obrobky → Vložit (Kopírovat a Vložit jsou softklávesy vpravo).',
-        'Zrušit navolení starého programu: NC → HD (odešle do PC). Křížek X u programu = navolený program, se kterým stroj pracuje.',
-        'Navolit nový program: HD → NC (navolí do stroje, objeví se u něj křížek X).',
+        'V Obrobky (Přehled programů) označit starý program, který má křížek X ve sloupci Zaveden → Odložit NC → HD. Křížek zmizí.',
+        'Označit nový program → Nahrát HD → NC. U programu se objeví křížek X ve sloupci Zaveden.',
       ],
     }]],
   ];
