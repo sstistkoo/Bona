@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bona – CNC pomocník</title>
+  <meta name="description" content="Pomocník pro obsluhu CNC karuselu se Sinumerik 840D – výroba železničních kol.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Bona <span>CNC pomocník · Sinumerik 840D</span></h1>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="kalk">Kalkulačka</button>
+      <button class="tab" data-tab="cas">Čas obrábění</button>
+      <button class="tab" data-tab="tahak">Tahák G-kódů</button>
+      <button class="tab" data-tab="smena">Směna</button>
+      <button class="tab" data-tab="poznamky">Poznámky</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- KALKULAČKA -->
+    <section id="kalk" class="panel active">
+      <div class="card">
+        <h2>Řezná rychlost ↔ otáčky</h2>
+        <div class="grid">
+          <label>Průměr D [mm]<input type="number" id="k-d" value="920" inputmode="decimal"></label>
+          <label>Řezná rychlost Vc [m/min]<input type="number" id="k-vc" value="120" inputmode="decimal"></label>
+          <label>Otáčky n [ot/min]<input type="number" id="k-n" inputmode="decimal"></label>
+          <label>LIMS [ot/min]<input type="number" id="k-lims" value="200" inputmode="decimal"></label>
+        </div>
+        <p class="hint">Změň D nebo Vc → spočítá n. Změň n → spočítá Vc.</p>
+        <div class="result" id="k-out"></div>
+      </div>
+
+      <div class="card">
+        <h2>Posuv a drsnost</h2>
+        <div class="grid">
+          <label>Posuv f [mm/ot]<input type="number" id="p-f" value="0.6" step="0.05" inputmode="decimal"></label>
+          <label>Otáčky n [ot/min]<input type="number" id="p-n" value="40" inputmode="decimal"></label>
+          <label>Rádius břitu r [mm]<input type="number" id="p-r" value="1.6" step="0.4" inputmode="decimal"></label>
+        </div>
+        <div class="result" id="p-out"></div>
+        <p class="hint">Teoretická drsnost Rz ≈ f² / (8·r). Skutečná bývá vyšší (chvění, opotřebení).</p>
+      </div>
+    </section>
+
+    <!-- ČAS OBRÁBĚNÍ -->
+    <section id="cas" class="panel">
+      <div class="card">
+        <h2>Čas čelního soustružení (G96 + LIMS)</h2>
+        <div class="grid">
+          <label>Vnější průměr D1 [mm]<input type="number" id="c-d1" value="920" inputmode="decimal"></label>
+          <label>Vnitřní průměr D2 [mm]<input type="number" id="c-d2" value="200" inputmode="decimal"></label>
+          <label>Vc [m/min]<input type="number" id="c-vc" value="120" inputmode="decimal"></label>
+          <label>Posuv f [mm/ot]<input type="number" id="c-f" value="0.6" step="0.05" inputmode="decimal"></label>
+          <label>LIMS [ot/min]<input type="number" id="c-lims" value="200" inputmode="decimal"></label>
+          <label>Počet třísek<input type="number" id="c-pocet" value="1" min="1" inputmode="numeric"></label>
+        </div>
+        <div class="result" id="c-out"></div>
+      </div>
+
+      <div class="card">
+        <h2>Čas podélného soustružení (G97 / konstantní D)</h2>
+        <div class="grid">
+          <label>Délka L [mm]<input type="number" id="l-l" value="135" inputmode="decimal"></label>
+          <label>Průměr D [mm]<input type="number" id="l-d" value="920" inputmode="decimal"></label>
+          <label>Vc [m/min]<input type="number" id="l-vc" value="120" inputmode="decimal"></label>
+          <label>Posuv f [mm/ot]<input type="number" id="l-f" value="0.6" step="0.05" inputmode="decimal"></label>
+          <label>Počet třísek<input type="number" id="l-pocet" value="1" min="1" inputmode="numeric"></label>
+        </div>
+        <div class="result" id="l-out"></div>
+      </div>
+    </section>
+
+    <!-- TAHÁK -->
+    <section id="tahak" class="panel">
+      <div class="card">
+        <h2>Sinumerik 840D – tahák (soustružení)</h2>
+        <input type="search" id="t-hledat" placeholder="Hledat… (např. LIMS, závit, CYCLE)">
+        <div id="t-seznam" class="codes"></div>
+        <p class="hint">Jde o obecný přehled. Vždy platí dokumentace stroje a technologie vašeho podniku.</p>
+      </div>
+    </section>
+
+    <!-- SMĚNA -->
+    <section id="smena" class="panel">
+      <div class="card">
+        <h2>Kontrolní seznam – začátek směny</h2>
+        <ul id="s-seznam" class="checklist"></ul>
+        <div class="row">
+          <input type="text" id="s-novy" placeholder="Přidat vlastní bod…">
+          <button id="s-pridat">Přidat</button>
+        </div>
+        <button id="s-reset" class="secondary">Odškrtnout vše (nová směna)</button>
+      </div>
+
+      <div class="card">
+        <h2>Počítadlo kusů</h2>
+        <div class="counter">
+          <button id="ks-minus" class="secondary">−</button>
+          <span id="ks-pocet">0</span>
+          <button id="ks-plus">+</button>
+        </div>
+        <button id="ks-reset" class="secondary">Vynulovat</button>
+      </div>
+    </section>
+
+    <!-- POZNÁMKY -->
+    <section id="poznamky" class="panel">
+      <div class="card">
+        <h2>Poznámky</h2>
+        <p class="hint">Korekce, nástroje, programy, zvláštnosti zakázek… Ukládá se jen v tomto prohlížeči.</p>
+        <textarea id="n-text" rows="14" placeholder="Např.: Program WHEEL_920 – T3 korekce Z +0.05 po výměně destičky"></textarea>
+        <p class="hint" id="n-stav"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Bona · CNC pomocník · <span id="verze"></span></footer>
+  <script src="app.js"></script>
+</body>
+</html>
