@@ -18,7 +18,9 @@
       <button class="tab" data-tab="drsnost">Drsnost</button>
       <button class="tab" data-tab="trig">Trigonometrie</button>
       <button class="tab" data-tab="calc">Kalkulačka</button>
-      <button class="tab" data-tab="tahak">Tahák G-kódů</button>
+      <button class="tab" data-tab="sinumerik">Sinumerik 840D</button>
+      <button class="tab" data-tab="prevod">Převodník</button>
+      <button class="tab" data-tab="nm">Nm</button>
       <button class="tab" data-tab="smena">Směna</button>
       <button class="tab" data-tab="poznamky">Poznámky</button>
     </nav>
@@ -195,12 +197,101 @@
     </section>
 
     <!-- TAHÁK -->
-    <section id="tahak" class="panel">
-      <div class="card">
-        <h2>Sinumerik 840D – tahák (soustružení)</h2>
+    <section id="sinumerik" class="panel">
+      <div class="card" id="sn-hub">
+        <h2>Sinumerik 840D – příručka pro soustruh</h2>
+        <input type="search" id="sn-vsude" placeholder="🔍 Hledat ve všem… (např. LIMS, G96, alarm 61000)">
+        <div id="sn-vysledky"></div>
+        <div class="tiles" id="sn-tiles"></div>
+      </div>
+      <div class="card" id="sn-view" hidden>
+        <button class="secondary back" id="sn-back">← Sinumerik 840D</button>
+        <h2 id="sn-title"></h2>
+        <input type="search" id="sn-hledat" placeholder="🔍 Hledat…">
+        <div class="chips" id="sn-groups"></div>
+        <div id="sn-list" class="ref-list"></div>
+        <p class="hint" id="sn-note"></p>
+      </div>
+      <div class="card" id="sn-tahak" hidden>
+        <button class="secondary back" data-back>← Sinumerik 840D</button>
+        <h2>Rychlý tahák – karusel</h2>
         <input type="search" id="t-hledat" placeholder="Hledat… (např. LIMS, závit, CYCLE)">
         <div id="t-seznam" class="codes"></div>
         <p class="hint">Jde o obecný přehled. Vždy platí dokumentace stroje a technologie vašeho podniku.</p>
+      </div>
+    </section>
+
+    <!-- PŘEVODNÍK -->
+    <section id="prevod" class="panel">
+      <div class="card">
+        <h2>Převodník</h2>
+        <div class="conv" id="conv"></div>
+        <p class="hint">Tvrdost je přibližný převod pro ocel (ASTM E140). HRC platí v rozsahu 20–68.</p>
+      </div>
+    </section>
+
+    <!-- NM -->
+    <section id="nm" class="panel">
+      <div class="card">
+        <h2>Utahovací momenty (Nm)</h2>
+        <div class="seg seg-wrap">
+          <button class="seg-btn active" data-nm="tools">Moje nože</button>
+          <button class="seg-btn" data-nm="ref">Šrouby VBD</button>
+          <button class="seg-btn" data-nm="bolt">Šroub M</button>
+          <button class="seg-btn" data-nm="key">Klíč</button>
+        </div>
+
+        <div data-nmtab="tools">
+          <div class="grid">
+            <label>Nůž / držák<input type="text" id="nt-name" placeholder="např. T3 PCLNR 3232P19"></label>
+            <label>Plátek (VBD)<input type="text" id="nt-insert" placeholder="CNMG 190612"></label>
+            <label>Šroub<input type="text" id="nt-screw" placeholder="M5 / páka…"></label>
+            <label>Klíč<input type="text" id="nt-key" placeholder="T20 / imbus 2,5"></label>
+            <label>Moment [Nm]<input type="text" id="nt-nm" inputmode="decimal" placeholder="z katalogu"></label>
+            <label>Poznámka<input type="text" id="nt-note" placeholder="podložka, upínka…"></label>
+          </div>
+          <div class="result" id="nt-info" hidden></div>
+          <div class="row" style="margin-top:12px"><button id="nt-save">💾 Uložit</button><button class="secondary" id="nt-new">➕ Nový</button></div>
+          <input type="search" id="nt-filter" placeholder="🔍 Hledat nůž, plátek, šroub…">
+          <div class="table-wrap"><table class="tbl click"><thead><tr><th>Nůž / držák</th><th>Plátek</th><th>Šroub / klíč</th><th>Nm</th><th></th></tr></thead><tbody id="nt-list"></tbody></table></div>
+          <p class="hint">Seznam se ukládá jen v tomto prohlížeči. Klepnutím na řádek ho upravíš.</p>
+        </div>
+
+        <div data-nmtab="ref" hidden>
+          <p class="lbl">Upínací šrouby destiček (Torx) – orientační moment</p>
+          <div class="table-wrap"><table class="tbl click" id="nr-insert"></table></div>
+          <p class="lbl">Kennametal Kenloc – čep negativních VBD s otvorem (imbus)</p>
+          <div class="table-wrap"><table class="tbl click" id="nr-pin"></table></div>
+          <p class="lbl">Kennametal – šroub upínky shora (imbus)</p>
+          <div class="table-wrap"><table class="tbl click" id="nr-clamp"></table></div>
+          <p class="hint">Klepnutím na řádek se hodnota převezme do „Moje nože“. Výrobci se liší až 2× – <b>platí hodnota na držáku, na obalu šroubu nebo v katalogu výrobce.</b> Šroub VBD utahuj momentovým šroubovákem, závit lehce namaž pastou proti zadření, opotřebený šroub a klíč vyměň.</p>
+        </div>
+
+        <div data-nmtab="bolt" hidden>
+          <div class="grid">
+            <label>Závit<select id="nb-d"></select></label>
+            <label>Pevnostní třída<select id="nb-cls"></select></label>
+            <label>Tření μ (závit i hlava)<select id="nb-mu"></select></label>
+          </div>
+          <div class="result" id="nb-out"></div>
+          <p class="hint">Výpočet podle VDI 2230 při využití 90 % meze kluzu – např. upínky a čelisti na desce karuselu. Platí předpis výrobce stroje / přípravku.</p>
+        </div>
+
+        <div data-nmtab="key" hidden>
+          <p class="lbl">Momentový klíč s prodloužením (nástavec v ose klíče)</p>
+          <div class="grid">
+            <label>Požadovaný moment [Nm]<input type="text" id="nk-m" inputmode="decimal"></label>
+            <label>Délka klíče L [mm]<input type="text" id="nk-l" inputmode="decimal" placeholder="rukojeť → čtyřhran"></label>
+            <label>Prodloužení a [mm]<input type="text" id="nk-a" inputmode="decimal" placeholder="přesah nástavce"></label>
+          </div>
+          <div class="result" id="nk-out"></div>
+          <p class="lbl">Převod jednotek momentu</p>
+          <div class="grid">
+            <label>Hodnota<input type="text" id="nc-v" inputmode="decimal"></label>
+            <label>Jednotka<select id="nc-u"></select></label>
+          </div>
+          <div class="result" id="nc-out"></div>
+        </div>
       </div>
     </section>
 
@@ -240,7 +331,10 @@
 
   <footer>Bona · CNC pomocník · <span id="verze"></span></footer>
   <script src="js/vypocty.js"></script>
+  <script src="js/sinumerik-data.js"></script>
   <script src="app.js"></script>
   <script src="js/nastroje.js"></script>
+  <script src="js/sinumerik.js"></script>
+  <script src="js/prevod-nm.js"></script>
 </body>
 </html>

@@ -213,6 +213,50 @@ summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
 .ck.num { background: var(--card); }
 .ck.eq { background: var(--accent); color: var(--accent-text); }
 
+/* ── Sinumerik příručka ── */
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; }
+.tile {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+  background: var(--code-bg); color: var(--text); border: 1px solid var(--border); padding: 16px 10px; font-weight: 400;
+}
+.tile:hover { border-color: var(--accent); }
+.tile .ti { font-size: 1.8rem; }
+.tile b { font-size: 1.05rem; }
+.tile small { color: var(--muted); font-size: 0.8rem; }
+.tile em { position: absolute; top: 6px; right: 8px; font-style: normal; font-size: 0.75rem; color: var(--muted); }
+.back { margin-bottom: 12px; }
+#sn-hledat, #sn-vsude, #nt-filter, #t-hledat { margin-top: 4px; }
+#sn-groups { margin-bottom: 8px; }
+#sn-groups .chip { min-width: 0; font-weight: 500; font-size: 0.85rem; }
+.ref-list, #sn-vysledky { margin-top: 8px; }
+.ref { border-bottom: 1px solid var(--border); margin: 0; }
+.ref summary, .ref.plain { display: flex; gap: 10px; align-items: baseline; padding: 10px 2px; list-style: none; font-weight: 400; }
+.ref summary::-webkit-details-marker { display: none; }
+.ref summary::before { content: '▸'; color: var(--muted); flex: none; }
+.ref[open] summary::before { content: '▾'; }
+.ref .nm { font-family: Consolas, monospace; font-weight: 700; color: var(--accent); flex: none; min-width: 64px; }
+.ref .kbd { font-family: Consolas, monospace; font-weight: 700; background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; flex: none; }
+.ref .sb { color: var(--text); }
+.rb { padding: 0 4px 12px 22px; }
+pre.code, pre.txt {
+  margin: 6px 0; padding: 10px; border-radius: 6px; background: var(--code-bg); overflow-x: auto; white-space: pre-wrap;
+}
+pre.code { font-family: Consolas, "Courier New", monospace; font-size: 0.9rem; }
+pre.txt { font-family: inherit; font-size: 0.95rem; }
+.ex-t { font-weight: 600; margin: 10px 0 2px; font-size: 0.9rem; }
+.notes { margin: 6px 0; padding-left: 20px; font-family: Consolas, monospace; font-size: 0.88rem; }
+.hit-sec { font-size: 0.75rem; color: var(--muted); margin-top: 10px; }
+
+/* ── Převodník a Nm ── */
+.conv-sec { padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+.conv-sec:last-child { border-bottom: none; }
+.seg-wrap { flex-wrap: wrap; }
+.seg-wrap .seg-btn { min-width: 25%; }
+.table-wrap { overflow-x: auto; }
+.tbl tr.sel { background: var(--code-bg); outline: 1px solid var(--accent); }
+.tbl .del { background: none; color: var(--muted); padding: 2px 8px; }
+#nt-filter { margin-top: 16px; }
+
 footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 20px; }
 
 @media (max-width: 520px) {
