@@ -19,6 +19,16 @@
         'Odeslat – modrá šipka nahoru ve skupině Přenos, nebo pravým tlačítkem myši na program → Odeslat.',
       ],
     }]],
+    ['Stroj – program', [{
+      t: 'Nahrát program ve stroji (CIMCO) a navolit ho',
+      d: [
+        'Menu Select → Program (správa programů) → softklávesa CIMCO.',
+        'Správa programu – DOWN (nahrát NC): zkopíruje program do stroje. Po odeslání z PC je program zatím jen přijatý, v NC ještě není. (UP je opačně: odeslat z HD do PC.)',
+        'Kopírovat → Obrobky → Vložit.',
+        'Zrušit navolení starého programu: NC → HD (odešle do PC). Křížek X u programu = navolený program, se kterým stroj pracuje.',
+        'Navolit nový program: HD → NC (navolí do stroje, objeví se u něj křížek X).',
+      ],
+    }]],
   ];
   const nove = () => VYCHOZI.map(([n, p]) => ({ n, p: p.map((x) => ({ t: x.t, d: x.d, ok: false })) }));
   // Kroky (d) a výchozí body se berou z kódu, aby se opravy projevily i v už uloženém seznamu.
