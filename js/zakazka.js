@@ -35,7 +35,7 @@
         d: [
           'Otevřít program PARAMDER (zůstává z předchozí zakázky).',
           'Najít řádek R23 = … + 0,01. Hodnota před plusem je jen příklad a mění se, důležitá je korekce za plusem.',
-          'Pokud je korekce jiná, než má být (viz štítek ROZTEČ nad obrazovkou), přepsat ji.',
+          'Zjistit z předchozí zakázky, jak to má být, a přepsat do nové. Pokud je korekce jiná, přepsat ji.',
         ],
       },
       {
@@ -50,12 +50,23 @@
         t: 'Kontrola VAR_DEF 1 a 2 (podpěrky, upnutí čelistí)',
         d: [
           'Zkontrolovat programy VAR_DEF_1 a VAR_DEF_2.',
-          'Podpěrky („íčko“): 97,7 (CHES4).',
+          'Podpěrky („íčko“): 97,7 (CHES4). Zjistit z předchozí zakázky, jak to má být, a přepsat do nové.',
           'H2 a H3 v programu = upnutí čelistí, max a min (rozsah).',
           'Upínání: Menu Select → Menu 1, upínání −10 / +10 od skutečné.',
         ],
       },
     ]],
+    ['Přepsání programu (nová zakázka)', [{
+      t: 'Přepsat uživatelská data pro novou zakázku',
+      d: [
+        'Menu Select → Parametry → Uživatelská data.',
+        'Name_OF_Workpiece: přepsat na číslo programu nové zakázky (např. 155540, u každé zakázky jiné).',
+        'Name_OF_TYPE: přepsat na stejné číslo programu.',
+        'Zkontrolovat OP_Step: 1 (první operace).',
+        'Zkontrolovat Zero_Offset = 97,7 (podložky).',
+        'Zkontrolovat Chuck_Stat = 0 (čelisti).',
+      ],
+    }]],
   ];
   const nove = () => VYCHOZI.map(([n, p]) => ({ n, p: p.map((x) => ({ t: x.t, d: x.d, ok: false })) }));
   // Kroky (d) a výchozí body se berou z kódu, aby se opravy projevily i v už uloženém seznamu.
