@@ -27,6 +27,7 @@
         'Označit program → Kopírovat → softklávesa Obrobky → Vložit (Kopírovat a Vložit jsou softklávesy vpravo).',
         'V Obrobky (Přehled programů) označit starý program, který má křížek X ve sloupci Zaveden → Odložit NC → HD. Křížek zmizí.',
         'Označit nový program → Nahrát HD → NC. U programu se objeví křížek X ve sloupci Zaveden.',
+        'Navolit: označit nahraný program → Navolit. Navolí se jako program, který se bude jet.',
       ],
     }]],
   ];
