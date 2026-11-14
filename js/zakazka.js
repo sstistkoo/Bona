@@ -59,6 +59,7 @@
     ['Přepsání programu (nová zakázka)', [{
       t: 'Přepsat uživatelská data pro novou zakázku',
       d: [
+        'Číslo programu se přepisuje na čtyřech místech.',
         'Menu Select → Parametry → Uživatelská data.',
         'Name_OF_Workpiece: přepsat na číslo programu nové zakázky (např. 155540, u každé zakázky jiné).',
         'Name_OF_TYPE: přepsat na stejné číslo programu.',
