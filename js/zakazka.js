@@ -66,6 +66,8 @@
         'Zkontrolovat OP_Step: 1 (první operace).',
         'Zkontrolovat Zero_Offset = 97,7 (podložky).',
         'Zkontrolovat Chuck_Stat = 0 (čelisti).',
+        'Na ovládacím panelu stisknout tlačítko upínač osazení (obrázek čelistí, vpravo vedle tlačítka C3).',
+        'Zadat číslo programu 2× (třetí a čtvrté místo, kde se číslo přepisuje).',
       ],
     }]],
   ];
