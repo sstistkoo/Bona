@@ -29,6 +29,33 @@
         'Označit nový program → Nahrát HD → NC. Tím se navolí jako program, který se bude jet. U programu se objeví křížek X ve sloupci Zaveden.',
       ],
     }]],
+    ['Seřizování – kontrola parametrů', [
+      {
+        t: 'Kontrola rozteče (PARAMDER)',
+        d: [
+          'Otevřít program PARAMDER (zůstává z předchozí zakázky).',
+          'Najít řádek R23 = … + 0,01. Hodnota před plusem je jen příklad a mění se, důležitá je korekce za plusem.',
+          'Pokud je korekce jiná, než má být (viz štítek ROZTEČ nad obrazovkou), přepsat ji.',
+        ],
+      },
+      {
+        t: 'Kontrola kužele díry a drsnosti (W_OTVHO1)',
+        d: [
+          'V programu DIRAHOT1 (SPF) najít řádek W_OTVHO1(…), např. W_OTVHO1(217.707,184.19,185.5,1,2,,,0.034,0.22,0.2,).',
+          'Zkontrolovat kužel díry.',
+          'Zkontrolovat drsnost (posuv).',
+        ],
+      },
+      {
+        t: 'Kontrola VAR_DEF 1 a 2 (podpěrky, upnutí čelistí)',
+        d: [
+          'Zkontrolovat programy VAR_DEF_1 a VAR_DEF_2.',
+          'Podpěrky („íčko“): 97,7 (CHES4).',
+          'H2 a H3 v programu = upnutí čelistí, max a min (rozsah).',
+          'Upínání: Menu Select → Menu 1, upínání −10 / +10 od skutečné.',
+        ],
+      },
+    ]],
   ];
   const nove = () => VYCHOZI.map(([n, p]) => ({ n, p: p.map((x) => ({ t: x.t, d: x.d, ok: false })) }));
   // Kroky (d) a výchozí body se berou z kódu, aby se opravy projevily i v už uloženém seznamu.
