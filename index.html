@@ -11,8 +11,13 @@
   <header class="top">
     <h1>Bona <span>CNC pomocník · Sinumerik 840D</span></h1>
     <nav class="tabs" role="tablist">
-      <button class="tab active" data-tab="kalk">Kalkulačka</button>
+      <button class="tab active" data-tab="kalk">Řezné podm.</button>
       <button class="tab" data-tab="cas">Čas obrábění</button>
+      <button class="tab" data-tab="tol">Tolerance</button>
+      <button class="tab" data-tab="kuzel">Kužel</button>
+      <button class="tab" data-tab="drsnost">Drsnost</button>
+      <button class="tab" data-tab="trig">Trigonometrie</button>
+      <button class="tab" data-tab="calc">Kalkulačka</button>
       <button class="tab" data-tab="tahak">Tahák G-kódů</button>
       <button class="tab" data-tab="smena">Směna</button>
       <button class="tab" data-tab="poznamky">Poznámky</button>
@@ -35,14 +40,129 @@
       </div>
 
       <div class="card">
-        <h2>Posuv a drsnost</h2>
+        <h2>Posuv za minutu</h2>
         <div class="grid">
           <label>Posuv f [mm/ot]<input type="number" id="p-f" value="0.6" step="0.05" inputmode="decimal"></label>
           <label>Otáčky n [ot/min]<input type="number" id="p-n" value="40" inputmode="decimal"></label>
-          <label>Rádius břitu r [mm]<input type="number" id="p-r" value="1.6" step="0.4" inputmode="decimal"></label>
         </div>
         <div class="result" id="p-out"></div>
-        <p class="hint">Teoretická drsnost Rz ≈ f² / (8·r). Skutečná bývá vyšší (chvění, opotřebení).</p>
+      </div>
+    </section>
+
+    <!-- TOLERANCE -->
+    <section id="tol" class="panel">
+      <div class="card">
+        <h2>Tolerance – ČSN EN ISO 286</h2>
+        <div class="seg">
+          <button class="seg-btn active" data-tsrc="iso">Třída a stupeň ISO</button>
+          <button class="seg-btn" data-tsrc="custom">Vlastní úchylky</button>
+        </div>
+        <div class="seg">
+          <button class="seg-btn active" data-tmode="hole">Díra</button>
+          <button class="seg-btn" data-tmode="shaft">Hřídel</button>
+        </div>
+        <label>Jmenovitý průměr Ø [mm]<input type="text" id="tol-dim" inputmode="decimal" placeholder="např. 255"></label>
+        <div id="tol-iso">
+          <p class="lbl">Třída</p><div class="chips" id="tol-class"></div>
+          <p class="lbl">Stupeň IT</p><div class="chips" id="tol-it"></div>
+        </div>
+        <div id="tol-custom" class="grid" hidden>
+          <label>Horní úchylka [mm]<input type="text" id="tol-up" inputmode="decimal" placeholder="např. -0,222"></label>
+          <label>Dolní úchylka [mm]<input type="text" id="tol-lo" inputmode="decimal" placeholder="např. -0,322"></label>
+        </div>
+        <div class="result" id="tol-out">Zadejte rozměr…</div>
+        <button class="secondary copy" data-copy="tol">📋 Kopírovat</button>
+        <details><summary>Volné míry – ČSN EN ISO 2768-1</summary><div id="tol-free"></div></details>
+        <details><summary>Volné geometrické tolerance – ČSN EN ISO 2768-2</summary><div id="tol-geo"></div></details>
+      </div>
+    </section>
+
+    <!-- KUŽEL -->
+    <section id="kuzel" class="panel">
+      <div class="card">
+        <h2>Kužel</h2>
+        <p class="hint" style="margin-top:0">Zadej 3 ze 4 hodnot (D, d, L, kuželovitost) – zbytek se dopočítá. Kuželovitost stačí jednou formou.</p>
+        <div class="grid">
+          <label>Velký průměr D [mm]<input type="text" id="kz-D" inputmode="decimal"></label>
+          <label>Malý průměr d [mm]<input type="text" id="kz-d" inputmode="decimal"></label>
+          <label>Délka kužele L [mm]<input type="text" id="kz-L" inputmode="decimal"></label>
+          <label>Kuželovitost 1:x <input type="text" id="kz-ratio" placeholder="např. 20 nebo 7:24"></label>
+          <label>Úhel α/2 [°] (polovrcholový)<input type="text" id="kz-half" inputmode="decimal"></label>
+          <label>Úhel α [°] (vrcholový)<input type="text" id="kz-full" inputmode="decimal"></label>
+        </div>
+        <div class="result" id="kz-out"></div>
+        <div class="row" style="margin-top:12px"><button class="secondary" id="kz-clear">🗑 Vymazat</button><button class="secondary copy" data-copy="kz">📋 Kopírovat</button></div>
+        <details><summary>Morse / ISO kužely (klepni na řádek)</summary><div id="kz-tables"></div></details>
+      </div>
+    </section>
+
+    <!-- DRSNOST -->
+    <section id="drsnost" class="panel">
+      <div class="card">
+        <h2>Drsnost povrchu</h2>
+        <div class="grid">
+          <label>Materiál obrobku<select id="dr-mat"></select></label>
+          <label>Materiál nástroje<select id="dr-tool"></select></label>
+          <label>Posuv f [mm/ot]<input type="text" id="dr-f" inputmode="decimal" value="0.6"></label>
+          <label>Vc [m/min]<input type="text" id="dr-vc" inputmode="decimal" value="120"></label>
+          <label>Rádius špičky rε [mm]<input type="text" id="dr-re" inputmode="decimal" value="1.6"></label>
+        </div>
+        <div class="chips" id="dr-radii"></div>
+        <div class="result" id="dr-out"></div>
+        <h3 class="sub">Jaký posuv pro požadovanou drsnost?</h3>
+        <div class="grid">
+          <label>Cílová Ra [µm]<input type="text" id="dr-ra" inputmode="decimal" placeholder="např. 3.2"></label>
+        </div>
+        <div class="chips" id="dr-ra-presets"></div>
+        <div class="result" id="dr-rev"></div>
+        <p class="hint" id="dr-k"></p>
+        <p class="lbl">Třídy drsnosti ISO 1302 (Ra µm)</p>
+        <div class="classbar" id="dr-classes"></div>
+      </div>
+    </section>
+
+    <!-- TRIGONOMETRIE -->
+    <section id="trig" class="panel">
+      <div class="card">
+        <h2>Trigonometrie</h2>
+        <div class="seg">
+          <button class="seg-btn active" data-trig="right">Pravoúhlý</button>
+          <button class="seg-btn" data-trig="gen">Obecný</button>
+        </div>
+        <svg class="tri-svg" viewBox="0 0 300 200" aria-hidden="true">
+          <polygon points="40,170 260,170 260,30" fill="none" stroke="currentColor" stroke-width="2"/>
+          <polyline id="tri-right-mark" points="242,170 242,152 260,152" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <text x="150" y="192" text-anchor="middle">b</text>
+          <text x="272" y="105">a</text>
+          <text x="135" y="92" text-anchor="end">c</text>
+          <text x="72" y="162">α</text>
+          <text x="244" y="62">β</text>
+          <text x="236" y="164" text-anchor="end" id="tri-gamma">γ</text>
+        </svg>
+        <p class="hint" id="trig-help" style="margin-top:0"></p>
+        <div class="grid">
+          <label>a [mm]<input type="text" data-tk="a" inputmode="decimal"></label>
+          <label>b [mm]<input type="text" data-tk="b" inputmode="decimal"></label>
+          <label>c [mm]<input type="text" data-tk="c" inputmode="decimal"></label>
+          <label>α [°]<input type="text" data-tk="alpha" inputmode="decimal"></label>
+          <label>β [°]<input type="text" data-tk="beta" inputmode="decimal"></label>
+          <label>γ [°]<input type="text" data-tk="gamma" inputmode="decimal"></label>
+        </div>
+        <div class="result" id="trig-out"></div>
+        <div class="row" style="margin-top:12px"><button class="secondary" id="trig-clear">🗑 Vymazat</button></div>
+        <p class="hint">Do polí lze psát i výrazy: sqrt(2)*50, 920/2, tan(30)*10 …</p>
+      </div>
+    </section>
+
+    <!-- KALKULAČKA -->
+    <section id="calc" class="panel">
+      <div class="card">
+        <h2>Kalkulačka</h2>
+        <div class="calc-hist" id="calc-hist"></div>
+        <input type="text" id="calc-in" inputmode="decimal" placeholder="0" autocomplete="off">
+        <div class="calc-res" id="calc-res">&nbsp;</div>
+        <div class="calc-keys" id="calc-keys"></div>
+        <p class="hint">Úhly ve stupních. Funkce: sin, cos, tan, asin, acos, atan, sqrt, abs, log, ln, round. Konstanta pi. Mocnina ^. ANS = poslední výsledek.</p>
       </div>
     </section>
 
@@ -119,6 +239,8 @@
   </main>
 
   <footer>Bona · CNC pomocník · <span id="verze"></span></footer>
+  <script src="js/vypocty.js"></script>
   <script src="app.js"></script>
+  <script src="js/nastroje.js"></script>
 </body>
 </html>

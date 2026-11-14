@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.1.0';
+const VERZE = '0.2.0';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -32,7 +32,8 @@ document.querySelectorAll('.tab').forEach((btn) => {
     store.set('tab', btn.dataset.tab);
   });
 });
-const ulozenaZalozka = store.get('tab', 'kalk');
+const zAdresy = location.hash.slice(1);
+const ulozenaZalozka = document.querySelector(`.tab[data-tab="${zAdresy}"]`) ? zAdresy : store.get('tab', 'kalk');
 document.querySelector(`.tab[data-tab="${ulozenaZalozka}"]`)?.click();
 
 /* ---------- Kalkulačka Vc ↔ n ---------- */
@@ -66,15 +67,10 @@ zDaVc();
 
 /* ---------- Posuv a drsnost ---------- */
 function vypisPosuv() {
-  const f = num('p-f'), n = num('p-n'), r = num('p-r');
-  const vf = f * n;
-  const rz = r > 0 ? (f * f) / (8 * r) * 1000 : NaN; // µm
-  const ra = rz / 4; // hrubý odhad Ra ≈ Rz/4
-  $('p-out').innerHTML =
-    `Posuv za minutu Vf = <b>${fmt(vf, 1)}</b> mm/min<br>` +
-    `Teoretická drsnost Rz ≈ <b>${fmt(rz, 1)}</b> µm &nbsp;(Ra ≈ ${fmt(ra, 1)} µm)`;
+  const f = num('p-f'), n = num('p-n');
+  $('p-out').innerHTML = `Posuv za minutu Vf = <b>${fmt(f * n, 1)}</b> mm/min`;
 }
-['p-f', 'p-n', 'p-r'].forEach((id) => $(id).addEventListener('input', vypisPosuv));
+['p-f', 'p-n'].forEach((id) => $(id).addEventListener('input', vypisPosuv));
 vypisPosuv();
 
 /* ---------- Čas čelního soustružení s G96 a LIMS ---------- */
