@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.4.0';
+const VERZE = '0.4.1';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -30,11 +30,34 @@ document.querySelectorAll('.tab').forEach((btn) => {
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('active', b === btn));
     document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('active', p.id === btn.dataset.tab));
     store.set('tab', btn.dataset.tab);
+    btn.scrollIntoView({ block: 'nearest', inline: 'nearest' }); // při mnoha záložkách posunout lištu k aktivní
   });
 });
-const zAdresy = location.hash.slice(1);
-const ulozenaZalozka = document.querySelector(`.tab[data-tab="${zAdresy}"]`) ? zAdresy : store.get('tab', 'kalk');
-document.querySelector(`.tab[data-tab="${ulozenaZalozka}"]`)?.click();
+const tabBtn = (id) => [...document.querySelectorAll('.tab')].find((b) => b.dataset.tab === id);
+function zalozkaZAdresy() {
+  const b = tabBtn(decodeURIComponent(location.hash.slice(1)));
+  if (b) { b.click(); window.scrollTo(0, 0); }
+  return !!b;
+}
+if (!zalozkaZAdresy()) (tabBtn(store.get('tab', 'kalk')) || tabBtn('kalk')).click();
+window.addEventListener('hashchange', zalozkaZAdresy);
+
+/* ---------- Tlačítko ± u polí se zápornými hodnotami (číselná klávesnice iOS nemá mínus) ---------- */
+document.querySelectorAll('input[data-neg]').forEach((inp) => {
+  const wrap = document.createElement('span');
+  wrap.className = 'negwrap';
+  inp.parentNode.insertBefore(wrap, inp);
+  wrap.appendChild(inp);
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'negbtn'; b.textContent = '±'; b.title = 'Změnit znaménko';
+  b.addEventListener('mousedown', (e) => e.preventDefault()); // nebrat fokus poli
+  b.addEventListener('click', () => {
+    const v = inp.value.trim();
+    inp.value = v.startsWith('-') ? v.slice(1) : '-' + v.replace(/^\+/, '');
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  wrap.appendChild(b);
+});
 
 /* ---------- Kalkulačka Vc ↔ n ---------- */
 function vypisKalk() {
@@ -103,6 +126,7 @@ vypisCelni();
 function vypisPodelny() {
   const l = num('l-l'), d = num('l-d'), vc = num('l-vc'), f = num('l-f');
   const pocet = Math.max(1, Math.round(num('l-pocet')) || 1);
+  if (!(l > 0 && d > 0 && vc > 0 && f > 0)) { $('l-out').innerHTML = 'Zadej kladnou délku, průměr, Vc a posuv.'; return; }
   const n = (1000 * vc) / (Math.PI * d);
   const t = l / (f * n);
   $('l-out').innerHTML =
@@ -144,7 +168,7 @@ const TAHAK = [
     ['T… D…', 'Volba nástroje a korekce (výměna dle nastavení stroje)', 'T3 D1'],
     ['G40', 'Zrušení korekce rádiusu břitu', ''],
     ['G41 / G42', 'Korekce rádiusu vlevo / vpravo od kontury', 'G42 G1 X500 Z0'],
-    ['D0', 'Zrušení korekce délky nástroje', ''],
+    ['D0', 'Vypnutí korekcí nástroje (délky i rádiusu)', ''],
   ]},
   { skupina: 'Dráha a kontura', polozky: [
     ['G60 / G9', 'Přesné zastavení (modálně / jen v bloku)', ''],

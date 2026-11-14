@@ -46,7 +46,9 @@
     on(['tp-mat', 'tp-l', 'tp-t'], mer); mer();
 
     function lis() {
-      const r = T.shrinkFit({ d: val('tl-d'), interference: val('tl-i'), clearance: val('tl-c') || 0, alpha: +$('tl-mat').value, T0: val('tl-t0') ?? 20 });
+      const t0 = val('tl-t0') ?? 20;
+      if (!Number.isFinite(t0)) { $('tl-out').textContent = 'Neplatná teplota okolí.'; return; }
+      const r = T.shrinkFit({ d: val('tl-d'), interference: val('tl-i'), clearance: val('tl-c') || 0, alpha: +$('tl-mat').value, T0: t0 });
       $('tl-out').innerHTML = r
         ? `Potřebná změna průměru ${f(r.dD, 3)} mm (ΔT = ${f(r.dT, 0)} °C)<br>Ohřev díry na <b>${f(r.heated, 0)} °C</b> · nebo chlazení hřídele na <b>${f(r.cooled, 0)} °C</b>` +
           (r.cooled < -196 ? '<div class="warn">Chlazení pod −196 °C (tekutý dusík) nejde – zvol ohřev.</div>' : '')

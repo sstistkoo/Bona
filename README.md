@@ -39,7 +39,7 @@ Funguje v prohlížeči na PC i mobilu, nic se neinstaluje – stačí otevřít
 
 ### Aktualizace ze SKICA
 
-`js/vypocty.js` a `js/sinumerik-data.js` se generují skriptem – ručně je neupravuj:
+`js/vypocty.js` a `js/sinumerik-data.js` se generují skriptem – ručně je neupravuj. Opravy chyb v datech příručky Sinumerik (kódy z Fanucu, neexistující kódy, špatné popisy) jsou v `scripts/opravy-sinumerik.mjs` a skript je použije při každém převzetí:
 
 ```
 git clone https://github.com/sstistkoo/2D_CAD-CAM ../2D_CAD-CAM

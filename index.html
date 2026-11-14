@@ -73,8 +73,8 @@
           <p class="lbl">Stupeň IT</p><div class="chips" id="tol-it"></div>
         </div>
         <div id="tol-custom" class="grid" hidden>
-          <label>Horní úchylka [mm]<input type="text" id="tol-up" inputmode="decimal" placeholder="např. -0,222"></label>
-          <label>Dolní úchylka [mm]<input type="text" id="tol-lo" inputmode="decimal" placeholder="např. -0,322"></label>
+          <label>Horní úchylka [mm]<input type="text" id="tol-up" data-neg inputmode="decimal" placeholder="např. -0,222"></label>
+          <label>Dolní úchylka [mm]<input type="text" id="tol-lo" data-neg inputmode="decimal" placeholder="např. -0,322"></label>
         </div>
         <div class="result" id="tol-out">Zadejte rozměr…</div>
         <button class="secondary copy" data-copy="tol">📋 Kopírovat</button>
@@ -140,7 +140,7 @@
           <div class="grid">
             <label>Materiál<select id="tp-mat" class="tp-mat"></select></label>
             <label>Rozměr [mm]<input type="text" id="tp-l" inputmode="decimal" placeholder="např. 920.12"></label>
-            <label>Teplota dílu [°C]<input type="text" id="tp-t" inputmode="decimal" placeholder="např. 35"></label>
+            <label>Teplota dílu [°C]<input type="text" id="tp-t" data-neg inputmode="decimal" placeholder="např. 35"></label>
           </div>
           <div class="result" id="tp-out"></div>
           <p class="hint">Platí pro měřidlo při 20 °C. Teplotu dílu měř dotykovým teploměrem na místě měření – kolo bývá po obrábění nerovnoměrně teplé.</p>
@@ -151,7 +151,7 @@
             <label>Průměr spoje d [mm]<input type="text" id="tl-d" inputmode="decimal"></label>
             <label>Přesah [mm]<input type="text" id="tl-i" inputmode="decimal" placeholder="např. 0.25"></label>
             <label>Montážní vůle [mm]<input type="text" id="tl-c" inputmode="decimal" placeholder="např. 0.1"></label>
-            <label>Teplota okolí [°C]<input type="text" id="tl-t0" inputmode="decimal" value="20"></label>
+            <label>Teplota okolí [°C]<input type="text" id="tl-t0" data-neg inputmode="decimal" value="20"></label>
           </div>
           <div class="result" id="tl-out"></div>
         </div>
@@ -160,7 +160,7 @@
             <label>Materiál díry<select id="tv-mh" class="tp-mat"></select></label>
             <label>Materiál hřídele<select id="tv-ms" class="tp-mat"></select></label>
             <label>Průměr d [mm]<input type="text" id="tv-d" inputmode="decimal"></label>
-            <label>Provozní teplota [°C]<input type="text" id="tv-t" inputmode="decimal"></label>
+            <label>Provozní teplota [°C]<input type="text" id="tv-t" data-neg inputmode="decimal"></label>
           </div>
           <div class="result" id="tv-out"></div>
         </div>
@@ -191,7 +191,7 @@
         <div class="grid">
           <label>Ø D [mm]<input type="text" id="rz-D" inputmode="decimal"></label>
           <label data-rzs="line">Délka sražení c v Z [mm]<input type="text" id="rz-c" inputmode="decimal"></label>
-          <label>Z čela [mm]<input type="text" id="rz-z0" inputmode="decimal" value="0"></label>
+          <label>Z čela [mm]<input type="text" id="rz-z0" data-neg inputmode="decimal" value="0"></label>
         </div>
         <div id="rz-pts"></div>
         <p class="hint">Platí pro soustružení ke sklíčidlu / k upínací desce (−Z), nůž v poloze 3 (vnější) / 2 (vnitřní).</p>
@@ -216,11 +216,11 @@
             <label><span id="cr-vl">Rádius R [mm]</span><input type="text" id="cr-v" inputmode="decimal"></label>
           </div>
           <p class="lbl">Předchozí bod P1 (kde začíná 1. úsek)</p>
-          <div class="grid"><label>Z<input type="text" id="cr-z1" inputmode="decimal"></label><label>Ø X<input type="text" id="cr-x1" inputmode="decimal"></label></div>
+          <div class="grid"><label>Z<input type="text" id="cr-z1" data-neg inputmode="decimal"></label><label>Ø X<input type="text" id="cr-x1" inputmode="decimal"></label></div>
           <p class="lbl">Roh</p>
-          <div class="grid"><label>Z<input type="text" id="cr-zc" inputmode="decimal"></label><label>Ø X<input type="text" id="cr-xc" inputmode="decimal"></label></div>
+          <div class="grid"><label>Z<input type="text" id="cr-zc" data-neg inputmode="decimal"></label><label>Ø X<input type="text" id="cr-xc" inputmode="decimal"></label></div>
           <p class="lbl">Další bod P2 (kde končí 2. úsek)</p>
-          <div class="grid"><label>Z<input type="text" id="cr-z2" inputmode="decimal"></label><label>Ø X<input type="text" id="cr-x2" inputmode="decimal"></label></div>
+          <div class="grid"><label>Z<input type="text" id="cr-z2" data-neg inputmode="decimal"></label><label>Ø X<input type="text" id="cr-x2" inputmode="decimal"></label></div>
         </div>
         <div data-geotab="chord" hidden>
           <p class="hint">Zadej libovolné dvě veličiny, třetí se dopočítá.</p>
@@ -231,13 +231,13 @@
           </div>
         </div>
         <div data-geotab="pts" hidden>
-          <p class="lbl">Začátek P1</p><div class="grid"><label>Z<input type="text" id="ap-z1" inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x1" inputmode="decimal"></label></div>
-          <p class="lbl">Bod uprostřed P2 (oblouk jím prochází)</p><div class="grid"><label>Z<input type="text" id="ap-z2" inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x2" inputmode="decimal"></label></div>
-          <p class="lbl">Konec P3</p><div class="grid"><label>Z<input type="text" id="ap-z3" inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x3" inputmode="decimal"></label></div>
+          <p class="lbl">Začátek P1</p><div class="grid"><label>Z<input type="text" id="ap-z1" data-neg inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x1" inputmode="decimal"></label></div>
+          <p class="lbl">Bod uprostřed P2 (oblouk jím prochází)</p><div class="grid"><label>Z<input type="text" id="ap-z2" data-neg inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x2" inputmode="decimal"></label></div>
+          <p class="lbl">Konec P3</p><div class="grid"><label>Z<input type="text" id="ap-z3" data-neg inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x3" inputmode="decimal"></label></div>
         </div>
         <div data-geotab="ends" hidden>
-          <p class="lbl">Začátek S</p><div class="grid"><label>Z<input type="text" id="ae-zs" inputmode="decimal"></label><label>Ø X<input type="text" id="ae-xs" inputmode="decimal"></label></div>
-          <p class="lbl">Konec E</p><div class="grid"><label>Z<input type="text" id="ae-ze" inputmode="decimal"></label><label>Ø X<input type="text" id="ae-xe" inputmode="decimal"></label></div>
+          <p class="lbl">Začátek S</p><div class="grid"><label>Z<input type="text" id="ae-zs" data-neg inputmode="decimal"></label><label>Ø X<input type="text" id="ae-xs" inputmode="decimal"></label></div>
+          <p class="lbl">Konec E</p><div class="grid"><label>Z<input type="text" id="ae-ze" data-neg inputmode="decimal"></label><label>Ø X<input type="text" id="ae-xe" inputmode="decimal"></label></div>
           <div class="grid">
             <label>Rádius R [mm]<input type="text" id="ae-R" inputmode="decimal"></label>
             <label>Smysl<select id="ae-dir"><option value="G3">G3</option><option value="G2">G2</option></select></label>
@@ -352,6 +352,7 @@
         <h2 id="sn-title"></h2>
         <input type="search" id="sn-hledat" placeholder="🔍 Hledat…">
         <div class="chips" id="sn-groups"></div>
+        <label class="check" id="sn-skryt-wrap"><input type="checkbox" id="sn-skryt"> <span>Skrýt kódy, které na 840D v režimu Siemens nefungují (<span id="sn-skryt-n"></span>)</span></label>
         <div id="sn-list" class="ref-list"></div>
         <p class="hint" id="sn-note"></p>
       </div>
@@ -425,7 +426,7 @@
           <div class="grid">
             <label>Požadovaný moment [Nm]<input type="text" id="nk-m" inputmode="decimal"></label>
             <label>Délka klíče L [mm]<input type="text" id="nk-l" inputmode="decimal" placeholder="rukojeť → čtyřhran"></label>
-            <label>Prodloužení a [mm]<input type="text" id="nk-a" inputmode="decimal" placeholder="přesah nástavce"></label>
+            <label>Prodloužení a [mm]<input type="text" id="nk-a" data-neg inputmode="decimal" placeholder="přesah nástavce"></label>
           </div>
           <div class="result" id="nk-out"></div>
           <p class="lbl">Převod jednotek momentu</p>

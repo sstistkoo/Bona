@@ -100,6 +100,20 @@ const data = {
   nastroje: refList(tl.snToolGroups, tl.snToolItems),
   alarmy: refList(al.snAlarmGroups, al.snAlarmItems),
 };
+// Opravy chyb v datech SKICA (scripts/opravy-sinumerik.mjs)
+const { OPRAVY, oznacitM } = await import(pathToFileURL(path.join(ROOT, 'scripts/opravy-sinumerik.mjs')).href);
+let opraveno = 0;
+for (const [sekce, mapa] of Object.entries(OPRAVY)) {
+  for (const it of data[sekce].items) {
+    const o = mapa[it.name] || (sekce === 'mkody' ? oznacitM(it.name) : null);
+    if (!o) continue;
+    it.stav = o.stav;
+    if (o.popis) { it.puvodni = it.description; it.description = o.popis; }
+    if (o.pozn) it.pozn = o.pozn;
+    opraveno++;
+  }
+}
+console.log('Označeno / opraveno položek:', opraveno);
 fs.writeFileSync(path.join(ROOT, 'js/sinumerik-data.js'),
   '// VYGENEROVÁNO skriptem scripts/prevzit-ze-skici.mjs ze SKICA 2D CAD/CAM – needitovat ručně.\nwindow.SINUMERIK = ' + JSON.stringify(data) + ';\n');
 fs.rmSync(tmp, { recursive: true, force: true });

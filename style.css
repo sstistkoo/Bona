@@ -267,6 +267,20 @@ label.inline select { width: auto; }
 .vbd-tbl code { font-family: Consolas, monospace; font-weight: 700; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
 h3.sub small { font-weight: 400; }
 
+/* ± u polí se zápornými hodnotami */
+.negwrap { display: flex; gap: 4px; }
+.negwrap input { flex: 1; min-width: 0; }
+.negbtn { flex: none; width: 44px; padding: 0; background: var(--code-bg); color: var(--text); border: 1px solid var(--border); font-size: 1.1rem; }
+
+/* štítky oprav v příručce Sinumerik */
+.badge-s { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; margin-left: 4px; white-space: nowrap; vertical-align: 1px; }
+.b-iso { background: #b45309; color: #fff; }
+.b-ne { background: #b91c1c; color: #fff; }
+.b-stroj { background: var(--code-bg); color: var(--muted); border: 1px solid var(--border); }
+.b-ok { background: var(--accent); color: var(--accent-text); }
+label.check { flex-direction: row; align-items: center; gap: 8px; margin: 4px 0 8px; color: var(--text); }
+label.check input { width: 20px; height: 20px; flex: none; }
+
 footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 20px; }
 
 @media (max-width: 520px) {

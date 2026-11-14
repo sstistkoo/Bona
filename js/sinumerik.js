@@ -12,8 +12,17 @@
   // Každá sekce převedená na jednotný tvar: { groups: {název: [klíče]}, items: [{key, title, sub, detail, mono, examples:[{title, code, description}]}] }
   const fromRef = (d, detail) => ({
     groups: d.groups,
-    items: d.items.map((i) => ({ key: i.name, title: i.name, sub: i.description, detail: i.syntax, mono: !detail, examples: i.examples || [] })),
+    items: d.items.map((i) => ({ key: i.name, title: i.name, sub: i.description, detail: i.syntax, mono: !detail, examples: i.examples || [], stav: i.stav, pozn: i.pozn, puvodni: i.puvodni })),
   });
+  // Štítky z oprav dat (scripts/opravy-sinumerik.mjs)
+  const STITEK = {
+    iso: ['Fanuc / ISO', 'b-iso'],
+    ne: ['nejspíš neexistuje', 'b-ne'],
+    stroj: ['dle výrobce stroje', 'b-stroj'],
+    oprava: ['opraveno', 'b-ok'],
+  };
+  const SKRYVAT = ['iso', 'ne'];
+  let skrytNe = (() => { try { return localStorage.getItem('bona.snSkryt') !== '0'; } catch { return true; } })();
   const SEKCE = [
     { id: 'gkody', icon: '⚙️', title: 'G kódy', desc: 'Pohybové a přípravné funkce', data: fromRef(S.gkody) },
     { id: 'mkody', icon: '🔧', title: 'M kódy', desc: 'Pomocné strojní funkce', data: fromRef(S.mkody) },
@@ -46,8 +55,11 @@
       (e.title ? `<p class="ex-t">${esc(e.title)}</p>` : '') + `<pre class="code">${esc(e.code)}</pre>` + (e.description ? `<p class="hint">${esc(e.description)}</p>` : '')).join('');
     const notes = i.notes ? '<ul class="notes">' + i.notes.map((n) => `<li>${esc(n)}</li>`).join('') + '</ul>' : '';
     const det = i.detail ? `<pre class="${i.mono ? 'code' : 'txt'}">${esc(i.detail)}</pre>` : '';
-    const body = det + ex + notes;
-    const head = `<span class="${i.kbd ? 'kbd' : 'nm'}">${esc(i.title)}</span><span class="sb">${esc(i.sub)}</span>`;
+    const st = i.stav && STITEK[i.stav];
+    const varovani = (i.pozn ? `<div class="warn">${esc(i.pozn)}</div>` : '') +
+      (i.puvodni ? `<p class="hint">Původní popis ve SKICE: „${esc(i.puvodni)}“</p>` : '');
+    const body = varovani + det + ex + notes;
+    const head = `<span class="${i.kbd ? 'kbd' : 'nm'}">${esc(i.title)}</span><span class="sb">${esc(i.sub)}${st ? ` <span class="badge-s ${st[1]}">${st[0]}</span>` : ''}</span>`;
     return body ? `<details class="ref"${open ? ' open' : ''}><summary>${head}</summary><div class="rb">${body}</div></details>` : `<div class="ref plain">${head}</div>`;
   }
 
@@ -55,6 +67,10 @@
     const d = akt.data;
     const q = norm($('sn-hledat').value.trim());
     let items = d.items;
+    const pocetSkrytych = items.filter((i) => SKRYVAT.includes(i.stav)).length;
+    $('sn-skryt-wrap').hidden = !pocetSkrytych;
+    $('sn-skryt-n').textContent = pocetSkrytych;
+    if (skrytNe) items = items.filter((i) => !SKRYVAT.includes(i.stav));
     if (skupina) { const set = new Set(d.groups[skupina]); items = items.filter((i) => set.has(i.key)); }
     if (q) items = items.filter((i) => norm([i.title, i.sub, i.detail, (i.notes || []).join(' '), i.examples.map((e) => e.code).join(' ')].join(' ')).includes(q));
     // seřadit podle pořadí ve skupině, když je vybraná
@@ -85,6 +101,12 @@
   $('sn-back').addEventListener('click', zpet);
   document.querySelector('#sn-tahak [data-back]').addEventListener('click', zpet);
   $('sn-hledat').addEventListener('input', kresliSeznam);
+  $('sn-skryt').checked = skrytNe;
+  $('sn-skryt').addEventListener('change', () => {
+    skrytNe = $('sn-skryt').checked;
+    try { localStorage.setItem('bona.snSkryt', skrytNe ? '1' : '0'); } catch { /* nedostupné */ }
+    kresliSeznam();
+  });
   $('sn-groups').addEventListener('click', (e) => {
     const b = e.target.closest('.chip'); if (!b) return;
     $('sn-groups').querySelectorAll('.chip').forEach((x) => x.classList.toggle('active', x === b));
