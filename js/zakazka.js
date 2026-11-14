@@ -7,15 +7,21 @@
   const get = (k, d) => { try { const v = localStorage.getItem('bona.zak.' + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
   const set = (k, v) => { try { localStorage.setItem('bona.zak.' + k, JSON.stringify(v)); } catch { /* nedostupné */ } };
 
+  // Výchozí seznam = postup z poznámek obsluhy. Položka může mít kroky (d), které se rozbalí.
   const VYCHOZI = [
-    ['Podklady', ['Výkres – správná revize', 'Technologický postup', 'NC program nahraný a zkontrolovaný', 'Polotovar – rozměry a přídavky']],
-    ['Upnutí', ['Čelisti / upínače pro tento díl', 'Díl upnutý, vystředěný, kontrola házení']],
-    ['Nástroje', ['Seznam nástrojů podle postupu', 'Destičky a držáky připravené', 'Nástroje změřené, korekce zapsané']],
-    ['Stroj', ['Nulový bod nastaven', 'LIMS v programu odpovídá upnutí', 'Sonda zkontrolovaná (je-li potřeba)']],
-    ['První kus', ['Program pomalu / s ověřením', 'Změřit a zapsat korekce', 'Kontrola rozměrů podle výkresu']],
+    ['PC – program', [{
+      t: 'Nahrát program z PC (CIMCO Edit) do stroje',
+      d: [
+        'Na PC otevřít CIMCO Edit.',
+        'Záložka Databáze → Průzkumník (modrá ikona databáze s lupou).',
+        'Vyhledat program podle čísla programu (u každé zakázky jiné).',
+        'Vyhledat stroj – vyplňuje se v poli dole na stránce: CHES4 (Stroj).',
+        'Odeslat – modrá šipka nahoru ve skupině Přenos (pravé tlačítko myši).',
+      ],
+    }]],
   ];
-  const nove = () => VYCHOZI.map(([n, p]) => ({ n, p: p.map((t) => ({ t, ok: false })) }));
-  let skupiny = get('seznam', nove());
+  const nove = () => VYCHOZI.map(([n, p]) => ({ n, p: p.map((x) => ({ t: x.t, d: x.d, ok: false })) }));
+  let skupiny = get('seznam2', nove());
 
   const POLE = ['zk-cislo', 'zk-vykres', 'zk-mat', 'zk-prog'];
   POLE.forEach((id) => {
@@ -31,11 +37,11 @@
     $('zk-postup').textContent = `Hotovo ${hotovo} z ${celkem}`;
     $('zk-seznam').innerHTML = skupiny.map((g, gi) =>
       `<h3 class="sub">${esc(g.n)}</h3><ul class="checklist">` +
-      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button></li>`).join('') +
+      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${esc(k)}</li>`).join('')}</ol></details>` : ''}</li>`).join('') +
       `</ul><div class="row"><input type="text" data-add="${gi}" placeholder="Přidat do skupiny…"><button class="secondary" data-addbtn="${gi}">Přidat</button></div>`
     ).join('');
   }
-  const uloz = () => { set('seznam', skupiny); vykresli(); };
+  const uloz = () => { set('seznam2', skupiny); vykresli(); };
 
   $('zk-seznam').addEventListener('change', (e) => {
     const { g, i } = e.target.dataset; if (g === undefined || i === undefined) return;
