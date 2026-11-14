@@ -9,7 +9,7 @@ Na telefonu ji lze přidat na plochu jako aplikaci (v prohlížeči „Přidat n
 
 - **Řezné podmínky** – přepočet řezné rychlosti Vc ↔ otáčky n, upozornění na LIMS, posuv za minutu
 - **Čas obrábění** – čelní soustružení s G96 a omezením LIMS, podélné soustružení
-- **Tolerance** – ISO 286 (díra/hřídel, třídy a stupně IT, rozměry až 3150 mm), vlastní úchylky, volné míry ISO 2768
+- **Tolerance** – ISO 286 (díra/hřídel, třídy a stupně IT, rozměry až 3150 mm), vlastní úchylky v mm nebo µm, rozhodující rozměr a střed tolerance, volné míry ISO 2768
 - **Kužel** – díra i čep, náčrt řezu (klepnutím na kótu se zadává), Ø z výkresu v hloubce, tolerance (i ISO, např. H7), měřicí místa od spodu i od vrchu s Ø min/max, náklon suportu, tabulky Morse a ISO
 - **Drsnost** – Ra/Rz z posuvu a rádiusu špičky s korekcí na materiál, zpětně max. posuv pro cílovou Ra
 - **Roztažnost** – přepočet rozměru teplého dílu na 20 °C, teplota pro nalisování, změna vůle spoje

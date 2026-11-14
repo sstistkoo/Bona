@@ -188,11 +188,6 @@ summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
 .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.85rem; font-weight: 700; }
 .badge.hole { background: #2563eb; color: #fff; }
 .badge.shaft { background: #b45309; color: #fff; }
-.tol-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; font-family: Consolas, monospace; }
-.tol-cols div { display: flex; justify-content: space-between; gap: 8px; padding: 3px 6px; border-radius: 4px; }
-.tol-cols span { color: var(--muted); }
-.tol-cols .key { background: var(--card); outline: 1px solid var(--accent); }
-.tol-key { margin-top: 8px; text-align: center; font-family: Consolas, monospace; }
 
 .classbar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
 .classbar div { text-align: center; padding: 4px 2px; border-radius: 4px; background: var(--code-bg); font-size: 0.8rem; }
@@ -398,3 +393,24 @@ body.menu-open { overflow: hidden; }
 .kz-tbl tr.kz-out td { color: #b91c1c; }
 @keyframes flash { from { box-shadow: 0 0 0 4px var(--accent); } to { box-shadow: 0 0 0 0 transparent; } }
 input.flash { animation: flash 1.2s ease-out; }
+
+/* ══════════ Tolerance – kompaktní ══════════ */
+.tol-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: stretch; margin-bottom: 4px; }
+.tol-top .seg { margin: 0; }
+label.tol-dim { flex-direction: row; align-items: center; gap: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); padding-left: 10px; }
+label.tol-dim span { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+label.tol-dim input { border: none; background: transparent; font-weight: 700; font-size: 1.1rem; }
+label.tol-dim:focus-within { outline: 2px solid var(--accent); }
+.tol-unitrow { display: flex; align-items: center; gap: 10px; margin: 10px 0 6px; font-size: 0.85rem; color: var(--muted); }
+.tol-unitrow .seg { margin: 0; width: 140px; }
+.tol-unitrow .seg-btn { padding: 6px 0; }
+.tol-head { margin-bottom: 8px; font-family: Consolas, monospace; }
+.tol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tol-grid .tc { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--border); min-width: 0; }
+.tol-grid .tc small { color: var(--muted); font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tol-grid .tc b { font-family: Consolas, monospace; font-size: 1.3rem; white-space: nowrap; }
+.tol-grid .tc.key { border-color: var(--accent); outline: 1px solid var(--accent); }
+.tol-grid .tc.key b { color: var(--accent); }
+.tol-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; margin-top: 8px; font-size: 0.9rem; }
+.tol-foot b { font-family: Consolas, monospace; }
+.tol-foot b { font-size: 1rem; }

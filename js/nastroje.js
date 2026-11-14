@@ -39,7 +39,7 @@
 
   /* ══════════════ TOLERANCE ══════════════ */
   (function tolerance() {
-    const st = Object.assign({ custom: false, hole: true, dim: '', up: '', lo: '', cls: { hole: 'H', shaft: 'h' }, it: '7' }, load('tol', {}));
+    const st = Object.assign({ custom: false, hole: true, um: false, dim: '', up: '', lo: '', cls: { hole: 'H', shaft: 'h' }, it: '7' }, load('tol', {}));
     const dimEl = $('tol-dim'), upEl = $('tol-up'), loEl = $('tol-lo'), out = $('tol-out');
     const clsEl = $('tol-class'), itEl = $('tol-it');
     dimEl.value = st.dim; upEl.value = st.up; loEl.value = st.lo;
@@ -53,8 +53,27 @@
     function ukaz() { $('tol-iso').hidden = st.custom; $('tol-custom').hidden = !st.custom; }
     setSrc(st.custom ? 'custom' : 'iso'); setMode(st.hole ? 'hole' : 'shaft'); ukaz(); kreslitTridy();
 
-    const sign = (v) => { const x = Math.round(v * 100) / 100; return x > 0 ? '+' + x : '' + x; };
+    // Jednotka vlastních úchylek: mm nebo µm (výpočet jede dál v mm)
+    function jednotkaUI() {
+      const u = st.um ? 'µm' : 'mm';
+      $('tol-up-l').textContent = `Horní úchylka [${u}]`;
+      $('tol-lo-l').textContent = `Dolní úchylka [${u}]`;
+      upEl.placeholder = st.um ? 'např. -222' : 'např. -0,222';
+      loEl.placeholder = st.um ? 'např. -322' : 'např. -0,322';
+    }
+    const setUnit = seg('[data-tunit]', 'tunit', (v) => {
+      const um = v === 'um';
+      if (um !== st.um) {                 // převést už zadané hodnoty, ať zůstanou stejné
+        const k = um ? 1000 : 0.001;
+        [upEl, loEl].forEach((inp) => { const x = val(inp); if (Number.isFinite(x)) inp.value = r(x * k, 6); });
+      }
+      st.um = um; jednotkaUI(); calc();
+    });
+    setUnit(st.um ? 'um' : 'mm'); jednotkaUI();
+
+    const sign = (v) => { const x = Math.round(v * 100) / 100; return x > 0 ? '+' + x : x < 0 ? '−' + Math.abs(x) : '0'; };
     const mm = (v) => String(parseFloat(v.toFixed(5)));
+    const mm3 = (v) => { const s = mm(v); const d = (s.split('.')[1] || '').length; return d >= 3 ? s : v.toFixed(3); };
 
     function calc() {
       st.dim = dimEl.value; st.up = upEl.value; st.lo = loEl.value; save('tol', st);
@@ -68,9 +87,10 @@
         if (up === null || lo === null) { out.textContent = 'Zadejte horní i dolní úchylku…'; return; }
         if (!Number.isFinite(up) || !Number.isFinite(lo)) { out.textContent = 'Neplatná úchylka'; return; }
         if (up < lo) [up, lo] = [lo, up];
-        const f = (v) => (v > 0 ? '+' : '') + r(v, 4);
+        if (st.um) { up /= 1000; lo /= 1000; }
         res = { upper: up * 1000, lower: lo * 1000, tol: Math.round((up - lo) * 1e6) / 1000 };
-        label = `Ø${dim} ${f(up)} / ${f(lo)}`;
+        const fmm = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + r(Math.abs(v), 4);
+        label = st.um ? `Ø${dim} ${sign(up * 1000)} / ${sign(lo * 1000)} µm` : `Ø${dim} ${fmm(up)} / ${fmm(lo)}`;
       } else {
         const letter = st.hole ? st.cls.hole : st.cls.shaft;
         res = V.deviations(letter, parseInt(st.it, 10), dim);
@@ -79,15 +99,17 @@
       }
       const max = dim + res.upper / 1000, min = dim + res.lower / 1000;
       const kind = st.hole ? 'Díra' : 'Hřídel';
-      const keyLbl = st.hole ? 'Ø min' : 'Ø max', keyVal = st.hole ? min : max, sg = st.hole ? '+' : '−';
-      const tolTxt = `${sg}${res.tol} µm (${sg}${mm(res.tol / 1000)} mm)`;
+      // Rozhodující rozměr: díra = Ø min (od něj se přidává), hřídel = Ø max
       kopie.tol = `${kind} ${label} | ${sign(res.upper)} / ${sign(res.lower)} µm | max ${mm(max)} / min ${mm(min)} mm`;
+      const bunka = (lbl, v, dev, key) =>
+        `<div class="tc${key ? ' key' : ''}"><small>${lbl}${key ? ' ◂ rozhodující' : ''}</small><b>${mm3(v)}</b><small>${dev}</small></div>`;
       out.innerHTML =
         `<div class="tol-head"><span class="badge ${st.hole ? 'hole' : 'shaft'}">${kind}</span> <b>${label}</b></div>` +
-        `<div class="tol-cols"><div><span>Horní</span><b>${sign(res.upper)} µm</b></div><div${st.hole ? '' : ' class="key"'}><span>Ø max</span><b>${mm(max)} mm</b></div>` +
-        `<div><span>Dolní</span><b>${sign(res.lower)} µm</b></div><div${st.hole ? ' class="key"' : ''}><span>Ø min</span><b>${mm(min)} mm</b></div></div>` +
-        `<div class="tol-key">${keyLbl} <b>${mm(keyVal)} mm</b> ${tolTxt}</div>` +
-        `<div class="tol-key">Střed tolerance: <b>${mm((max + min) / 2)} mm</b></div>` +
+        `<div class="tol-grid">` +
+          bunka('Ø max', max, `horní ${sign(res.upper)} µm`, !st.hole) +
+          bunka('Ø min', min, `dolní ${sign(res.lower)} µm`, st.hole) +
+        `</div>` +
+        `<div class="tol-foot"><span>Tolerance <b>${res.tol} µm</b> (${mm(res.tol / 1000)} mm)</span><span>Střed <b>${mm((max + min) / 2)}</b></span></div>` +
         (res.note ? `<p class="hint">${res.note}</p>` : '');
     }
     [dimEl, upEl, loEl].forEach((e) => e.addEventListener('input', calc));

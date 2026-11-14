@@ -77,18 +77,29 @@
           <button class="seg-btn active" data-tsrc="iso">Třída a stupeň ISO</button>
           <button class="seg-btn" data-tsrc="custom">Vlastní úchylky</button>
         </div>
-        <div class="seg">
-          <button class="seg-btn active" data-tmode="hole">Díra</button>
-          <button class="seg-btn" data-tmode="shaft">Hřídel</button>
+        <div class="tol-top">
+          <div class="seg">
+            <button class="seg-btn active" data-tmode="hole">Díra</button>
+            <button class="seg-btn" data-tmode="shaft">Hřídel</button>
+          </div>
+          <label class="tol-dim"><span>Ø</span><input type="text" id="tol-dim" inputmode="decimal" placeholder="rozměr mm" aria-label="Jmenovitý průměr v mm"></label>
         </div>
-        <label>Jmenovitý průměr Ø [mm]<input type="text" id="tol-dim" inputmode="decimal" placeholder="např. 255"></label>
         <div id="tol-iso">
           <p class="lbl">Třída</p><div class="chips" id="tol-class"></div>
           <p class="lbl">Stupeň IT</p><div class="chips" id="tol-it"></div>
         </div>
-        <div id="tol-custom" class="grid" hidden>
-          <label>Horní úchylka [mm]<input type="text" id="tol-up" data-neg inputmode="decimal" placeholder="např. -0,222"></label>
-          <label>Dolní úchylka [mm]<input type="text" id="tol-lo" data-neg inputmode="decimal" placeholder="např. -0,322"></label>
+        <div id="tol-custom" hidden>
+          <div class="tol-unitrow">
+            <span>Úchylky v</span>
+            <div class="seg">
+              <button class="seg-btn active" data-tunit="mm">mm</button>
+              <button class="seg-btn" data-tunit="um">µm</button>
+            </div>
+          </div>
+          <div class="grid">
+            <label><span id="tol-up-l">Horní úchylka [mm]</span><input type="text" id="tol-up" data-neg inputmode="decimal" placeholder="např. -0,222"></label>
+            <label><span id="tol-lo-l">Dolní úchylka [mm]</span><input type="text" id="tol-lo" data-neg inputmode="decimal" placeholder="např. -0,322"></label>
+          </div>
         </div>
         <div class="result" id="tol-out">Zadejte rozměr…</div>
         <button class="secondary copy" data-copy="tol">📋 Kopírovat</button>
