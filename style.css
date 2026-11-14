@@ -345,3 +345,56 @@ body.menu-open { overflow: hidden; }
 }
 /* odkaz #záložka: prohlížeč neodroluje sekci pod hlavičku */
 .panel { scroll-margin-top: 400px; }
+
+/* ══════════ Kužel – náčrt (kreslení převzaté ze SKICA) ══════════ */
+:root {
+  --sk-line: #374151; --sk-dim: #b45309; --sk-calc: #b45309; --sk-empty: #6b7280; --sk-ref: #2563eb;
+  --sk-pt: #c2410c; --sk-hatch: #9ca3af; --sk-hit: #d1d5db; --sk-bg: #f9fafb; --sk-halo: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sk-line: #e5e7eb; --sk-dim: #f9e2af; --sk-calc: #f9e2af; --sk-empty: #9ca3af; --sk-ref: #89b4fa;
+    --sk-pt: #fab387; --sk-hatch: #4b5563; --sk-hit: #374151; --sk-bg: #161a1f; --sk-halo: #161a1f;
+  }
+}
+.kz-svg { width: 100%; max-width: 440px; display: block; margin: 4px auto 8px; background: var(--sk-bg); border-radius: 8px; touch-action: manipulation; }
+.kz-svg .cs-axis { stroke: var(--sk-empty); stroke-width: 0.8; stroke-dasharray: 10 3 2 3; }
+.kz-svg .cs-ext { stroke: var(--sk-empty); stroke-width: 0.7; stroke-dasharray: 2 2; }
+.kz-svg .cs-dim { stroke: var(--sk-dim); stroke-width: 1; }
+.kz-svg .cs-arrow-y { fill: var(--sk-dim); }
+.kz-svg .cs-arc { fill: none; stroke: var(--sk-line); stroke-width: 1; }
+.kz-svg .tb-mat { fill: url(#tbHatch); stroke: var(--sk-line); stroke-width: 1.5; stroke-linejoin: round; }
+.kz-svg .tb-hatch { stroke: var(--sk-hatch); stroke-width: 1; }
+.kz-svg .tb-ref { stroke: var(--sk-ref); stroke-width: 2; }
+.kz-svg .tb-ref-lead { stroke: var(--sk-ref); stroke-width: 1; }
+.kz-svg .tb-ref-t { fill: var(--sk-ref); font: bold 11px Consolas, monospace; }
+.kz-svg .tb-pt-l { stroke: var(--sk-pt); stroke-width: 1; stroke-dasharray: 4 2; }
+.kz-svg .tb-pt-t { fill: var(--sk-pt); font: bold 11px Consolas, monospace; }
+.kz-svg .tb-pt-t, .kz-svg .tb-ref-t { paint-order: stroke; stroke: var(--sk-halo); stroke-width: 4px; stroke-linejoin: round; }
+.kz-svg .sk-edit { cursor: pointer; }
+.kz-svg .sk-hit { fill: transparent; stroke: var(--sk-hit); stroke-width: 1; stroke-dasharray: 2 2; }
+.kz-svg .sk-edit:hover .sk-hit, .kz-svg .sk-edit:active .sk-hit { fill: var(--code-bg); stroke: var(--accent); stroke-dasharray: none; }
+.kz-svg .sk-val { fill: var(--sk-line); font: bold 12px Consolas, monospace; }
+.kz-svg .sk-calc { fill: var(--sk-calc); font: bold 12px Consolas, monospace; }
+.kz-svg .sk-empty { fill: var(--sk-empty); font: italic 12px Consolas, monospace; }
+.kz-svg .sk-btn { fill: var(--sk-pt); font: bold 11px Consolas, monospace; }
+.kz-svg .tb-add-zone { fill: transparent; cursor: crosshair; }
+.kz-svg .tb-mat, .kz-svg .tb-pt-l, .kz-svg .tb-ref, .kz-svg .tb-ref-lead { pointer-events: none; }
+.kz-svg .sk-legend { fill: var(--sk-empty); font: 10.5px Consolas, monospace; }
+.kz-svg .sk-legend .sk-lk { fill: var(--sk-line); font-weight: bold; }
+.kz-svg .sk-legend .sk-lk-calc { fill: var(--sk-calc); }
+.kz-big { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.9rem; color: var(--muted); }
+.kz-bigseg { flex: 1; margin: 0; }
+.kz-forms { font-family: Consolas, monospace; font-size: 0.85rem; text-align: center; margin: 4px 0 8px; word-break: break-word; }
+.kz-pt { display: flex; gap: 6px; margin-bottom: 6px; }
+.kz-pt .kz-pt-d { flex: 1; min-width: 0; }
+.kz-pt select { width: auto; flex: none; max-width: 48%; }
+.kz-pt-del { flex: none; width: 44px; padding: 0; background: var(--code-bg); color: var(--muted); border: 1px solid var(--border); }
+.kz-pt-actions { flex-wrap: wrap; }
+.kz-pt-actions #kz-step { width: 90px; flex: none; }
+.kz-tbl small { color: var(--muted); font-weight: 400; }
+.kz-tbl tr.kz-end td { color: var(--muted); }
+.kz-tbl tr.kz-refrow td { color: var(--sk-ref); font-weight: 700; }
+.kz-tbl tr.kz-out td { color: #b91c1c; }
+@keyframes flash { from { box-shadow: 0 0 0 4px var(--accent); } to { box-shadow: 0 0 0 0 transparent; } }
+input.flash { animation: flash 1.2s ease-out; }

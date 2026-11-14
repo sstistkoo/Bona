@@ -101,17 +101,62 @@
     <section id="kuzel" class="panel">
       <div class="card">
         <h2>Kužel</h2>
-        <p class="hint" style="margin-top:0">Zadej 3 ze 4 hodnot (D, d, L, kuželovitost) – zbytek se dopočítá. Kuželovitost stačí jednou formou.</p>
-        <div class="grid">
-          <label>Velký průměr D [mm]<input type="text" id="kz-D" inputmode="decimal"></label>
-          <label>Malý průměr d [mm]<input type="text" id="kz-d" inputmode="decimal"></label>
-          <label>Délka kužele L [mm]<input type="text" id="kz-L" inputmode="decimal"></label>
-          <label>Kuželovitost 1:x <input type="text" id="kz-ratio" placeholder="např. 20 nebo 7:24"></label>
-          <label>Úhel α/2 [°] (polovrcholový)<input type="text" id="kz-half" inputmode="decimal"></label>
-          <label>Úhel α [°] (vrcholový)<input type="text" id="kz-full" inputmode="decimal"></label>
+        <div class="seg">
+          <button class="seg-btn active" data-kz="hole">Díra</button>
+          <button class="seg-btn" data-kz="shaft">Čep / hřídel</button>
         </div>
-        <div class="result" id="kz-out"></div>
-        <div class="row" style="margin-top:12px"><button class="secondary" id="kz-clear">🗑 Vymazat</button><button class="secondary copy" data-copy="kz">📋 Kopírovat</button></div>
+        <div class="kz-big">
+          <span>Větší Ø je</span>
+          <div class="seg kz-bigseg">
+            <button class="seg-btn" data-kzbig="A">dole</button>
+            <button class="seg-btn active" data-kzbig="B">nahoře</button>
+          </div>
+        </div>
+        <p class="hint" style="margin-top:0">Stačí 3 údaje (D, d, délka, kuželovitost) – nebo Ø z výkresu v hloubce + délka + kuželovitost. <b>Klepni na kótu v náčrtu</b> a zadej ji, klepnutím do kužele přidáš měřicí místo.</p>
+        <svg class="kz-svg" id="kz-svg" viewBox="0 0 340 390" role="img" aria-label="Náčrt kužele"></svg>
+        <div class="warn" id="kz-err" hidden></div>
+        <p class="kz-forms" id="kz-forms"></p>
+        <div class="result" id="kz-slide" hidden></div>
+      </div>
+
+      <div class="card" id="kz-zadani">
+        <h3 class="sub" style="margin-top:0">Kužel <small class="hint">(stačí 3 údaje)</small></h3>
+        <div class="grid">
+          <label>D – velký Ø [mm]<input type="text" id="kz-D" inputmode="decimal" placeholder="např. 215.5" autocomplete="off"></label>
+          <label>d – malý Ø [mm]<input type="text" id="kz-d" inputmode="decimal" placeholder="např. 210.5" autocomplete="off"></label>
+          <label>Délka L [mm]<input type="text" id="kz-L" inputmode="decimal" placeholder="např. 34+135+25" autocomplete="off"></label>
+          <label>Kuželovitost 1:x<input type="text" id="kz-K" placeholder="např. 20 nebo 7:24" autocomplete="off"></label>
+          <label>Úhel α – sklon k ose [°]<input type="text" id="kz-a" inputmode="decimal" placeholder="např. 1.43" autocomplete="off"></label>
+        </div>
+        <h3 class="sub">Ø z výkresu v hloubce <small class="hint">(nepovinné)</small></h3>
+        <div class="grid">
+          <label>Zadaný Ø [mm]<input type="text" id="kz-refD" inputmode="decimal" placeholder="např. 211" autocomplete="off"></label>
+          <label>V hloubce [mm]<input type="text" id="kz-ref" inputmode="decimal" placeholder="0 = na hraně" autocomplete="off"></label>
+          <label>Hloubka měřena<select id="kz-refSide"><option value="A">od spodu</option><option value="B">od vrchu</option></select></label>
+        </div>
+        <h3 class="sub">Tolerance <small class="hint">(platí pro všechny průměry)</small></h3>
+        <div class="grid">
+          <label>Horní úchylka [mm]<input type="text" id="kz-es" inputmode="decimal" placeholder="např. +0.046" autocomplete="off" data-neg></label>
+          <label>Dolní úchylka [mm]<input type="text" id="kz-ei" inputmode="decimal" placeholder="např. 0" autocomplete="off" data-neg></label>
+          <label>nebo ISO<input type="text" id="kz-iso" placeholder="např. H7" autocomplete="off" autocapitalize="characters"></label>
+        </div>
+        <p class="hint" id="kz-iso-info"></p>
+      </div>
+
+      <div class="card">
+        <h3 class="sub" style="margin-top:0">Měřicí místa <small class="hint">(hloubka od strany)</small></h3>
+        <div id="kz-points"></div>
+        <div class="row kz-pt-actions">
+          <button type="button" class="secondary" id="kz-add">➕ Místo</button>
+          <input type="text" id="kz-step" inputmode="decimal" placeholder="krok mm">
+          <button type="button" class="secondary" id="kz-stepbtn">≡ Po krocích</button>
+        </div>
+        <div class="table-wrap" id="kz-res"></div>
+        <div class="row" style="margin-top:12px; flex-wrap:wrap">
+          <button type="button" class="secondary" id="kz-copy">📋 Kopírovat</button>
+          <button type="button" class="secondary" id="kz-copync" title="VELKÁ PÍSMENA BEZ DIAKRITIKY – jako komentář v programu">📝 Do programu</button>
+          <button type="button" class="secondary" id="kz-clear">🗑 Vymazat</button>
+        </div>
         <details><summary>Morse / ISO kužely (klepni na řádek)</summary><div id="kz-tables"></div></details>
       </div>
     </section>
@@ -492,6 +537,7 @@
   <script src="js/sinumerik-data.js"></script>
   <script src="app.js"></script>
   <script src="js/nastroje.js"></script>
+  <script src="js/kuzel.js"></script>
   <script src="js/sinumerik.js"></script>
   <script src="js/prevod-nm.js"></script>
   <script src="js/dilna.js"></script>

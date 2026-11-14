@@ -113,64 +113,6 @@
       '<p class="hint">Hodnoty = šířka tolerančního pásma (mm).</p>';
   })();
 
-  /* ══════════════ KUŽEL ══════════════ */
-  (function kuzel() {
-    const ids = ['D', 'd', 'L', 'ratio', 'half', 'full'];
-    const el = Object.fromEntries(ids.map((k) => [k, $('kz-' + k)]));
-    const out = $('kz-out');
-    let lastTaper = 'ratio'; // které pole kuželovitosti zadal uživatel naposledy
-
-    function setComputed(k, v) { el[k].value = v; el[k].classList.add('computed'); }
-    function calc() {
-      kopie.kz = '';
-      ids.forEach((k) => { if (el[k].classList.contains('computed')) { el[k].value = ''; el[k].classList.remove('computed'); } });
-      const D = val(el.D), d = val(el.d), L = val(el.L);
-      let C = null;
-      const tv = el[lastTaper].value.trim();
-      if (tv) C = lastTaper === 'ratio' ? V.ratioToC(tv) : V.taperC(lastTaper, ev(tv));
-      for (const [k, x] of [['D', D], ['d', d], ['L', L]]) if (Number.isNaN(x)) { out.textContent = 'Neplatná hodnota v poli ' + k; return; }
-      if (Number.isNaN(C)) { out.textContent = 'Neplatná kuželovitost'; return; }
-      // ostatní dvě pole kuželovitosti jsou jen výstup
-      ['ratio', 'half', 'full'].filter((k) => k !== lastTaper).forEach((k) => { el[k].value = ''; });
-      const s = V.solveTaper({ D, d, L, C }, null, 'A');
-      if (s.error) { out.textContent = s.error; return; }
-      const known = (x) => x !== null && Number.isFinite(x);
-      if (!(known(s.D) && known(s.d) && known(s.L) && known(s.C))) { out.textContent = 'Zadej 3 ze 4 hodnot (D, d, L, kuželovitost).'; return; }
-      ['D', 'd', 'L'].forEach((k) => { if (s.computed.has(k)) setComputed(k, r(s[k], 4)); });
-      const F = V.taperForms(s.C);
-      const formy = { ratio: F.C > 0 ? '1:' + r(F.ratio, 4) : '—', half: r(F.half, 4), full: r(F.full, 4) };
-      ['ratio', 'half', 'full'].filter((k) => k !== lastTaper).forEach((k) => setComputed(k, k === 'ratio' ? (F.C > 0 ? r(F.ratio, 4) : '') : formy[k]));
-      const dm = Math.floor(F.half), mi = Math.floor((F.half - dm) * 60), se = Math.round(((F.half - dm) * 60 - mi) * 60);
-      kopie.kz = `Kužel D ${r(s.D)} / d ${r(s.d)} / L ${r(s.L)} | ${formy.ratio} | α/2 ${formy.half}° | α ${formy.full}°`;
-      out.innerHTML =
-        `D = <b>${r(s.D)}</b> mm · d = <b>${r(s.d)}</b> mm · L = <b>${r(s.L)}</b> mm<br>` +
-        `Kuželovitost <b>${formy.ratio}</b> · α/2 = <b>${formy.half}°</b> (${dm}° ${mi}′ ${se}″) · α = <b>${formy.full}°</b><br>` +
-        `<span class="hint">Rozdíl na poloměr (D−d)/2 = ${r((s.D - s.d) / 2)} mm · změna Ø na 1 mm délky = ${r(s.C, 5)} mm</span>` +
-        (s.warn ? `<div class="warn">${s.warn}</div>` : '');
-    }
-    ids.forEach((k) => el[k].addEventListener('input', () => {
-      el[k].classList.remove('computed');
-      if (['ratio', 'half', 'full'].includes(k)) lastTaper = k;
-      calc();
-    }));
-    $('kz-clear').addEventListener('click', () => { ids.forEach((k) => { el[k].value = ''; el[k].classList.remove('computed'); }); out.textContent = ''; });
-
-    const morse = [['MT0', 9.045, 6.401, 49.8], ['MT1', 12.065, 9.371, 53.5], ['MT2', 17.780, 14.533, 64.0], ['MT3', 23.825, 19.761, 80.5], ['MT4', 31.267, 25.908, 102.5], ['MT5', 44.399, 37.468, 129.5]];
-    const metric = [['1:5', '5'], ['1:10', '10'], ['1:20 (metrický)', '20'], ['1:50', '50'], ['7:24 (ISO/SK)', '7:24']];
-    $('kz-tables').innerHTML =
-      '<p class="lbl">Morse</p><table class="tbl click"><thead><tr><th></th><th>D</th><th>d</th><th>L</th><th>α/2</th></tr></thead><tbody>' +
-      morse.map(([n, D, d, L]) => `<tr data-m="${D},${d},${L}"><td>${n}</td><td>${D}</td><td>${d}</td><td>${L}</td><td>${(Math.atan((D - d) / (2 * L)) * 180 / Math.PI).toFixed(4)}°</td></tr>`).join('') +
-      '</tbody></table><p class="lbl">Poměrové kužely</p><table class="tbl click"><thead><tr><th>Kužel</th><th>α/2</th></tr></thead><tbody>' +
-      metric.map(([n, q]) => `<tr data-r="${q}"><td>${n}</td><td>${(Math.atan(V.ratioToC(q) / 2) * 180 / Math.PI).toFixed(4)}°</td></tr>`).join('') + '</tbody></table>';
-    $('kz-tables').addEventListener('click', (e) => {
-      const tr = e.target.closest('tr[data-m],tr[data-r]'); if (!tr) return;
-      ids.forEach((k) => { el[k].value = ''; el[k].classList.remove('computed'); });
-      if (tr.dataset.m) { const [D, d, L] = tr.dataset.m.split(','); el.D.value = D; el.d.value = d; el.L.value = L; }
-      else { el.ratio.value = tr.dataset.r; lastTaper = 'ratio'; }
-      calc(); el.D.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-  })();
-
   /* ══════════════ DRSNOST ══════════════ */
   (function drsnost() {
     const mats = [['Ocel 11 523 (S355)', 1.0], ['Ocel 12 050 (C45)', 1.0], ['Ocel 14 220 (16MnCr5)', 0.95], ['Ocel 15 142 (42CrMo4)', 0.9],

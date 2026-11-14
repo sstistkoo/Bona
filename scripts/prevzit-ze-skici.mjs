@@ -41,8 +41,10 @@ v += part('ISO 286 (iso286.js + iso286Large.js)',
   `  const L = (function () {\n${strip(read(J('calculators/iso286Large.js')))}\n  return { deviationsLarge, itValueLarge };\n  })();\n` +
   '  const deviationsLarge = L.deviationsLarge, itValueLarge = L.itValueLarge;\n' + strip(read(J('calculators/iso286.js'))),
   '  out.deviations = deviations; out.fit = fit; out.itValue = itValue; out.SHAFT_LETTERS = SHAFT_LETTERS; out.HOLE_LETTERS = HOLE_LETTERS;');
-v += part('Kužel (taperBoreMath.js)', '  const deviations = out.deviations;\n' + strip(read(J('calculators/taperBoreMath.js'))),
-  '  out.taperC = taperC; out.taperForms = taperForms; out.solveTaper = solveTaper; out.ratioToC = ratioToC;');
+v += part('Kužel (taperBoreMath.js + náčrt taperBoreSketch.js)', '  const deviations = out.deviations;\n' + strip(read(J('calculators/taperBoreMath.js'))) +
+  '\n' + strip(read(J('calculators/taperBoreSketch.js'))),
+  '  out.taperC = taperC; out.taperForms = taperForms; out.solveTaper = solveTaper; out.ratioToC = ratioToC;\n' +
+  '  out.taper = { taperC, taperForms, solveTaper, ratioToC, computeTaperBore, isoTolerance, f3, fmtDev, drawBoreSketch };');
 const tq = strip(read(J('calculators/torqueMath.js')));
 const tqNames = [...tq.matchAll(/^(?:function|const) (\w+)/gm)].map((m) => m[1]).filter((n) => n !== 'IC_ISO');
 v += part('Utahovací momenty (torqueMath.js)', tq, `  out.torque = { ${tqNames.join(', ')} };`);
