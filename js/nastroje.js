@@ -196,9 +196,9 @@
       if (f > 0 && re > 0) {
         const rz = (f * f) / (8 * re) * 1000, ra = rz / 4;
         const c = cls(ra * k);
-        $('dr-out').innerHTML = `<table class="tbl"><thead><tr><th></th><th>Ra µm</th><th>Rz µm</th><th>Třída</th></tr></thead><tbody>` +
+        $('dr-out').innerHTML = `<div class="table-wrap"><table class="tbl"><thead><tr><th></th><th>Ra µm</th><th>Rz µm</th><th>Třída</th></tr></thead><tbody>` +
           `<tr><td>Teoretická</td><td>${ra.toFixed(3)}</td><td>${rz.toFixed(3)}</td><td>${cls(ra)}</td></tr>` +
-          `<tr><td><b>Praktická</b></td><td><b>${(ra * k).toFixed(3)}</b></td><td><b>${(rz * k).toFixed(3)}</b></td><td><b>${c}</b></td></tr></tbody></table>` +
+          `<tr><td><b>Praktická</b></td><td><b>${(ra * k).toFixed(3)}</b></td><td><b>${(rz * k).toFixed(3)}</b></td><td><b>${c}</b></td></tr></tbody></table></div>` +
           `<p class="hint">Rz = f² / (8·rε) · 1000, Ra ≈ Rz / 4</p>`;
         $('dr-classes').querySelector(`[data-c="${c}"]`)?.classList.add('active');
       } else $('dr-out').textContent = 'Zadej posuv a rádius špičky.';
@@ -282,7 +282,7 @@
     const keys = [
       ['sin(', 'cos(', 'tan(', 'sqrt('], ['(', ')', '^', 'pi'],
       ['7', '8', '9', '÷'], ['4', '5', '6', '×'], ['1', '2', '3', '−'], ['0', '.', 'ANS', '+'],
-      ['C', '⌫', '='],
+      ['C', '⌫', '⌨', '='],
     ];
     $('calc-keys').innerHTML = keys.map((row) => `<div class="calc-row">${row.map((k) => `<button type="button" class="ck${/[0-9.]/.test(k) ? ' num' : ''}${k === '=' ? ' eq' : ''}" data-k="${k}">${k}</button>`).join('')}</div>`).join('');
 
@@ -315,6 +315,12 @@
       if (k === '=') rovnase();
       else if (k === 'C') { inEl.value = ''; nahled(); }
       else if (k === '⌫') { inEl.value = inEl.value.slice(0, -1); nahled(); }
+      else if (k === '⌨') { // systémová klávesnice jen na požádání (jinak zakrývá tlačítka)
+        const zap = inEl.inputMode !== 'text';
+        inEl.inputMode = zap ? 'text' : 'none';
+        b.classList.toggle('on', zap);
+        inEl.blur(); if (zap) setTimeout(() => inEl.focus(), 50);
+      }
       else vloz(k === '−' ? '-' : k === 'ANS' ? 'ans' : k);
     });
     inEl.addEventListener('input', nahled);

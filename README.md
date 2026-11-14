@@ -2,7 +2,8 @@
 
 Jednoduchá webová aplikace pro obsluhu CNC karuselu (svislého soustruhu) se systémem **Sinumerik 840D** při výrobě železničních kol.
 
-Funguje v prohlížeči na PC i mobilu, nic se neinstaluje – stačí otevřít `index.html`.
+Dělaná hlavně pro mobil: menu ☰ se všemi nástroji, velká tlačítka, ± u polí se zápornými hodnotami.
+Na telefonu ji lze přidat na plochu jako aplikaci (v prohlížeči „Přidat na plochu“ / „Instalovat aplikaci“) a funguje i **bez signálu** – při prvním otevření se uloží do telefonu. Na PC stačí otevřít `index.html`.
 
 ## Co umí
 
@@ -36,6 +37,7 @@ Funguje v prohlížeči na PC i mobilu, nic se neinstaluje – stačí otevřít
 | `js/sinumerik.js` | příručka Sinumerik 840D |
 | `js/prevod-nm.js` | převodník, utahovací momenty |
 | `js/dilna.js` | roztažnost, korekce rε, roh a oblouk, VBD a držáky |
+| `sw.js`, `manifest.webmanifest`, `icons/` | offline režim a instalace na plochu (při změně souborů zvyš `VERZE` v `sw.js`) |
 
 ### Aktualizace ze SKICA
 

@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.4.1';
+const VERZE = '0.5.0';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -25,20 +25,54 @@ function casText(min) {
 }
 
 /* ---------- Záložky ---------- */
+const lista = document.querySelector('.tabs');
 document.querySelectorAll('.tab').forEach((btn) => {
   btn.addEventListener('click', () => {
+    const zmena = !btn.classList.contains('active');
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('active', b === btn));
     document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('active', p.id === btn.dataset.tab));
     store.set('tab', btn.dataset.tab);
-    btn.scrollIntoView({ block: 'nearest', inline: 'nearest' }); // při mnoha záložkách posunout lištu k aktivní
+    // posunout jen lištu (ne stránku), aby byla aktivní záložka uprostřed
+    lista.scrollTo({ left: btn.offsetLeft - (lista.clientWidth - btn.offsetWidth) / 2, behavior: zmena ? 'smooth' : 'auto' });
+    if (zmena) window.scrollTo(0, 0); // nová záložka začíná nahoře
   });
 });
 const tabBtn = (id) => [...document.querySelectorAll('.tab')].find((b) => b.dataset.tab === id);
 function zalozkaZAdresy() {
   const b = tabBtn(decodeURIComponent(location.hash.slice(1)));
-  if (b) { b.click(); window.scrollTo(0, 0); }
+  if (b) { b.click(); window.scrollTo(0, 0); setTimeout(() => window.scrollTo(0, 0), 0); }
   return !!b;
 }
+
+/* ---------- Menu ☰ – všechny nástroje na jedné obrazovce ---------- */
+const MENU = [
+  ['Výpočty', [['kalk', '⚙️'], ['cas', '⏱️'], ['drsnost', '🔬'], ['tol', '📏'], ['kuzel', '🔺'], ['teplo', '🌡️']]],
+  ['Programování', [['sinumerik', '🏭'], ['rez', '◢'], ['geo', '⌒'], ['trig', '📐'], ['calc', '🔢']]],
+  ['Nástroje', [['vbd', '💎'], ['nm', '🔧'], ['prevod', '🔄']]],
+  ['Dílna', [['smena', '✅'], ['poznamky', '📝']]],
+];
+const menu = document.getElementById('menu'), menuBtn = document.getElementById('menu-btn');
+document.getElementById('menu-in').innerHTML = MENU.map(([g, items]) =>
+  `<p class="menu-g">${g}</p><div class="menu-grid">` +
+  items.map(([id, ic]) => `<button type="button" class="menu-i" data-go="${id}"><span>${ic}</span>${tabBtn(id).textContent}</button>`).join('') + '</div>').join('');
+function menuOtevrit(ano) {
+  menu.hidden = !ano;
+  menuBtn.setAttribute('aria-expanded', String(ano));
+  menuBtn.textContent = ano ? '✕' : '☰';
+  document.body.classList.toggle('menu-open', ano);
+  if (ano) {
+    menu.style.setProperty('--menu-top', document.querySelector('.top').getBoundingClientRect().bottom + 'px');
+    const akt = document.querySelector('.tab.active')?.dataset.tab;
+    menu.querySelectorAll('.menu-i').forEach((b) => b.classList.toggle('active', b.dataset.go === akt));
+  }
+}
+menuBtn.addEventListener('click', () => menuOtevrit(menu.hidden));
+menu.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-go]');
+  if (b) tabBtn(b.dataset.go).click();
+  if (b || e.target === menu) menuOtevrit(false);
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) menuOtevrit(false); });
 if (!zalozkaZAdresy()) (tabBtn(store.get('tab', 'kalk')) || tabBtn('kalk')).click();
 window.addEventListener('hashchange', zalozkaZAdresy);
 
@@ -233,7 +267,7 @@ let seznam = store.get('seznam', VYCHOZI_SEZNAM.map((t) => ({ t, ok: false })));
 
 function vykresliSeznam() {
   $('s-seznam').innerHTML = seznam.map((p, i) =>
-    `<li class="${p.ok ? 'done' : ''}"><input type="checkbox" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span><button class="del" data-del="${i}" title="Smazat">✕</button></li>`
+    `<li class="${p.ok ? 'done' : ''}"><label class="ck-l"><input type="checkbox" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-del="${i}" title="Smazat" aria-label="Smazat">✕</button></li>`
   ).join('');
 }
 $('s-seznam').addEventListener('change', (e) => {
@@ -274,3 +308,10 @@ $('n-text').addEventListener('input', () => {
 });
 
 $('verze').textContent = 'verze ' + VERZE;
+
+/* ---------- Offline režim (service worker) – jen na https (GitHub Pages) ---------- */
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+// prohlížeč po načtení odroluje na #kotvu – vrátit stránku nahoru
+window.addEventListener('load', () => { if (location.hash) setTimeout(() => window.scrollTo(0, 0), 0); });

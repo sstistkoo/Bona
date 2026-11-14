@@ -286,3 +286,62 @@ footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 20
 @media (max-width: 520px) {
   .code-item { grid-template-columns: 1fr; gap: 4px; }
 }
+
+/* ══════════ Mobil a menu ══════════ */
+.top { padding-top: max(8px, env(safe-area-inset-top)); }
+.top { z-index: 30; }
+.top-row { display: flex; align-items: center; gap: 10px; }
+.top-row h1 { margin: 0; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.menu-btn {
+  flex: none; width: 44px; height: 44px; padding: 0; font-size: 1.4rem; line-height: 1;
+  background: var(--code-bg); color: var(--text); border: 1px solid var(--border);
+}
+.tabs { scrollbar-width: none; -webkit-overflow-scrolling: touch; margin-top: 4px; }
+.tabs::-webkit-scrollbar { display: none; }
+
+.menu {
+  position: fixed; inset: 0; z-index: 20; background: rgba(0, 0, 0, 0.45);
+  padding-top: var(--menu-top, 100px);
+}
+.menu-in {
+  background: var(--card); border-bottom: 1px solid var(--border); padding: 4px 16px 16px;
+  max-height: calc(100dvh - var(--menu-top, 100px)); overflow-y: auto; max-width: 900px; margin: 0 auto;
+}
+body.menu-open { overflow: hidden; }
+.menu-g { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 14px 0 6px; }
+.menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+.menu-i {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 4px; font-weight: 600; font-size: 0.85rem;
+  background: var(--code-bg); color: var(--text); border: 1px solid var(--border); min-height: 72px; line-height: 1.2;
+}
+.menu-i span { font-size: 1.4rem; }
+.menu-i.active { border-color: var(--accent); outline: 2px solid var(--accent); }
+
+/* formuláře: 2 pole vedle sebe i na mobilu, vstupy zarovnané dole */
+.grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); align-items: end; }
+.tiles { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+.chip { min-height: 40px; }
+.checklist .ck-l { display: flex; flex-direction: row; align-items: center; gap: 10px; flex: 1; cursor: pointer; color: var(--text); font-size: 1rem; min-height: 40px; }
+.checklist li.done .ck-l span { text-decoration: line-through; color: var(--muted); }
+.checklist .del { width: 44px; height: 44px; padding: 0; flex: none; }
+.tbl .del { min-width: 40px; min-height: 40px; }
+.ck.on { background: var(--accent); color: var(--accent-text); }
+#sn-skryt-wrap { min-height: 40px; }
+
+@media (max-width: 560px) {
+  main { padding: 12px; }
+  .card { padding: 14px 12px; }
+  h1 span { display: none; }
+  .tab { padding: 10px 10px; }
+  .seg-wrap .seg-btn { min-width: 50%; }         /* 4 volby → 2 × 2 */
+  .seg-btn { padding: 10px 6px; font-size: 0.92rem; }
+  .tile { padding: 12px 6px; }
+  .tile small { font-size: 0.75rem; }
+  .ref .nm { min-width: 52px; }
+  .rb { padding-left: 8px; }
+  .tbl { font-size: 0.85rem; }
+  .tbl th, .tbl td { padding: 6px 5px; }
+  .counter { justify-content: center; }
+}
+/* odkaz #záložka: prohlížeč neodroluje sekci pod hlavičku */
+.panel { scroll-margin-top: 400px; }

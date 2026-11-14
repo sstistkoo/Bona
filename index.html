@@ -2,33 +2,47 @@
 <html lang="cs">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Bona – CNC pomocník</title>
   <meta name="description" content="Pomocník pro obsluhu CNC karuselu se Sinumerik 840D – výroba železničních kol.">
+  <meta name="theme-color" content="#1b2026">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Bona">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="top">
-    <h1>Bona <span>CNC pomocník · Sinumerik 840D</span></h1>
+    <div class="top-row">
+      <button class="menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false">☰</button>
+      <h1>Bona <span>CNC pomocník · Sinumerik 840D</span></h1>
+    </div>
     <nav class="tabs" role="tablist">
       <button class="tab active" data-tab="kalk">Řezné podm.</button>
       <button class="tab" data-tab="cas">Čas obrábění</button>
+      <button class="tab" data-tab="drsnost">Drsnost</button>
       <button class="tab" data-tab="tol">Tolerance</button>
       <button class="tab" data-tab="kuzel">Kužel</button>
-      <button class="tab" data-tab="drsnost">Drsnost</button>
       <button class="tab" data-tab="teplo">Roztažnost</button>
+      <button class="tab" data-tab="sinumerik">Sinumerik 840D</button>
       <button class="tab" data-tab="rez">Korekce rε</button>
       <button class="tab" data-tab="geo">Roh a oblouk</button>
-      <button class="tab" data-tab="vbd">VBD a držáky</button>
       <button class="tab" data-tab="trig">Trigonometrie</button>
       <button class="tab" data-tab="calc">Kalkulačka</button>
-      <button class="tab" data-tab="sinumerik">Sinumerik 840D</button>
-      <button class="tab" data-tab="prevod">Převodník</button>
+      <button class="tab" data-tab="vbd">VBD a držáky</button>
       <button class="tab" data-tab="nm">Nm</button>
+      <button class="tab" data-tab="prevod">Převodník</button>
       <button class="tab" data-tab="smena">Směna</button>
       <button class="tab" data-tab="poznamky">Poznámky</button>
     </nav>
   </header>
+  <div class="menu" id="menu" hidden>
+    <div class="menu-in" id="menu-in"></div>
+  </div>
 
   <main>
     <!-- KALKULAČKA -->
@@ -304,7 +318,7 @@
       <div class="card">
         <h2>Kalkulačka</h2>
         <div class="calc-hist" id="calc-hist"></div>
-        <input type="text" id="calc-in" inputmode="decimal" placeholder="0" autocomplete="off">
+        <input type="text" id="calc-in" inputmode="none" placeholder="0" autocomplete="off">
         <div class="calc-res" id="calc-res">&nbsp;</div>
         <div class="calc-keys" id="calc-keys"></div>
         <p class="hint">Úhly ve stupních. Funkce: sin, cos, tan, asin, acos, atan, sqrt, abs, log, ln, round. Konstanta pi. Mocnina ^. ANS = poslední výsledek.</p>
