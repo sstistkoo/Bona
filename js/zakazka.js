@@ -67,7 +67,7 @@
         'Zkontrolovat Zero_Offset = 97,7 (podložky).',
         'Zkontrolovat Chuck_Stat = 0 (čelisti).',
         'Na ovládacím panelu stisknout tlačítko upínač osazení (obrázek čelistí, vpravo vedle tlačítka C3).',
-        'Zadat číslo programu 2× (třetí a čtvrté místo, kde se číslo přepisuje).',
+        'Na obrazovce Upínač osazení zadat číslo programu na dvou místech: první řádek seznamu „Nahlášené typy obrobku“ a pole „aktuální typ“ (třetí a čtvrté místo).',
       ],
     }]],
   ];
