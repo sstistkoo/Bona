@@ -420,3 +420,7 @@ label.tol-dim:focus-within { outline: 2px solid var(--accent); }
 .st-seg .seg-btn { min-width: 33.33%; }
 .st-kat { font-size: 0.75rem; color: var(--accent); font-weight: 600; margin-right: 4px; }
 @media (max-width: 560px) { .st-seg .seg-btn { min-width: 50%; } }
+
+/* ── Nová zakázka ── */
+#zakazka .card > button.secondary { width: 100%; margin-top: 8px; }
+#zk-seznam .row input { flex: 1; min-width: 0; }

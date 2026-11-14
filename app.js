@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.7.0';
+const VERZE = '0.8.0';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -61,7 +61,7 @@ const MENU = [
   ['Programování', [['sinumerik', '🏭'], ['rez', '◢'], ['geo', '⌒'], ['trig', '📐'], ['calc', '🔢']]],
   ['Nástroje', [['vbd', '💎'], ['nm', '🔧'], ['prevod', '🔄']]],
   ['Stroj', window.STROJ_KAT.map((k) => [k.id, k.ikona, k.nazev])],
-  ['Dílna', [['smena', '✅'], ['poznamky', '📝']]],
+  ['Dílna', [['zakazka', '📋'], ['smena', '✅'], ['poznamky', '📝']]],
 ];
 const menu = document.getElementById('menu'), menuBtn = document.getElementById('menu-btn');
 document.getElementById('menu-in').innerHTML = MENU.map(([g, items]) =>

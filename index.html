@@ -37,6 +37,7 @@
       <button class="tab" data-tab="nm">Nm</button>
       <button class="tab" data-tab="prevod">Převodník</button>
       <button class="tab" data-tab="stroj">Stroj</button>
+      <button class="tab" data-tab="zakazka">Nová zakázka</button>
       <button class="tab" data-tab="smena">Směna</button>
       <button class="tab" data-tab="poznamky">Poznámky</button>
     </nav>
@@ -528,6 +529,28 @@
       </div>
     </section>
 
+    <!-- NOVÁ ZAKÁZKA -->
+    <section id="zakazka" class="panel">
+      <div class="card">
+        <h2>Chystání na novou zakázku</h2>
+        <div class="grid">
+          <label>Číslo zakázky<input type="text" id="zk-cislo"></label>
+          <label>Výkres / revize<input type="text" id="zk-vykres"></label>
+          <label>Materiál<input type="text" id="zk-mat"></label>
+          <label>Program<input type="text" id="zk-prog"></label>
+        </div>
+        <p class="lbl">Poznámka k zakázce</p>
+        <textarea id="zk-pozn" rows="4"></textarea>
+      </div>
+      <div class="card">
+        <h2>Kontrolní seznam</h2>
+        <p class="hint" id="zk-postup"></p>
+        <div id="zk-seznam"></div>
+        <button id="zk-reset" class="secondary">Odškrtnout vše</button>
+        <button id="zk-nova" class="secondary">Nová zakázka (vyčistit vše)</button>
+      </div>
+    </section>
+
     <!-- SMĚNA -->
     <section id="smena" class="panel">
       <div class="card">
@@ -573,5 +596,6 @@
   <script src="js/prevod-nm.js"></script>
   <script src="js/dilna.js"></script>
   <script src="js/stroj.js"></script>
+  <script src="js/zakazka.js"></script>
 </body>
 </html>
