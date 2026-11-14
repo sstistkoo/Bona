@@ -16,12 +16,32 @@
         'Záložka Databáze → Průzkumník (modrá ikona databáze s lupou).',
         'Vyhledat program podle čísla programu (u každé zakázky jiné).',
         'Vyhledat stroj – vyplňuje se v poli dole na stránce: CHES4 (Stroj).',
-        'Odeslat – modrá šipka nahoru ve skupině Přenos (pravé tlačítko myši).',
+        'Odeslat – modrá šipka nahoru ve skupině Přenos, nebo pravým tlačítkem myši na program → Odeslat.',
       ],
     }]],
   ];
   const nove = () => VYCHOZI.map(([n, p]) => ({ n, p: p.map((x) => ({ t: x.t, d: x.d, ok: false })) }));
-  let skupiny = get('seznam2', nove());
+  // Kroky (d) a výchozí body se berou z kódu, aby se opravy projevily i v už uloženém seznamu.
+  // Ukládá se jen odškrtnutí, vlastní body a smazané výchozí body.
+  let smazano = get('smazano', []);
+  function slij(ulozene) {
+    const vys = nove();
+    const ok = new Map();
+    (ulozene || []).forEach((g) => g.p.forEach((p) => ok.set(g.n + '|' + p.t, p.ok)));
+    vys.forEach((g) => {
+      g.p = g.p.filter((p) => !smazano.includes(g.n + '|' + p.t));
+      g.p.forEach((p) => { p.ok = ok.get(g.n + '|' + p.t) || false; });
+    });
+    (ulozene || []).forEach((g) => g.p.forEach((p) => {
+      if (vys.some((v) => v.p.some((x) => v.n === g.n && x.t === p.t))) return;
+      if (VYCHOZI.some(([n, ps]) => n === g.n && ps.some((x) => x.t === p.t))) return;
+      let cil = vys.find((v) => v.n === g.n);
+      if (!cil) vys.push((cil = { n: g.n, p: [] }));
+      cil.p.push({ t: p.t, ok: p.ok });
+    }));
+    return vys;
+  }
+  let skupiny = slij(get('seznam2', null));
 
   const POLE = ['zk-cislo', 'zk-vykres', 'zk-mat', 'zk-prog'];
   POLE.forEach((id) => {
@@ -49,7 +69,11 @@
   });
   $('zk-seznam').addEventListener('click', (e) => {
     const d = e.target.closest('[data-del]');
-    if (d) { skupiny[d.dataset.g].p.splice(d.dataset.del, 1); uloz(); return; }
+    if (d) {
+      const g = skupiny[d.dataset.g], p = g.p[d.dataset.del];
+      if (VYCHOZI.some(([n, ps]) => n === g.n && ps.some((x) => x.t === p.t))) { smazano.push(g.n + '|' + p.t); set('smazano', smazano); }
+      g.p.splice(d.dataset.del, 1); uloz(); return;
+    }
     const a = e.target.closest('[data-addbtn]');
     if (a) pridej(a.dataset.addbtn);
   });
