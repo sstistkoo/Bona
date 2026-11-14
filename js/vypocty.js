@@ -993,5 +993,607 @@ function convertTorque(value, from, to) {
 
   out.torque = { INSERT_SCREWS, KENLOC_PINS, CLAMP_SCREWS, insertIC, hexKeyOf, HEX_QUICK, quickTorqueForHex, torxOf, torxPlusOf, keyKindOf, insertScrewsForTorx, STRENGTH_CLASSES, FRICTION, METRIC_BOLTS, boltTorque, yieldOf, wrenchSetting, TORQUE_UNITS, convertTorque };
   })();
+  // ── Tepelná roztažnost (thermalMath.js) ──
+  (function () {
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  SKICA – Tepelná roztažnost (čistý výpočet)                  ║
+// ╚══════════════════════════════════════════════════════════════╝
+//
+// Lineární model: L(T) = L₀·(1 + α·(T − T₀)), α [10⁻⁶ /K], T₀ = 20 °C (ISO 1).
+// Hodnoty α jsou ORIENTAČNÍ střed rozsahu pro 20–100 °C; přesná hodnota závisí
+// na slitině a tepelném zpracování (u přesných dílů vzít z materiálového listu).
+
+/** [klíč, název, α v 10⁻⁶/K] */
+const THERMAL_MATERIALS = [
+  ['steel',    'Ocel konstrukční / uhlíková', 11.5],
+  ['tool',     'Ocel nástrojová (kalená)', 11],
+  ['inox',     'Nerez austenitická (1.4301)', 16.5],
+  ['inoxM',    'Nerez martenzitická (1.4021)', 10.5],
+  ['castGrey', 'Litina šedá', 10.5],
+  ['castDuct', 'Litina tvárná', 11],
+  ['alu',      'Hliníkové slitiny', 23],
+  ['copper',   'Měď', 16.5],
+  ['brass',    'Mosaz', 19],
+  ['bronze',   'Bronz', 17.5],
+  ['titan',    'Titan Ti6Al4V', 8.6],
+  ['carbide',  'Slinutý karbid (WC-Co)', 5.5],
+  ['pom',      'POM', 110],
+  ['pa6',      'PA6', 90],
+];
+
+const REF_TEMP = 20;
+
+/** Rozměr po změně teploty z T0 na T. @param {number} alpha 10⁻⁶/K */
+function sizeAtTemp(L0, alpha, T, T0 = REF_TEMP) {
+  return L0 * (1 + alpha * 1e-6 * (T - T0));
+}
+
+/** Rozměr při T0 (20 °C) z hodnoty naměřené při teplotě T. */
+function sizeAtRef(Lmeasured, alpha, T, T0 = REF_TEMP) {
+  return Lmeasured / (1 + alpha * 1e-6 * (T - T0));
+}
+
+/**
+ * Teplota pro nalisování za tepla (ohřev díry) nebo za studena (chlazení hřídele).
+ * Potřebná změna průměru = přesah + montážní vůle.
+ * @param {{d:number, interference:number, clearance?:number, alpha:number, T0?:number}} p
+ *   d [mm], přesah a vůle [mm]
+ * @returns {{dT:number, dD:number, heated:number, cooled:number}|null}
+ *   heated – teplota ohřívané součásti, cooled – teplota chlazené součásti
+ */
+function shrinkFit({ d, interference, clearance = 0, alpha, T0 = 20 }) {
+  if (!(d > 0) || !(alpha > 0) || !(interference >= 0) || !(clearance >= 0)) return null;
+  const dD = interference + clearance;
+  const dT = dD / (alpha * 1e-6 * d);
+  return { dT, dD, heated: T0 + dT, cooled: T0 - dT };
+}
+
+/**
+ * Změna vůle spoje hřídel/otvor při změně teploty z T0 na T.
+ * Kladné = vůle roste (otvor roste víc než hřídel).
+ * @returns {number} změna průměrové vůle [mm]
+ */
+function gapChange({ d, alphaHole, alphaShaft, T, T0 = REF_TEMP }) {
+  return d * (alphaHole - alphaShaft) * 1e-6 * (T - T0);
+}
+
+  out.thermal = { THERMAL_MATERIALS, REF_TEMP, sizeAtTemp, sizeAtRef, shrinkFit, gapChange };
+  })();
+  // ── Korekce rádiusu špičky (noseRadiusMath.js) ──
+  (function () {
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  SKICA – Korekce na rádius špičky nože (bez G41/G42)         ║
+// ╚══════════════════════════════════════════════════════════════╝
+//
+// Bez korekce rádiusu řídicí systém vede TEORETICKOU ŠPIČKU P – průsečík
+// tečen k rádiusu rε rovnoběžných s osami. Na válci a čele to nevadí, na
+// sražení, kuželu a rádiusu ale nůž obrys podřízne nebo nechá materiál.
+//
+// Souřadnice (z, x): z = osa vřetene, x = POLOMĚR (průměr = 2x). Nůž obrábí
+// ke sklíčidlu (−Z): P = střed rádiusu + rε·q, q = (−1, −1) vnější nůž,
+// q = (−1, +1) vnitřní (vyvrtávací) nůž. n = jednotková normála obrysu
+// směrem od materiálu; správná dráha P je obrys posunutý o δ·n, kde
+// δ = rε·(1 + q·n). δ < 0 → bez korekce zůstane materiál, δ > 0 → podřízne.
+
+function toolQ(internal) { return { z: -1, x: internal ? 1 : -1 }; }
+
+/**
+ * Korekce přímého úseku (sražení, kužel) skloněného o α od osy Z.
+ * reverse = false: sklon, který nůž bere špičkou – vnější: Ø roste ke
+ *   sklíčidlu (sražení na konci hřídele); vnitřní: Ø klesá ke sklíčidlu
+ *   (sražení na vstupu díry).
+ * reverse = true: opačný sklon (zpětný kužel).
+ * @param {number} r - rádius špičky rε [mm]
+ * @param {number} alphaDeg - úhel od osy Z, (0, 90)
+ * @returns {{dz:number, dx:number, delta:number, n:{z:number,x:number}}|null}
+ *   dz – posun bodů ležících na válci v ose Z; dx – posun bodů ležících na
+ *   čele v ose X (POLOMĚR, na průměr 2·dx); delta – kolmá odchylka dráhy P.
+ */
+function lineCorrection(r, alphaDeg, { internal = false, reverse = false } = {}) {
+  if (!(r >= 0) || !(alphaDeg > 0 && alphaDeg < 90)) return null;
+  const a = alphaDeg * Math.PI / 180;
+  const n = { z: (reverse ? -1 : 1) * Math.sin(a), x: (internal ? -1 : 1) * Math.cos(a) };
+  const q = toolQ(internal);
+  const delta = r * (1 + q.z * n.z + q.x * n.x);
+  return { dz: delta / n.z, dx: delta / n.x, delta, n };
+}
+
+/**
+ * Programované body sražení hrany (vnější: konec hřídele Ø D, vnitřní: vstup díry Ø D).
+ * @param {number} c - délka sražení v ose Z
+ * @param {number} zFace - Z čela
+ * @returns {{contour, prog, corr}|null} body {z, d} – d je PRŮMĚR; a = na čele, b = na válci
+ */
+function chamferPoints(r, alphaDeg, D, c, zFace = 0, internal = false) {
+  const corr = lineCorrection(r, alphaDeg, { internal });
+  if (!corr || !(D > 0) || !(c > 0)) return null;
+  const sx = internal ? -1 : 1;
+  const dA = D - sx * 2 * c * Math.tan(alphaDeg * Math.PI / 180);
+  if (!(dA >= 0)) return null;                       // sražení větší než poloměr
+  return {
+    corr,
+    contour: { a: { z: zFace, d: dA }, b: { z: zFace - c, d: D } },
+    prog: { a: { z: zFace, d: dA + 2 * corr.dx }, b: { z: zFace - c + corr.dz, d: D } },
+  };
+}
+
+/**
+ * Rádius 90° mezi čelem (kolmo na osu) a válcem.
+ * concave = false: vypouklý – zaoblení hrany čela a válce Ø D (z0 = Z čela).
+ * concave = true: vydutý – rádius v osazení; Ø D = válec (díra) u osazení,
+ *   z0 = Z čela osazení, které je obrácené k +Z.
+ * Programovaný rádius: vypouklý R + rε, vydutý R − rε (vydutý vyžaduje R ≥ rε).
+ * @returns {{Rp:number, contour, prog}|null} body {z, d} (d = PRŮMĚR), center {z, d}
+ */
+function arcCorrection(r, R, D, z0 = 0, { internal = false, concave = false } = {}) {
+  if (!(r >= 0) || !(R > 0) || !(D > 0)) return null;
+  const sx = internal ? -1 : 1;
+  if (!concave) {
+    const Rp = R + r;
+    return {
+      Rp,
+      contour: { face: { z: z0, d: D - sx * 2 * R }, cyl: { z: z0 - R, d: D }, center: { z: z0 - R, d: D - sx * 2 * R } },
+      prog: { face: { z: z0, d: D - sx * 2 * Rp }, cyl: { z: z0 - Rp, d: D }, center: { z: z0 - Rp, d: D - sx * 2 * Rp } },
+    };
+  }
+  if (R < r) return null;
+  const Rp = R - r;
+  return {
+    Rp,
+    contour: { cyl: { z: z0 + R, d: D }, face: { z: z0, d: D + sx * 2 * R }, center: { z: z0 + R, d: D + sx * 2 * R } },
+    prog: { cyl: { z: z0 + Rp, d: D }, face: { z: z0, d: D + sx * 2 * Rp }, center: { z: z0 + Rp, d: D + sx * 2 * Rp } },
+  };
+}
+
+  out.nose = { lineCorrection, chamferPoints, arcCorrection };
+  })();
+  // ── Roh R/C (cornerMath.js) ──
+  (function () {
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  SKICA – Zaoblení a sražení obecného rohu (čistý výpočet)    ║
+// ╚══════════════════════════════════════════════════════════════╝
+//
+// Roh C mezi úsekem P1 → C a C → P2 (libovolné úhly – kužel/válec/čelo).
+// Body {z, x}: z = osa, x = POLOMĚR (Ø/2) – úhly a rádius jsou skutečné.
+//   δ = úhel otočení směru (0 = rovně), vnitřní úhel rohu = 180° − δ
+//   rádius R: tečné body ve vzdálenosti t = R·tan(δ/2) od rohu, střed na
+//             normále k 1. úseku ve vzdálenosti R (na vnitřní straně otočení)
+//   sražení c: body ve vzdálenosti c od rohu po obou úsecích (stejné odvěsny)
+
+const sub = (a, b) => ({ z: a.z - b.z, x: a.x - b.x });
+const len = (v) => Math.hypot(v.z, v.x);
+
+/** Směry obou úseků a otočení. @returns {{d1, d2, turn:number, left:boolean, L1:number, L2:number}|null} */
+function cornerDirections(P1, C, P2) {
+  const v1 = sub(C, P1), v2 = sub(P2, C);
+  const L1 = len(v1), L2 = len(v2);
+  if (!(L1 > 1e-9) || !(L2 > 1e-9)) return null;
+  const d1 = { z: v1.z / L1, x: v1.x / L1 }, d2 = { z: v2.z / L2, x: v2.x / L2 };
+  const cross = d1.z * d2.x - d1.x * d2.z, dot = d1.z * d2.z + d1.x * d2.x;
+  const turn = Math.atan2(Math.abs(cross), dot);
+  if (turn < 1e-6 || turn > Math.PI - 1e-6) return null;     // rovně nebo obrat zpět – není roh
+  return { d1, d2, turn, left: cross > 0, L1, L2 };
+}
+
+/**
+ * Zaoblení rohu rádiusem R.
+ * @returns {{T1, T2, O, t:number, inner:number, ccw:boolean, fits1:boolean, fits2:boolean}|null}
+ *   T1/T2 – tečné body na 1./2. úseku, O – střed, t – vzdálenost tečných bodů
+ *   od rohu, inner – vnitřní úhel rohu [°], ccw – oblouk proti směru hodin v rovině Z–X
+ */
+function cornerFillet(P1, C, P2, R) {
+  const k = cornerDirections(P1, C, P2);
+  if (!k || !(R > 0)) return null;
+  const t = R * Math.tan(k.turn / 2);
+  const T1 = { z: C.z - k.d1.z * t, x: C.x - k.d1.x * t };
+  const T2 = { z: C.z + k.d2.z * t, x: C.x + k.d2.x * t };
+  const n = k.left ? { z: -k.d1.x, x: k.d1.z } : { z: k.d1.x, x: -k.d1.z };
+  const O = { z: T1.z + n.z * R, x: T1.x + n.x * R };
+  return {
+    T1, T2, O, t,
+    inner: 180 - k.turn * 180 / Math.PI,
+    ccw: k.left,
+    fits1: t <= k.L1 + 1e-9, fits2: t <= k.L2 + 1e-9,
+  };
+}
+
+/**
+ * Sražení rohu se stejnými odvěsnami c (podél obou úseků).
+ * @returns {{A, B, width:number, inner:number, fits1:boolean, fits2:boolean}|null}
+ *   width – délka sražení (spojnice A–B)
+ */
+function cornerChamfer(P1, C, P2, c) {
+  const k = cornerDirections(P1, C, P2);
+  if (!k || !(c > 0)) return null;
+  const A = { z: C.z - k.d1.z * c, x: C.x - k.d1.x * c };
+  const B = { z: C.z + k.d2.z * c, x: C.x + k.d2.x * c };
+  return {
+    A, B, width: len(sub(B, A)),
+    inner: 180 - k.turn * 180 / Math.PI,
+    fits1: c <= k.L1 + 1e-9, fits2: c <= k.L2 + 1e-9,
+  };
+}
+
+/** Bod ve vzdálenosti L ve směru úhlu φ [°] (0 = +Z, 90 = +X). */
+function pointAtAngle(C, phiDeg, L) {
+  const a = phiDeg * Math.PI / 180;
+  return { z: C.z + L * Math.cos(a), x: C.x + L * Math.sin(a) };
+}
+
+  out.corner = { cornerDirections, cornerFillet, cornerChamfer, pointAtAngle };
+  })();
+  // ── Oblouk (arcMath.js) ──
+  (function () {
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  SKICA – Oblouk: tětiva/výška, tři body, start+konec+R       ║
+// ╚══════════════════════════════════════════════════════════════╝
+//
+// Čistý výpočet v rovině (z, x): z = osa, x = POLOMĚR (Ø/2) – délky a úhly
+// jsou skutečné. „ccw" = proti směru hodin v rovině Z (vpravo) – X (nahoru);
+// G2/G3 se z něj odvozují až v okně (podle typu stroje, jako CNC export).
+
+const DEG = 180 / Math.PI;
+
+/**
+ * Oblouk z libovolných dvou ze tří veličin: tětiva c, výška oblouku h, rádius R.
+ * @returns {{c:number, h:number, R:number, angle:number, length:number}|null}
+ *   angle – středový úhel [°] (nad 180° při h > R), length – délka oblouku
+ */
+function arcFromTwo({ c = null, h = null, R = null }) {
+  const has = (v) => v !== null && Number.isFinite(v);
+  const n = [c, h, R].filter(has).length;
+  if (n < 2) return null;
+  if ([c, h, R].some(v => has(v) && !(v > 0))) return null;
+  if (has(c) && has(h)) R = (c * c / 4 + h * h) / (2 * h);
+  else if (has(c) && has(R)) {
+    if (c > 2 * R + 1e-9) return null;
+    h = R - Math.sqrt(Math.max(R * R - c * c / 4, 0));          // menší oblouk (≤ 180°)
+  } else {
+    if (h > 2 * R + 1e-9) return null;
+    c = 2 * Math.sqrt(Math.max(h * (2 * R - h), 0));
+  }
+  const angle = 2 * Math.atan2(c / 2, R - h) * DEG;
+  return { c, h, R, angle, length: R * angle / DEG };
+}
+
+/** Přepočet: z tětivy+R je druhé řešení „přes půlkruh" (h' = 2R − h). */
+function arcLargeVariant(r) {
+  return arcFromTwo({ R: r.R, h: 2 * r.R - r.h });
+}
+
+/**
+ * Kružnice a oblouk P1 → P2 → P3 (oblouk prochází středním bodem).
+ * @returns {{O:{z,x}, R:number, ccw:boolean, sweep:number, length:number}|null}
+ *   null = body leží na přímce (nebo splývají)
+ */
+function arcFrom3Points(P1, P2, P3) {
+  // počítá se vůči P1 (jinak by u malého oblouku daleko od počátku ubývala přesnost)
+  const ax = 0, ay = 0, bx = P2.z - P1.z, by = P2.x - P1.x, cx = P3.z - P1.z, cy = P3.x - P1.x;
+  const d = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+  const scale = Math.max(Math.abs(ax), Math.abs(bx), Math.abs(cx), Math.abs(ay), Math.abs(by), Math.abs(cy), 1);
+  if (Math.abs(d) < 1e-9 * scale * scale) return null;
+  const a2 = ax * ax + ay * ay, b2 = bx * bx + by * by, c2 = cx * cx + cy * cy;
+  const O = {
+    z: P1.z + (a2 * (by - cy) + b2 * (cy - ay) + c2 * (ay - by)) / d,
+    x: P1.x + (a2 * (cx - bx) + b2 * (ax - cx) + c2 * (bx - ax)) / d,
+  };
+  const R = Math.hypot(P1.z - O.z, P1.x - O.x);
+  const cross = bx * (cy - by) - by * (cx - bx);
+  const ccw = cross > 0;
+  const sweep = sweepDeg(O, P1, P3, ccw);
+  return { O, R, ccw, sweep, length: R * sweep / DEG };
+}
+
+/** Úhel, který oblouk S → E opíše kolem středu O v daném smyslu [°] (0–360). */
+function sweepDeg(O, S, E, ccw) {
+  const a1 = Math.atan2(S.x - O.x, S.z - O.z), a2 = Math.atan2(E.x - O.x, E.z - O.z);
+  let s = (ccw ? a2 - a1 : a1 - a2) * DEG;
+  s = ((s % 360) + 360) % 360;
+  return s;
+}
+
+/**
+ * Střed oblouku ze startu S, konce E, rádiusu R, smyslu a velikosti oblouku.
+ * @param {boolean} ccw  proti směru hodin v rovině Z–X
+ * @param {boolean} large  oblouk přes 180° (v G-kódu záporné R)
+ * @returns {{O:{z,x}, I:number, K:number, sweep:number, length:number, chord:number}|null}
+ *   I – přírůstek středu ve směru X (poloměr), K – ve směru Z (od startu)
+ *   null = R je menší než polovina tětivy, nebo S = E
+ */
+function arcFromEndsRadius(S, E, R, ccw, large) {
+  const dz = E.z - S.z, dx = E.x - S.x;
+  const chord = Math.hypot(dz, dx);
+  if (!(chord > 1e-9) || !(R > 0)) return null;
+  if (chord > 2 * R * (1 + 1e-9)) return null;
+  const h = Math.sqrt(Math.max(R * R - chord * chord / 4, 0));
+  const nz = -dx / chord, nx = dz / chord;                          // levá normála S → E
+  const side = (ccw ? 1 : -1) * (large ? -1 : 1);
+  const O = { z: (S.z + E.z) / 2 + nz * h * side, x: (S.x + E.x) / 2 + nx * h * side };
+  const sweep = sweepDeg(O, S, E, ccw);
+  return { O, I: O.x - S.x, K: O.z - S.z, sweep, length: R * sweep / DEG, chord };
+}
+
+  out.arc = { arcFromTwo, arcLargeVariant, arcFrom3Points, arcFromEndsRadius };
+  })();
+  // ── VBD a držáky (vbdIso.js, holderIsoData.js, insert.js) ──
+  (function () {
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  SKICA – Značení VBD dle ISO 1832 (data + dekódování)        ║
+// ╚══════════════════════════════════════════════════════════════╝
+//
+// Pozice: 1 tvar · 2 úhel hřbetu · 3 třída přesnosti · 4 typ (díra/utvařeč)
+// · 5 velikost (DÉLKA BŘITU v mm, ne IC) · 6 tloušťka (kód) · 7 rádius
+// · 8 úprava břitu · 9 směr. Za pomlčkou je označení výrobce (utvařeč,
+// např. -PM) – není součástí ISO kódu.
+
+const P = (pts, fill) => '<polygon points="' + pts + '" fill="' + fill + '" stroke="#89b4fa" stroke-width="1.5"/>';
+
+/** Tvar: úhel špičky (pro CAM), poměr IC / délka břitu (pro velikost). */
+const SHAPES = [
+  { v: 'C', d: 'Kosočtverec 80°', dt: 'Nejrozšířenější – podélné i čelní soustružení', angle: 80, icPerEdge: Math.sin(80 * Math.PI / 180), svg: P('35,5 53,35 35,65 17,35', '#3498db') },
+  { v: 'D', d: 'Kosočtverec 55°', dt: 'Kopírování, dokončování', angle: 55, icPerEdge: Math.sin(55 * Math.PI / 180), svg: P('35,8 55,35 35,62 15,35', '#e74c3c') },
+  { v: 'R', d: 'Kruhový', dt: 'Kopírování, hrubování s velkým rádiusem', angle: null, icPerEdge: 1, svg: '<circle cx="35" cy="35" r="22" fill="#9b59b6" stroke="#89b4fa" stroke-width="1.5"/>' },
+  { v: 'S', d: 'Čtverec 90°', dt: 'Hrubování, srážení hran, 4 (8) břity', angle: 90, icPerEdge: 1, svg: P('13,13 57,13 57,57 13,57', '#2ecc71') },
+  { v: 'T', d: 'Trojúhelník 60°', dt: 'Univerzální, 3 (6) břity', angle: 60, icPerEdge: 1 / Math.sqrt(3), svg: P('35,10 55,52 15,52', '#f1c40f') },
+  { v: 'V', d: 'Kosočtverec 35°', dt: 'Jemné kopírování, nejostřejší špička', angle: 35, icPerEdge: Math.sin(35 * Math.PI / 180), svg: P('35,15 52,35 35,55 18,35', '#1abc9c') },
+  { v: 'W', d: 'Trigon 80°', dt: 'Šestibřitý trojúhelník s tupými rohy 80°', angle: 80, icPerEdge: 12.7 / 8.69, svg: P('35,9 41,30 58,49 35,45 12,49 29,30', '#e67e22') },
+  { v: 'E', d: 'Kosočtverec 75°', dt: 'Méně časté', angle: 75, icPerEdge: Math.sin(75 * Math.PI / 180), svg: P('35,7 54,35 35,63 16,35', '#5dade2') },
+  { v: 'M', d: 'Kosočtverec 86°', dt: 'Méně časté', angle: 86, icPerEdge: Math.sin(86 * Math.PI / 180), svg: P('35,9 59,35 35,61 11,35', '#48c9b0') },
+  { v: 'H', d: 'Šestiúhelník 120°', dt: 'Frézování, speciální', angle: 120, icPerEdge: Math.sqrt(3), svg: P('35,10 57,22 57,48 35,60 13,48 13,22', '#d35400') },
+  { v: 'O', d: 'Osmiúhelník 135°', dt: 'Frézování', angle: 135, icPerEdge: 1 + Math.SQRT2, svg: P('26,12 44,12 58,26 58,44 44,58 26,58 12,44 12,26', '#a04000') },
+  { v: 'P', d: 'Pětiúhelník 108°', dt: 'Frézování', angle: 108, icPerEdge: 1.3764, svg: P('35,10 58,28 49,57 21,57 12,28', '#7d3c98') },
+  { v: 'L', d: 'Obdélník 90°', dt: 'Speciální', angle: 90, icPerEdge: null, svg: P('8,22 62,22 62,48 8,48', '#2e86c1') },
+  { v: 'A', d: 'Rovnoběžník 85°', dt: 'Frézování', angle: 85, icPerEdge: null, svg: P('14,52 22,18 58,18 50,52', '#566573') },
+  { v: 'B', d: 'Rovnoběžník 82°', dt: 'Frézování', angle: 82, icPerEdge: null, svg: P('12,52 22,18 58,18 48,52', '#616a6b') },
+  { v: 'K', d: 'Rovnoběžník 55°', dt: 'Frézování, zapichování', angle: 55, icPerEdge: null, svg: P('8,52 30,18 62,18 40,52', '#717d7e') },
+];
+
+/** Úhel hřbetu [°]. */
+const CLEARANCE_DEG = { A: 3, B: 5, C: 7, D: 15, E: 20, F: 25, G: 30, N: 0, P: 11 };
+const CLEARANCE = [
+  { v: 'N', d: '0° – negativní', dt: 'Oboustranné destičky, pevný břit, hrubování' },
+  { v: 'A', d: '3° – pozitivní', dt: '' },
+  { v: 'B', d: '5° – pozitivní', dt: 'Např. VBMT' },
+  { v: 'C', d: '7° – pozitivní', dt: 'Šroubové upnutí (CCMT, DCMT), dokončování' },
+  { v: 'P', d: '11° – pozitivní', dt: 'Ostré destičky, nízké řezné síly' },
+  { v: 'D', d: '15° – pozitivní', dt: '' },
+  { v: 'E', d: '20° – pozitivní', dt: '' },
+  { v: 'F', d: '25° – pozitivní', dt: '' },
+  { v: 'G', d: '30° – pozitivní', dt: '' },
+  { v: 'O', d: 'Jiný úhel (zvláštní)', dt: 'Viz katalog' },
+];
+
+// Třída přesnosti: m (výška rohu), s (tloušťka), d (vepsaná kružnice) ±mm
+const TOLERANCE = [
+  ['A', '0,005', '0,025', '0,025', 'broušená'], ['F', '0,005', '0,025', '0,013', 'broušená'],
+  ['C', '0,013', '0,025', '0,025', 'broušená'], ['H', '0,013', '0,025', '0,013', 'broušená'],
+  ['E', '0,025', '0,025', '0,025', 'broušená'], ['G', '0,025', '0,13', '0,025', 'broušená po obvodu'],
+  ['J', '0,005', '0,025', '0,05–0,15', 'broušená'], ['K', '0,013', '0,025', '0,05–0,15', 'broušená'],
+  ['L', '0,025', '0,025', '0,05–0,15', 'broušená'], ['M', '0,08–0,2', '0,13', '0,05–0,15', 'lisovaná (nejběžnější)'],
+  ['N', '0,08–0,2', '0,025', '0,05–0,15', 'lisovaná'], ['U', '0,13–0,38', '0,13', '0,08–0,25', 'lisovaná, hrubá'],
+].map(([v, m, s, d, dt]) => ({ v, d: 'm ±' + m + ', s ±' + s + ', d ±' + d + ' mm', dt }));
+
+const TYPE = [
+  ['A', 'Válcová díra, bez utvařeče', 'Upnutí páčkou / klínem'],
+  ['B', 'Díra se zahloubením 70–90° (1 strana), bez utvařeče', 'Šroub'],
+  ['C', 'Díra se zahloubením 70–90° (2 strany), bez utvařeče', 'Šroub'],
+  ['F', 'Bez díry, utvařeč na obou stranách', 'Upínka shora'],
+  ['G', 'Válcová díra, utvařeč na obou stranách', 'Páčka / klín, oboustranná'],
+  ['H', 'Zahloubení 70–90° (1 strana), utvařeč na 1 straně', 'Šroub'],
+  ['J', 'Zahloubení 70–90° (2 strany), utvařeč na obou stranách', 'Šroub'],
+  ['M', 'Válcová díra, utvařeč na 1 straně', 'Páčka / klín'],
+  ['N', 'Bez díry, bez utvařeče', 'Upínka shora'],
+  ['Q', 'Zahloubení 40–60° (2 strany), bez utvařeče', 'Šroub'],
+  ['R', 'Bez díry, utvařeč na 1 straně', 'Upínka shora'],
+  ['T', 'Zahloubení 40–60° (1 strana), utvařeč na 1 straně', 'Šroub (CCMT, DCMT…)'],
+  ['U', 'Zahloubení 40–60° (2 strany), utvařeč na obou stranách', 'Šroub'],
+  ['W', 'Zahloubení 40–60° (1 strana), bez utvařeče', 'Šroub'],
+  ['X', 'Zvláštní provedení', 'Viz katalog'],
+].map(([v, d, dt]) => ({ v, d, dt }));
+
+/** Tloušťka podle kódu [mm]. */
+const THICKNESS_MM = { '01': 1.59, T1: 1.98, '02': 2.38, T2: 2.78, '03': 3.18, T3: 3.97, '04': 4.76, '05': 5.56, '06': 6.35, '07': 7.94, '09': 9.52 };
+/** Rádius špičky podle kódu [mm]. */
+const RADIUS_MM = { '00': 0, '01': 0.1, '02': 0.2, '04': 0.4, '08': 0.8, '12': 1.2, '16': 1.6, '20': 2.0, '24': 2.4, '28': 2.8, '32': 3.2 };
+
+const EDGE = [
+  ['F', 'Ostrý břit'], ['E', 'Zaoblený (honovaný) břit'], ['T', 'Fazetka (negativní)'],
+  ['S', 'Fazetka + zaoblení'], ['K', 'Dvojitá fazetka'], ['P', 'Dvojitá fazetka + zaoblení'],
+].map(([v, d]) => ({ v, d, dt: '' }));
+
+/** Data pozic 1–9 (pro výběr i popis). */
+const VBD_ISO = {
+  1: { title: 'Tvar', options: SHAPES },
+  2: { title: 'Úhel hřbetu', options: CLEARANCE },
+  3: { title: 'Třída přesnosti', options: TOLERANCE },
+  4: { title: 'Typ (díra, utvařeč)', options: TYPE },
+  5: { title: 'Velikost (délka břitu)', options: ['04', '06', '07', '08', '09', '11', '12', '15', '16', '19', '22', '25', '27']
+    .map(v => ({ v, d: 'kód ' + v + ' (délka břitu ' + parseInt(v, 10) + '… mm)', dt: '' })) },
+  6: { title: 'Tloušťka', options: Object.keys(THICKNESS_MM).map(v => ({ v, d: String(THICKNESS_MM[v]).replace('.', ',') + ' mm', dt: '' })) },
+  7: { title: 'Rádius špičky', options: [...Object.keys(RADIUS_MM).map(v => ({ v, d: RADIUS_MM[v] === 0 ? 'ostrá špička' : String(RADIUS_MM[v]).replace('.', ',') + ' mm', dt: '' })),
+    { v: 'M0', d: 'kulatá destička, metrický průměr', dt: '' }] },
+  8: { title: 'Úprava břitu', options: EDGE },
+  9: { title: 'Směr', options: [{ v: 'R', d: 'Pravý', dt: '' }, { v: 'L', d: 'Levý', dt: '' }, { v: 'N', d: 'Neutrální', dt: '' }] },
+};
+
+/** Normalizované IC (palcová řada – u ISO VBD standardní). */
+const IC_SERIES = [3.97, 4.76, 5.56, 6.35, 7.94, 9.525, 12.7, 15.875, 19.05, 25.4, 31.75];
+
+/**
+ * Velikost z kódu poz. 5: IC a skutečná délka břitu.
+ * @returns {{ic:number, edge:number}|{diameter:number}|null}
+ */
+function sizeInfo(shape, code) {
+  if (!/^\d\d$/.test(code || '')) return null;
+  const n = parseInt(code, 10);
+  if (shape === 'R') return { diameter: n };
+  const s = SHAPES.find(x => x.v === shape);
+  if (!s || !s.icPerEdge) return null;
+  const est = (n + 0.5) * s.icPerEdge;                 // kód = délka břitu oříznutá na celé mm
+  const ic = IC_SERIES.reduce((b, v) => (Math.abs(v - est) < Math.abs(b - est) ? v : b));
+  return { ic, edge: Math.round(ic / s.icPerEdge * 100) / 100 };
+}
+
+/**
+ * Rozdělí kód VBD na pozice ISO 1–9 a označení výrobce za pomlčkou.
+ * „CNMG120408-PM" → {1:'C',…,7:'08',8:'-',9:'-', suffix:'PM'}
+ */
+function parseVbdCode(code) {
+  const raw = (code || '').toUpperCase().trim();
+  const dash = raw.search(/[-–]/);
+  const iso = (dash >= 0 ? raw.slice(0, dash) : raw).replace(/\s/g, '');
+  const suffix = dash >= 0 ? raw.slice(dash + 1).replace(/[\s\-–]/g, '') : '';
+  const r = { 1: '-', 2: '-', 3: '-', 4: '-', 5: '-', 6: '-', 7: '-', 8: '-', 9: '-', suffix };
+  for (let i = 0; i < 4; i++) if (iso[i]) r[i + 1] = iso[i];
+  if (iso.length >= 6) r[5] = iso.slice(4, 6);
+  if (iso.length >= 8) r[6] = iso.slice(6, 8);
+  if (iso.length >= 10) r[7] = iso.slice(8, 10);
+  if (iso.length >= 11) r[8] = iso[10];
+  if (iso.length >= 12) r[9] = iso[11];
+  return r;
+}
+
+/** Popis pozice s ohledem na tvar (velikost, tloušťka, rádius jsou z kódu, ne ze seznamu). */
+function describePosition(pos, value, shape) {
+  if (!value || value === '-') return null;
+  if (pos === 5) {
+    const s = sizeInfo(shape, value);
+    if (!s) return 'kód ' + value + ' (délka břitu ~' + parseInt(value, 10) + ' mm; IC podle tvaru)';
+    if (s.diameter) return 'průměr ' + s.diameter + ' mm';
+    return 'délka břitu ' + String(s.edge).replace('.', ',') + ' mm, IC ' + String(s.ic).replace('.', ',') + ' mm';
+  }
+  if (pos === 6) return THICKNESS_MM[value] !== undefined ? String(THICKNESS_MM[value]).replace('.', ',') + ' mm' : null;
+  if (pos === 7) {
+    if (value === 'M0') return 'kulatá destička (metrická)';
+    return RADIUS_MM[value] !== undefined ? (RADIUS_MM[value] === 0 ? 'ostrá špička' : String(RADIUS_MM[value]).replace('.', ',') + ' mm') : null;
+  }
+  const o = VBD_ISO[pos].options.find(x => x.v === value);
+  return o ? o.d : null;
+}
+
+/**
+ * Typická upnutí (ISO 5608, 1. písmeno držáku) podle typu destičky:
+ * válcová díra → P (páčka), D (tuhé upnutí), M (upínka + kolík); zahloubení → S (šroub);
+ * bez díry → C (upínka shora).
+ */
+function clampingForType(type) {
+  if ('AGM'.includes(type)) return ['P', 'D', 'M'];
+  if ('BCHJQTUW'.includes(type)) return ['S'];
+  if ('FNR'.includes(type)) return ['C'];
+  return [];
+}
+
+/** Doporučené držáky: upnutí + tvar + styl + úhel hřbetu (R/L). */
+function holdersFor(shape, clearance, type) {
+  const styles = { C: ['L'], D: ['J'], S: ['S', 'K'], T: ['J', 'G'], V: ['J', 'V'], W: ['L'], R: ['D'] }[shape];
+  if (!styles || clearance === '-' || !clearance) return '';
+  const clamps = type && type !== '-' ? clampingForType(type) : (clearance === 'N' ? ['P', 'D', 'M'] : ['S']);
+  const out = [];
+  // Neutrální styly (kulatá D, kosočtverec 35° V – 72,5°) mají ruku N
+  for (const c of clamps) for (const st of styles) out.push(c + shape + st + clearance + (shape === 'R' || st === 'V' ? 'N' : 'R/L'));
+  return out.slice(0, 4).join(', ');
+}
+
+// ── ISO 5608 / ISO 5610 – GEOMETRIE DRŽÁKU ─────────────────────
+// Orientační referenční hodnoty konzistentní napříč hlavními výrobci nářadí
+// (Sandvik, Seco, Kennametal apod.), NIKOLI certifikovaná katalogová čísla
+// konkrétního výrobce. Přesná geometrie (κr, h, b, l1) se u jednotlivých
+// výrobců/velikostí může mírně lišit – v UI vždy zobrazovat upozornění
+// "Orientační dle ISO 5608, ověřte v katalogu nástroje".
+
+// Styl držáku (pozice 3 kódu dle ISO 5608) → úhel nastavení hlavního ostří κr.
+const HOLDER_STYLES = [
+  { code: 'A', kappa: 90,   desc: 'Podélné soustružení, přímý' },
+  { code: 'B', kappa: 75,   desc: 'Podélné soustružení' },
+  { code: 'C', kappa: 90,   desc: 'Čelní/podélné, pravoúhlý' },
+  { code: 'D', kappa: 45,   desc: 'Kopírovací' },
+  { code: 'E', kappa: 60,   desc: 'Kopírovací' },
+  { code: 'F', kappa: 90,   desc: 'Čelní' },
+  { code: 'G', kappa: 90,   desc: 'Zapichovací / upichovací' },
+  { code: 'J', kappa: 93,   desc: 'Kopírovací' },
+  { code: 'K', kappa: 75,   desc: 'Kopírovací' },
+  { code: 'L', kappa: 95,   desc: 'Kopírovací' },
+  { code: 'M', kappa: 45,   desc: 'Univerzální' },
+  { code: 'P', kappa: 90,   desc: 'Univerzální' },
+  { code: 'Q', kappa: 45,   desc: 'Kopírovací' },
+  { code: 'R', kappa: 75,   desc: 'Univerzální' },
+  { code: 'S', kappa: 45,   desc: 'Univerzální' },
+  { code: 'T', kappa: 90,   desc: 'Upichovací' },
+  { code: 'U', kappa: 93,   desc: 'Kopírovací, dvoubřitý' },
+  { code: 'V', kappa: 72.5, desc: 'Kopírovací (destička V)' },
+  { code: 'W', kappa: 60,   desc: 'Univerzální (destička W)' },
+];
+
+// Typická řada funkční délky l1 [mm] podle výšky tělesa h [mm].
+const HOLDER_LENGTH_BY_HEIGHT = [
+  { h: 16, l1: 100 },
+  { h: 20, l1: 125 },
+  { h: 25, l1: 150 },
+  { h: 32, l1: 170 },
+  { h: 40, l1: 200 },
+];
+
+function holderStyleByCode(code) {
+  return HOLDER_STYLES.find(function (s) { return s.code === code; }) || null;
+}
+
+function suggestL1(h) {
+  if (!h || !isFinite(h)) return null;
+  var rows = HOLDER_LENGTH_BY_HEIGHT;
+  var best = rows[0];
+  var bestDiff = Math.abs(rows[0].h - h);
+  for (var i = 1; i < rows.length; i++) {
+    var diff = Math.abs(rows[i].h - h);
+    if (diff < bestDiff) { best = rows[i]; bestDiff = diff; }
+  }
+  return best.l1;
+}
+
+  const vbdIsoData = VBD_ISO;
+const holderIso = {
+  1: { title:'Způsob upnutí',options:[
+    {v:'C',d:'Upínka shora',dt:'Destička bez díry'},
+    {v:'D',d:'Tuhé upnutí (upínka + kolík)',dt:'Destička s válcovou dírou'},
+    {v:'M',d:'Upínka shora + kolík v otvoru',dt:'Destička s válcovou dírou'},
+    {v:'P',d:'Páčka přes otvor',dt:'Destička s válcovou dírou'},
+    {v:'S',d:'Šroub přes otvor',dt:'Destička se zahloubenou dírou (CCMT, DCMT…)'}
+  ]},
+  2: { title:'Tvar destičky',options: SHAPES.filter(function(s) { return 'CDRSTVW'.indexOf(s.v) >= 0; }) },
+  // Styl držáku dle ISO 5608 – určuje přístupový úhel κr (orientační, viz holderIsoData.js)
+  3: { title:'Styl (κr)',options: HOLDER_STYLES.map(function(s) {
+    return { v:s.code, d:s.kappa + '° – ' + s.desc, dt:'Přístupový úhel, orientační dle ISO 5608' };
+  }) },
+  // Úhel hřbetu destičky – stejné hodnoty jako pozice 2 u vbdIsoData (sdílený zdroj pravdy)
+  4: { title:'Úhel hřbetu destičky', options: vbdIsoData[2].options },
+  5: { title:'Ruka nástroje',options:[
+    {v:'R',d:'Pravé provedení',dt:'Pravostranné operace'},
+    {v:'L',d:'Levé provedení',dt:'Levostranné operace'},
+    {v:'N',d:'Neutrální',dt:'Standardní operace'}
+  ]},
+  6: { title:'Výška (h)',options:[
+    {v:'16',d:'16 mm',dt:'Menší – přesné obrábění'},
+    {v:'20',d:'20 mm',dt:'Standardní'},
+    {v:'25',d:'25 mm',dt:'Středně náročné operace'},
+    {v:'32',d:'32 mm',dt:'Náročné operace'},
+    {v:'40',d:'40 mm',dt:'Těžké obrábění'}
+  ]},
+  7: { title:'Šířka (b)',options:[
+    {v:'16',d:'16 mm',dt:'Úzký – omezené prostory'},
+    {v:'20',d:'20 mm',dt:'Standardní'},
+    {v:'25',d:'25 mm',dt:'Širší – lepší stabilita'},
+    {v:'32',d:'32 mm',dt:'Max. tuhost'}
+  ]}
+};
+function parseHolderCode(code) {
+  code = (code || '').replace(/[\s\-]/g, '').toUpperCase();
+  var result = {1:'-',2:'-',3:'-',4:'-',5:'-',6:'-',7:'-'};
+  if (code.length < 5) return result;
+  for (var i = 1; i <= 5; i++) result[i] = code[i - 1] || '-';
+  result[6] = code.length >= 7 ? code.substring(5, 7) : '-';
+  result[7] = code.length >= 9 ? code.substring(7, 9) : '-';
+  return result;
+}
+  out.vbd = { VBD_ISO, SHAPES, CLEARANCE_DEG, THICKNESS_MM, RADIUS_MM, sizeInfo, parseVbdCode, describePosition, clampingForType, holdersFor, HOLDER_STYLES, holderIso, parseHolderCode };
+  })();
   return out;
 })();

@@ -46,6 +46,22 @@ v += part('Kužel (taperBoreMath.js)', '  const deviations = out.deviations;\n' 
 const tq = strip(read(J('calculators/torqueMath.js')));
 const tqNames = [...tq.matchAll(/^(?:function|const) (\w+)/gm)].map((m) => m[1]).filter((n) => n !== 'IC_ISO');
 v += part('Utahovací momenty (torqueMath.js)', tq, `  out.torque = { ${tqNames.join(', ')} };`);
+v += part('Tepelná roztažnost (thermalMath.js)', strip(read(J('calculators/thermalMath.js'))),
+  '  out.thermal = { THERMAL_MATERIALS, REF_TEMP, sizeAtTemp, sizeAtRef, shrinkFit, gapChange };');
+v += part('Korekce rádiusu špičky (noseRadiusMath.js)', strip(read(J('calculators/noseRadiusMath.js'))),
+  '  out.nose = { lineCorrection, chamferPoints, arcCorrection };');
+v += part('Roh R/C (cornerMath.js)', strip(read(J('calculators/cornerMath.js'))),
+  '  out.corner = { cornerDirections, cornerFillet, cornerChamfer, pointAtAngle };');
+v += part('Oblouk (arcMath.js)', strip(read(J('calculators/arcMath.js'))),
+  '  out.arc = { arcFromTwo, arcLargeVariant, arcFrom3Points, arcFromEndsRadius };');
+// VBD (ISO 1832) + držák (ISO 5608): data držáku jsou v insert.js mezi „const holderIso = {" a „};"
+const ins = read(J('calculators/insert.js'));
+const holderIso = ins.slice(ins.indexOf('const holderIso = {'), ins.indexOf('\n};', ins.indexOf('const holderIso = {')) + 3);
+const parseHolder = ins.slice(ins.indexOf('export function parseHolderCode'), ins.indexOf('\n}', ins.indexOf('export function parseHolderCode')) + 2).replace(/^export /, '');
+v += part('VBD a držáky (vbdIso.js, holderIsoData.js, insert.js)',
+  strip(read(J('calculators/vbdIso.js'))) + '\n' + strip(read(J('calculators/holderIsoData.js'))) +
+  '\n  const vbdIsoData = VBD_ISO;\n' + holderIso + '\n' + parseHolder,
+  '  out.vbd = { VBD_ISO, SHAPES, CLEARANCE_DEG, THICKNESS_MM, RADIUS_MM, sizeInfo, parseVbdCode, describePosition, clampingForType, holdersFor, HOLDER_STYLES, holderIso, parseHolderCode };');
 v += '  return out;\n})();\n';
 fs.writeFileSync(path.join(ROOT, 'js/vypocty.js'), v);
 

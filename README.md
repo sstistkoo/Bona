@@ -11,6 +11,10 @@ Funguje v prohlížeči na PC i mobilu, nic se neinstaluje – stačí otevřít
 - **Tolerance** – ISO 286 (díra/hřídel, třídy a stupně IT, rozměry až 3150 mm), vlastní úchylky, volné míry ISO 2768
 - **Kužel** – ze 3 hodnot dopočítá zbytek (D, d, L, 1:x, úhly), tabulky Morse a poměrových kuželů
 - **Drsnost** – Ra/Rz z posuvu a rádiusu špičky s korekcí na materiál, zpětně max. posuv pro cílovou Ra
+- **Roztažnost** – přepočet rozměru teplého dílu na 20 °C, teplota pro nalisování, změna vůle spoje
+- **Korekce rε** – posun bodů sražení, kužele a rádiusu při obrábění bez G41/G42, body do programu
+- **Roh a oblouk** – zaoblení / sražení rohu, oblouk z tětivy a výšky, ze 3 bodů, ze startu, konce a R (G2/G3 s CR= i I/K)
+- **VBD a držáky** – rozluštění kódu destičky (ISO 1832) a držáku (ISO 5608), vhodné kombinace
 - **Trigonometrie** – pravoúhlý i obecný trojúhelník
 - **Kalkulačka** – výrazy, goniometrické funkce ve stupních, historie
 - **Sinumerik 840D** – příručka: G kódy, M kódy, příkazy, systémové proměnné, zkratky, ukázky programů, data nástrojů, alarmy, rychlý tahák pro karusel; hledání napříč vším
@@ -31,6 +35,7 @@ Funguje v prohlížeči na PC i mobilu, nic se neinstaluje – stačí otevřít
 | `js/nastroje.js` | tolerance, kužel, drsnost, trigonometrie, kalkulačka |
 | `js/sinumerik.js` | příručka Sinumerik 840D |
 | `js/prevod-nm.js` | převodník, utahovací momenty |
+| `js/dilna.js` | roztažnost, korekce rε, roh a oblouk, VBD a držáky |
 
 ### Aktualizace ze SKICA
 
@@ -41,6 +46,6 @@ git clone https://github.com/sstistkoo/2D_CAD-CAM ../2D_CAD-CAM
 node scripts/prevzit-ze-skici.mjs ../2D_CAD-CAM
 ```
 
-Odkaz na konkrétní záložku: `…/Bona/#tol`, `#kuzel`, `#drsnost`, `#trig`, `#calc`, `#sinumerik`, `#prevod`, `#nm`.
+Odkaz na konkrétní záložku: `…/Bona/#tol`, `#kuzel`, `#drsnost`, `#trig`, `#calc`, `#sinumerik`, `#prevod`, `#nm`, `#teplo`, `#rez`, `#geo`, `#vbd`.
 
 > Údaje v aplikaci jsou orientační. Vždy platí dokumentace stroje, výkres a technologický postup.

@@ -16,6 +16,10 @@
       <button class="tab" data-tab="tol">Tolerance</button>
       <button class="tab" data-tab="kuzel">Kužel</button>
       <button class="tab" data-tab="drsnost">Drsnost</button>
+      <button class="tab" data-tab="teplo">Roztažnost</button>
+      <button class="tab" data-tab="rez">Korekce rε</button>
+      <button class="tab" data-tab="geo">Roh a oblouk</button>
+      <button class="tab" data-tab="vbd">VBD a držáky</button>
       <button class="tab" data-tab="trig">Trigonometrie</button>
       <button class="tab" data-tab="calc">Kalkulačka</button>
       <button class="tab" data-tab="sinumerik">Sinumerik 840D</button>
@@ -120,6 +124,145 @@
         <p class="hint" id="dr-k"></p>
         <p class="lbl">Třídy drsnosti ISO 1302 (Ra µm)</p>
         <div class="classbar" id="dr-classes"></div>
+      </div>
+    </section>
+
+    <!-- ROZTAŽNOST -->
+    <section id="teplo" class="panel">
+      <div class="card">
+        <h2>Tepelná roztažnost</h2>
+        <div class="seg seg-wrap">
+          <button class="seg-btn active" data-tp="mer">Měření teplého dílu</button>
+          <button class="seg-btn" data-tp="lis">Nalisování</button>
+          <button class="seg-btn" data-tp="vule">Vůle spoje</button>
+        </div>
+        <div data-tptab="mer">
+          <div class="grid">
+            <label>Materiál<select id="tp-mat" class="tp-mat"></select></label>
+            <label>Rozměr [mm]<input type="text" id="tp-l" inputmode="decimal" placeholder="např. 920.12"></label>
+            <label>Teplota dílu [°C]<input type="text" id="tp-t" inputmode="decimal" placeholder="např. 35"></label>
+          </div>
+          <div class="result" id="tp-out"></div>
+          <p class="hint">Platí pro měřidlo při 20 °C. Teplotu dílu měř dotykovým teploměrem na místě měření – kolo bývá po obrábění nerovnoměrně teplé.</p>
+        </div>
+        <div data-tptab="lis" hidden>
+          <div class="grid">
+            <label>Ohřívaná / chlazená součást<select id="tl-mat" class="tp-mat"></select></label>
+            <label>Průměr spoje d [mm]<input type="text" id="tl-d" inputmode="decimal"></label>
+            <label>Přesah [mm]<input type="text" id="tl-i" inputmode="decimal" placeholder="např. 0.25"></label>
+            <label>Montážní vůle [mm]<input type="text" id="tl-c" inputmode="decimal" placeholder="např. 0.1"></label>
+            <label>Teplota okolí [°C]<input type="text" id="tl-t0" inputmode="decimal" value="20"></label>
+          </div>
+          <div class="result" id="tl-out"></div>
+        </div>
+        <div data-tptab="vule" hidden>
+          <div class="grid">
+            <label>Materiál díry<select id="tv-mh" class="tp-mat"></select></label>
+            <label>Materiál hřídele<select id="tv-ms" class="tp-mat"></select></label>
+            <label>Průměr d [mm]<input type="text" id="tv-d" inputmode="decimal"></label>
+            <label>Provozní teplota [°C]<input type="text" id="tv-t" inputmode="decimal"></label>
+          </div>
+          <div class="result" id="tv-out"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KOREKCE Rε -->
+    <section id="rez" class="panel">
+      <div class="card">
+        <h2>Korekce na rádius špičky rε</h2>
+        <p class="hint" style="margin-top:0">Když se kužel, sražení nebo rádius točí <b>bez G41/G42</b>, řízení vede teoretickou špičku nože – obrys se posune. Tady zjistíš o kolik.</p>
+        <div class="seg">
+          <button class="seg-btn active" data-rz="line">Sražení / kužel</button>
+          <button class="seg-btn" data-rz="arc">Rádius</button>
+        </div>
+        <div class="grid">
+          <label>Obrábění<select id="rz-side"><option value="ext">Vnější</option><option value="int">Vnitřní (díra)</option></select></label>
+          <label data-rzs="line">Obrys<select id="rz-orient"><option value="std">Sražení / kužel</option><option value="rev">Zpětný kužel</option></select></label>
+          <label data-rzs="arc" hidden>Rádius<select id="rz-arc"><option value="convex">Vypouklý (hrana)</option><option value="concave">Vydutý (osazení)</option></select></label>
+          <label>Rádius špičky rε [mm]<input type="text" id="rz-r" inputmode="decimal" value="1.6"></label>
+          <label data-rzs="line">Úhel α od osy Z [°]<input type="text" id="rz-a" inputmode="decimal" value="45"></label>
+          <label data-rzs="arc" hidden>Rádius obrysu R [mm]<input type="text" id="rz-R" inputmode="decimal"></label>
+        </div>
+        <div class="chips" id="rz-chips"></div>
+        <p class="hint" id="rz-info"></p>
+        <div class="result" id="rz-out"></div>
+        <h3 class="sub">Body do programu <small class="hint">(volitelné)</small></h3>
+        <div class="grid">
+          <label>Ø D [mm]<input type="text" id="rz-D" inputmode="decimal"></label>
+          <label data-rzs="line">Délka sražení c v Z [mm]<input type="text" id="rz-c" inputmode="decimal"></label>
+          <label>Z čela [mm]<input type="text" id="rz-z0" inputmode="decimal" value="0"></label>
+        </div>
+        <div id="rz-pts"></div>
+        <p class="hint">Platí pro soustružení ke sklíčidlu / k upínací desce (−Z), nůž v poloze 3 (vnější) / 2 (vnitřní).</p>
+      </div>
+    </section>
+
+    <!-- ROH A OBLOUK -->
+    <section id="geo" class="panel">
+      <div class="card">
+        <h2>Roh a oblouk</h2>
+        <div class="seg seg-wrap">
+          <button class="seg-btn active" data-geo="roh">Roh R / C</button>
+          <button class="seg-btn" data-geo="chord">Tětiva + výška</button>
+          <button class="seg-btn" data-geo="pts">Oblouk 3 body</button>
+          <button class="seg-btn" data-geo="ends">Start + konec + R</button>
+        </div>
+        <label class="inline">Stroj (smysl G2/G3)<select id="geo-mach"><option value="karusel">Karusel</option><option value="sou">Klasický soustruh</option></select></label>
+
+        <div data-geotab="roh">
+          <div class="grid">
+            <label>Úprava rohu<select id="cr-kind"><option value="R">Zaoblení R</option><option value="C">Sražení C</option></select></label>
+            <label><span id="cr-vl">Rádius R [mm]</span><input type="text" id="cr-v" inputmode="decimal"></label>
+          </div>
+          <p class="lbl">Předchozí bod P1 (kde začíná 1. úsek)</p>
+          <div class="grid"><label>Z<input type="text" id="cr-z1" inputmode="decimal"></label><label>Ø X<input type="text" id="cr-x1" inputmode="decimal"></label></div>
+          <p class="lbl">Roh</p>
+          <div class="grid"><label>Z<input type="text" id="cr-zc" inputmode="decimal"></label><label>Ø X<input type="text" id="cr-xc" inputmode="decimal"></label></div>
+          <p class="lbl">Další bod P2 (kde končí 2. úsek)</p>
+          <div class="grid"><label>Z<input type="text" id="cr-z2" inputmode="decimal"></label><label>Ø X<input type="text" id="cr-x2" inputmode="decimal"></label></div>
+        </div>
+        <div data-geotab="chord" hidden>
+          <p class="hint">Zadej libovolné dvě veličiny, třetí se dopočítá.</p>
+          <div class="grid">
+            <label>Tětiva c [mm]<input type="text" id="ar-c" inputmode="decimal"></label>
+            <label>Výška h [mm]<input type="text" id="ar-h" inputmode="decimal"></label>
+            <label>Rádius R [mm]<input type="text" id="ar-R" inputmode="decimal"></label>
+          </div>
+        </div>
+        <div data-geotab="pts" hidden>
+          <p class="lbl">Začátek P1</p><div class="grid"><label>Z<input type="text" id="ap-z1" inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x1" inputmode="decimal"></label></div>
+          <p class="lbl">Bod uprostřed P2 (oblouk jím prochází)</p><div class="grid"><label>Z<input type="text" id="ap-z2" inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x2" inputmode="decimal"></label></div>
+          <p class="lbl">Konec P3</p><div class="grid"><label>Z<input type="text" id="ap-z3" inputmode="decimal"></label><label>Ø X<input type="text" id="ap-x3" inputmode="decimal"></label></div>
+        </div>
+        <div data-geotab="ends" hidden>
+          <p class="lbl">Začátek S</p><div class="grid"><label>Z<input type="text" id="ae-zs" inputmode="decimal"></label><label>Ø X<input type="text" id="ae-xs" inputmode="decimal"></label></div>
+          <p class="lbl">Konec E</p><div class="grid"><label>Z<input type="text" id="ae-ze" inputmode="decimal"></label><label>Ø X<input type="text" id="ae-xe" inputmode="decimal"></label></div>
+          <div class="grid">
+            <label>Rádius R [mm]<input type="text" id="ae-R" inputmode="decimal"></label>
+            <label>Smysl<select id="ae-dir"><option value="G3">G3</option><option value="G2">G2</option></select></label>
+            <label>Oblouk<select id="ae-size"><option value="small">do 180°</option><option value="large">přes 180°</option></select></label>
+          </div>
+        </div>
+        <div class="result" id="geo-out"></div>
+        <div id="geo-pts"></div>
+        <p class="hint">Souřadnice jako v programu: Z a průměr X. I, K = střed od začátku oblouku, I v poloměru. CR= záporné = oblouk přes 180°. <b>Smysl G2/G3 ověř v simulaci</b> – závisí na nastavení stroje.</p>
+      </div>
+    </section>
+
+    <!-- VBD A DRŽÁKY -->
+    <section id="vbd" class="panel">
+      <div class="card">
+        <h2>Značení VBD – ISO 1832</h2>
+        <label>Kód destičky<input type="text" id="vb-code" placeholder="např. CNMG 190612-PR" autocapitalize="characters"></label>
+        <div class="chips" id="vb-ex"></div>
+        <div id="vb-out"></div>
+      </div>
+      <div class="card">
+        <h2>Značení držáku – ISO 5608</h2>
+        <label>Kód držáku<input type="text" id="vh-code" placeholder="např. PCLNR 3232 P19" autocapitalize="characters"></label>
+        <div id="vh-out"></div>
+        <p class="hint">Úhel κr je orientační dle ISO 5608 – ověř v katalogu nástroje.</p>
       </div>
     </section>
 
@@ -336,5 +479,6 @@
   <script src="js/nastroje.js"></script>
   <script src="js/sinumerik.js"></script>
   <script src="js/prevod-nm.js"></script>
+  <script src="js/dilna.js"></script>
 </body>
 </html>
