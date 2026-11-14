@@ -414,3 +414,9 @@ label.tol-dim:focus-within { outline: 2px solid var(--accent); }
 .tol-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; margin-top: 8px; font-size: 0.9rem; }
 .tol-foot b { font-family: Consolas, monospace; }
 .tol-foot b { font-size: 1rem; }
+
+/* ── Stroj – poznámky ── */
+#st-hledat { margin-bottom: 12px; }
+.st-seg .seg-btn { min-width: 33.33%; }
+.st-kat { font-size: 0.75rem; color: var(--accent); font-weight: 600; margin-right: 4px; }
+@media (max-width: 560px) { .st-seg .seg-btn { min-width: 50%; } }

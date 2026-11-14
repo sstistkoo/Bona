@@ -21,6 +21,7 @@ Na telefonu ji lze přidat na plochu jako aplikaci (v prohlížeči „Přidat n
 - **Sinumerik 840D** – příručka: G kódy, M kódy, příkazy, systémové proměnné, zkratky, ukázky programů, data nástrojů, alarmy, rychlý tahák pro karusel; hledání napříč vším
 - **Převodník** – mm/palce, úhly (° / rad / ° ′ ″), Ra ↔ Rz, TPI ↔ stoupání, tvrdost HRC/HB/HV, moment, síla, rychlost
 - **Nm** – vlastní seznam nožů s momenty, tabulky šroubů VBD, moment šroubu M podle VDI 2230, klíč s prodloužením, převody jednotek
+- **Stroj** – poznámky ke stroji v kategoriích Sonda, Nástroje, Reset, Korekce, Poruchy, Manipulátor; hledání napříč všemi a vlastní poznámky ke každé kategorii
 - **Směna** – kontrolní seznam (lze upravit) a počítadlo kusů
 - **Poznámky** – ukládají se automaticky v prohlížeči
 
@@ -38,6 +39,8 @@ Na telefonu ji lze přidat na plochu jako aplikaci (v prohlížeči „Přidat n
 | `js/sinumerik.js` | příručka Sinumerik 840D |
 | `js/prevod-nm.js` | převodník, utahovací momenty |
 | `js/dilna.js` | roztažnost, korekce rε, roh a oblouk, VBD a držáky |
+| `js/stroj-data.js` | poznámky ke stroji (sem se doplňují) |
+| `js/stroj.js` | záložka Stroj – kategorie, hledání, vlastní poznámky |
 | `sw.js`, `manifest.webmanifest`, `icons/` | offline režim a instalace na plochu (při změně souborů zvyš `VERZE` v `sw.js`) |
 
 ### Aktualizace ze SKICA
@@ -49,6 +52,6 @@ git clone https://github.com/sstistkoo/2D_CAD-CAM ../2D_CAD-CAM
 node scripts/prevzit-ze-skici.mjs ../2D_CAD-CAM
 ```
 
-Odkaz na konkrétní záložku: `…/Bona/#tol`, `#kuzel`, `#drsnost`, `#trig`, `#calc`, `#sinumerik`, `#prevod`, `#nm`, `#teplo`, `#rez`, `#geo`, `#vbd`.
+Odkaz na konkrétní záložku: `…/Bona/#tol`, `#kuzel`, `#drsnost`, `#trig`, `#calc`, `#sinumerik`, `#prevod`, `#nm`, `#teplo`, `#rez`, `#geo`, `#vbd`, `#stroj`; přímo kategorie poznámek: `#sonda`, `#nastroje`, `#reset`, `#korekce`, `#poruchy`, `#manipulator`.
 
 > Údaje v aplikaci jsou orientační. Vždy platí dokumentace stroje, výkres a technologický postup.

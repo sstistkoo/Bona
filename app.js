@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.6.1';
+const VERZE = '0.7.0';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -38,10 +38,21 @@ document.querySelectorAll('.tab').forEach((btn) => {
   });
 });
 const tabBtn = (id) => [...document.querySelectorAll('.tab')].find((b) => b.dataset.tab === id);
+// kategorie poznámek ke stroji (#sonda, #poruchy…) otevírají záložku Stroj
+const strojKat = (id) => window.STROJ_KAT.find((k) => k.id === id);
+function otevri(id) {
+  const k = strojKat(id);
+  if (k) {
+    store.set('strojKat', k.id);
+    window.strojUkaz?.(k.id);
+    tabBtn('stroj').click();
+  } else tabBtn(id)?.click();
+}
 function zalozkaZAdresy() {
-  const b = tabBtn(decodeURIComponent(location.hash.slice(1)));
-  if (b) { b.click(); window.scrollTo(0, 0); setTimeout(() => window.scrollTo(0, 0), 0); }
-  return !!b;
+  const id = decodeURIComponent(location.hash.slice(1));
+  const ok = !!(tabBtn(id) || strojKat(id));
+  if (ok) { otevri(id); window.scrollTo(0, 0); setTimeout(() => window.scrollTo(0, 0), 0); }
+  return ok;
 }
 
 /* ---------- Menu ☰ – všechny nástroje na jedné obrazovce ---------- */
@@ -49,12 +60,13 @@ const MENU = [
   ['Výpočty', [['kalk', '⚙️'], ['cas', '⏱️'], ['drsnost', '🔬'], ['tol', '📏'], ['kuzel', '🔺'], ['teplo', '🌡️']]],
   ['Programování', [['sinumerik', '🏭'], ['rez', '◢'], ['geo', '⌒'], ['trig', '📐'], ['calc', '🔢']]],
   ['Nástroje', [['vbd', '💎'], ['nm', '🔧'], ['prevod', '🔄']]],
+  ['Stroj', window.STROJ_KAT.map((k) => [k.id, k.ikona, k.nazev])],
   ['Dílna', [['smena', '✅'], ['poznamky', '📝']]],
 ];
 const menu = document.getElementById('menu'), menuBtn = document.getElementById('menu-btn');
 document.getElementById('menu-in').innerHTML = MENU.map(([g, items]) =>
   `<p class="menu-g">${g}</p><div class="menu-grid">` +
-  items.map(([id, ic]) => `<button type="button" class="menu-i" data-go="${id}"><span>${ic}</span>${tabBtn(id).textContent}</button>`).join('') + '</div>').join('');
+  items.map(([id, ic, txt]) => `<button type="button" class="menu-i" data-go="${id}"><span>${ic}</span>${txt || tabBtn(id).textContent}</button>`).join('') + '</div>').join('');
 function menuOtevrit(ano) {
   menu.hidden = !ano;
   menuBtn.setAttribute('aria-expanded', String(ano));
@@ -62,14 +74,15 @@ function menuOtevrit(ano) {
   document.body.classList.toggle('menu-open', ano);
   if (ano) {
     menu.style.setProperty('--menu-top', document.querySelector('.top').getBoundingClientRect().bottom + 'px');
-    const akt = document.querySelector('.tab.active')?.dataset.tab;
+    let akt = document.querySelector('.tab.active')?.dataset.tab;
+    if (akt === 'stroj') akt = store.get('strojKat', 'sonda');
     menu.querySelectorAll('.menu-i').forEach((b) => b.classList.toggle('active', b.dataset.go === akt));
   }
 }
 menuBtn.addEventListener('click', () => menuOtevrit(menu.hidden));
 menu.addEventListener('click', (e) => {
   const b = e.target.closest('[data-go]');
-  if (b) tabBtn(b.dataset.go).click();
+  if (b) otevri(b.dataset.go);
   if (b || e.target === menu) menuOtevrit(false);
 });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) menuOtevrit(false); });

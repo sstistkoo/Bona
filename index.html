@@ -36,6 +36,7 @@
       <button class="tab" data-tab="vbd">VBD a držáky</button>
       <button class="tab" data-tab="nm">Nm</button>
       <button class="tab" data-tab="prevod">Převodník</button>
+      <button class="tab" data-tab="stroj">Stroj</button>
       <button class="tab" data-tab="smena">Směna</button>
       <button class="tab" data-tab="poznamky">Poznámky</button>
     </nav>
@@ -509,6 +510,24 @@
       </div>
     </section>
 
+    <!-- STROJ – poznámky ke stroji -->
+    <section id="stroj" class="panel">
+      <div class="card">
+        <h2>Poznámky ke stroji</h2>
+        <input type="search" id="st-hledat" placeholder="Hledat ve všech kategoriích…">
+        <div class="seg seg-wrap st-seg" id="st-seg"></div>
+        <div id="st-obsah">
+          <h3 class="sub" id="st-nadpis"></h3>
+          <p class="hint" id="st-popis"></p>
+          <div class="ref-list" id="st-seznam"></div>
+          <p class="lbl">Moje poznámky (ukládají se jen v tomto prohlížeči)</p>
+          <textarea id="st-moje" rows="8"></textarea>
+          <p class="hint" id="st-stav"></p>
+        </div>
+        <div class="ref-list" id="st-vysledky" hidden></div>
+      </div>
+    </section>
+
     <!-- SMĚNA -->
     <section id="smena" class="panel">
       <div class="card">
@@ -546,11 +565,13 @@
   <footer>Bona · CNC pomocník · <span id="verze"></span></footer>
   <script src="js/vypocty.js"></script>
   <script src="js/sinumerik-data.js"></script>
+  <script src="js/stroj-data.js"></script>
   <script src="app.js"></script>
   <script src="js/nastroje.js"></script>
   <script src="js/kuzel.js"></script>
   <script src="js/sinumerik.js"></script>
   <script src="js/prevod-nm.js"></script>
   <script src="js/dilna.js"></script>
+  <script src="js/stroj.js"></script>
 </body>
 </html>
