@@ -442,3 +442,5 @@ html.zamceno body > :not(#brana) { display: none !important; }
 /* Fotky u poznámek */
 .st-foto { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 .st-foto img { width: 100%; height: auto; border-radius: 8px; border: 1px solid #334; display: block; }
+
+.zk-foto { width: 100%; height: auto; border-radius: 8px; border: 1px solid #334; display: block; margin-top: 8px; }

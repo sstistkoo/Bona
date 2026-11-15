@@ -28,6 +28,7 @@
         'V Obrobky (Přehled programů) označit starý program, který má křížek X ve sloupci Zaveden → Odložit NC → HD. Křížek zmizí.',
         'Označit nový program → Nahrát HD → NC. Tím se navolí jako program, který se bude jet. U programu se objeví křížek X ve sloupci Zaveden.',
       ],
+      f: ['prehled-programu.jpg'],
     }]],
     ['Seřizování – kontrola parametrů', [
       {
@@ -51,9 +52,10 @@
         d: [
           'Zkontrolovat programy VAR_DEF_1 a VAR_DEF_2.',
           'Podpěrky („íčko“): 97,7 (CHES4). Zjistit z předchozí zakázky, jak to má být, a přepsat do nové.',
-          'H2 a H3 v programu = upnutí čelistí, max a min (rozsah).',
-          'Upínání: Menu Select → Menu 1, upínání −10 / +10 od skutečné.',
+          'Upnutí čelistí: Menu Select → Menu 1 → softklávesa Upínač. Čelisti se upnou na obrobek na nějakou hodnotu (Skutečná poloha). Od ní se nastavuje rozsah upnutí: minimum o 10 méně a maximum o 10 více, než na kolik se upnulo (pole „Dílec upnut“ – min. a max. mezní hodnota pro hlídání upínacího bodu; na fotce např. 219 a 239).',
+          'Tyto hodnoty (od skutečné polohy) se musí zapsat v programu do H2 a H3 (upnutí čelistí, max a min).',
         ],
+        f: ['upinac-menu1.jpg'],
       },
     ]],
     ['Přepsání programu (nová zakázka)', [{
@@ -68,10 +70,12 @@
         'Zkontrolovat Chuck_Stat = 0 (čelisti).',
         'Na ovládacím panelu stisknout tlačítko upínač osazení (obrázek čelistí, vpravo vedle tlačítka C3).',
         'Na obrazovce Upínač osazení zadat číslo programu na dvou místech: první řádek seznamu „Nahlášené typy obrobku“ a pole „aktuální typ“ (třetí a čtvrté místo).',
+        'Nakonec: Program → softklávesa Obrobky → označit program → Nahrát HD → NC.',
       ],
+      f: ['prehled-programu.jpg'],
     }]],
   ];
-  const nove = () => VYCHOZI.map(([n, p]) => ({ n, p: p.map((x) => ({ t: x.t, d: x.d, ok: false })) }));
+  const nove = () => VYCHOZI.map(([n, p]) => ({ n, p: p.map((x) => ({ t: x.t, d: x.d, f: x.f, ok: false })) }));
   // Kroky (d) a výchozí body se berou z kódu, aby se opravy projevily i v už uloženém seznamu.
   // Ukládá se jen odškrtnutí, vlastní body a smazané výchozí body.
   let smazano = get('smazano', []);
@@ -108,7 +112,7 @@
     $('zk-postup').textContent = `Hotovo ${hotovo} z ${celkem}`;
     $('zk-seznam').innerHTML = skupiny.map((g, gi) =>
       `<h3 class="sub">${esc(g.n)}</h3><ul class="checklist">` +
-      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${esc(k)}</li>`).join('')}</ol></details>` : ''}</li>`).join('') +
+      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${esc(k)}</li>`).join('')}</ol>${(p.f || []).map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img class="zk-foto" src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</details>` : ''}</li>`).join('') +
       `</ul><div class="row"><input type="text" data-add="${gi}" placeholder="Přidat do skupiny…"><button class="secondary" data-addbtn="${gi}">Přidat</button></div>`
     ).join('');
   }
