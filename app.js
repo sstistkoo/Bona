@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.54';
+const VERZE = '0.8.55';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -101,6 +101,8 @@ function ukazAktualni() {
   document.title = p ? p.txt + ' – Bona' : 'Bona – CNC pomocník';
   bnav.querySelectorAll('[data-bn]').forEach((b) => b.classList.toggle('active', b.dataset.bn === t && menu.hidden));
   zapisNedavne(aktualniId());
+  zapisHistorii(aktualniId());
+  document.getElementById('top-calc').classList.toggle('active', t === 'calc');
 }
 
 /* Naposledy použité – nahoře v menu */
@@ -166,6 +168,47 @@ menu.addEventListener('click', (e) => {
   if (b || e.target === menu) menuOtevrit(false);
 });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) menuOtevrit(false); });
+
+/* ---------- Tlačítka vpravo nahoře: 🔢 kalkulačka · ⛶ celá obrazovka · ✕ zavřít ---------- */
+// Historie sekcí v tomto spuštění – ✕ vrací na předchozí (jako zavření okna ve SKICE)
+const historie = [];
+function zapisHistorii(id) {
+  if (POLOZKY[id] && historie[historie.length - 1] !== id) historie.push(id);
+  if (historie.length > 30) historie.shift();
+}
+function zpet() {
+  if (!menu.hidden) { menuOtevrit(false); return; }
+  historie.pop();                       // aktuální sekce
+  const pred = historie.pop();          // předchozí (po otevření se znovu zapíše)
+  if (pred) otevri(pred);
+  else menuOtevrit(true);               // není kam se vrátit → přehled všech nástrojů
+}
+document.getElementById('top-zavrit').addEventListener('click', zpet);
+document.getElementById('top-calc').addEventListener('click', () => {
+  if (document.querySelector('.tab.active')?.dataset.tab === 'calc' && menu.hidden) { zpet(); return; }
+  menuOtevrit(false);
+  tabBtn('calc').click();
+});
+// Celá obrazovka (Android/PC). iPhone ji pro stránky nepodporuje → tlačítko se neukáže.
+const fullBtn = document.getElementById('top-full');
+const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
+  fullBtn.hidden = false;
+  fullBtn.addEventListener('click', () => {
+    const d = document.documentElement;
+    if (fsEl()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else (d.requestFullscreen || d.webkitRequestFullscreen).call(d)?.catch?.(() => {});
+  });
+  const fsStav = () => {
+    const on = !!fsEl();
+    fullBtn.classList.toggle('on', on);
+    fullBtn.title = on ? 'Ukončit celou obrazovku' : 'Celá obrazovka';
+    fullBtn.setAttribute('aria-label', fullBtn.title);
+  };
+  document.addEventListener('fullscreenchange', fsStav);
+  document.addEventListener('webkitfullscreenchange', fsStav);
+}
+
 if (!zalozkaZAdresy()) (tabBtn(store.get('tab', 'kalk')) || tabBtn('kalk')).click();
 window.addEventListener('hashchange', zalozkaZAdresy);
 

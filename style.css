@@ -684,3 +684,22 @@ details > summary { -webkit-tap-highlight-color: transparent; }
   .panel.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; align-items: start; }
   .panel.active > .card { margin-bottom: 0; }
 }
+
+/* ── hlavička: 🔢 kalkulačka · ⛶ celá obrazovka · ✕ zavřít ── */
+.top-akce { flex: none; display: flex; gap: 6px; }
+.top-btn {
+  width: 44px; height: 44px; min-height: 0; padding: 0; display: grid; place-items: center;
+  background: var(--code-bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px;
+  font-size: 1.15rem; line-height: 1;
+}
+.top-btn.active { border-color: var(--accent); background: var(--accent-soft); }
+.top-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.top-btn .ic-min, .top-btn.on .ic-max { display: none; }
+.top-btn.on .ic-min { display: inline; }
+#top-zavrit { font-size: 1.25rem; }
+@media (max-width: 700px) {
+  .menu-btn { display: none; }          /* menu je ve spodní liště (Vše) */
+  .top-row { gap: 8px; }
+  .top-akce { gap: 5px; }
+  .top-btn { width: 42px; height: 42px; }
+}
