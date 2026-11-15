@@ -101,18 +101,25 @@
   /* ---------- Stroje a hodnoty pro nastavování ---------- */
   // sk = skupina, k = klíč, n = název, kde = kde se hodnota najde ve stroji
   const PAR = [
-    { sk: 'Rozteč', k: 'rozt', n: 'Korekce rozteče (R23 = … + korekce)', kde: 'PARAMDER' },
-    { sk: 'Kužel díry', k: 'ko', n: 'Konus _KO', kde: 'DIRAHOT1 / W_OTVHO1' },
-    { sk: 'Drsnost', k: 'r', n: 'Rádius nože rε [mm]', kde: 'nástroj' },
-    { sk: 'Drsnost', k: 'f1', n: 'Posuv _F1 [mm/ot]', kde: 'DIRAHOT1 / W_OTVHO1' },
-    { sk: 'Drsnost', k: 'f2', n: 'Posuv RAD _F2 [mm/ot]', kde: 'DIRAHOT1 / W_OTVHO1' },
-    { sk: 'Drsnost', k: 'ra', n: 'Drsnost Ra [µm]', kde: 'výkres' },
-    { sk: 'Podpěrky', k: 'podp', n: 'Podpěrky („íčko“)', kde: 'VAR_DEF_1 / VAR_DEF_2' },
-    { sk: 'Upnutí čelistí', k: 'upn', n: 'Rozsah upnutí H2 / H3 (max a min)', kde: 'VAR_DEF (skutečná poloha z Upínače)' },
-    { sk: 'Uživatelská data', k: 'zero', n: 'Zero_Offset', kde: 'Parametry → Uživatelská data' },
-    { sk: 'Uživatelská data', k: 'chuck', n: 'Chuck_Stat', kde: 'Parametry → Uživatelská data' },
-    { sk: 'Uživatelská data', k: 'op', n: 'OP_Step', kde: 'Parametry → Uživatelská data' },
+    { sk: 'Rozteč', k: 'rozt', kr: 'Korekce R23 +', n: 'Korekce rozteče (R23 = … + korekce)', kde: 'PARAMDER' },
+    { sk: 'Kužel díry', k: 'ko', kr: 'Konus _KO', n: 'Konus _KO', kde: 'DIRAHOT1 / W_OTVHO1' },
+    { sk: 'Drsnost', k: 'r', kr: 'Rádius rε', n: 'Rádius nože rε [mm]', kde: 'nástroj' },
+    { sk: 'Drsnost', k: 'f1', kr: 'Posuv _F1', n: 'Posuv _F1 [mm/ot]', kde: 'DIRAHOT1 / W_OTVHO1' },
+    { sk: 'Drsnost', k: 'f2', kr: 'Posuv RAD _F2', n: 'Posuv RAD _F2 [mm/ot]', kde: 'DIRAHOT1 / W_OTVHO1' },
+    { sk: 'Drsnost', k: 'ra', kr: 'Drsnost Ra', n: 'Drsnost Ra [µm]', kde: 'výkres' },
+    { sk: 'Podpěrky', k: 'podp', kr: 'Podpěrky', n: 'Podpěrky („íčko“)', kde: 'VAR_DEF_1 / VAR_DEF_2' },
+    { sk: 'Upnutí čelistí', k: 'upn', kr: 'Upnutí H2/H3', n: 'Rozsah upnutí H2 / H3 (max a min)', kde: 'VAR_DEF (skutečná poloha z Upínače)' },
+    { sk: 'Uživatelská data', k: 'zero', kr: 'Zero_Offset', n: 'Zero_Offset', kde: 'Parametry → Uživatelská data' },
+    { sk: 'Uživatelská data', k: 'chuck', kr: 'Chuck_Stat', n: 'Chuck_Stat', kde: 'Parametry → Uživatelská data' },
+    { sk: 'Uživatelská data', k: 'op', kr: 'OP_Step', n: 'OP_Step', kde: 'Parametry → Uživatelská data' },
   ];
+  // Které hodnoty stroje se ukážou u kterého bodu kontrolního seznamu
+  const HODNOTY_U_BODU = {
+    'Kontrola rozteče (PARAMDER)': ['rozt'],
+    'Kontrola kužele díry a drsnosti (W_OTVHO1)': ['ko', 'f1', 'f2', 'r', 'ra'],
+    'Kontrola VAR_DEF 1 a 2 (podpěrky, upnutí čelistí)': ['podp', 'upn'],
+    'Přepsat uživatelská data pro novou zakázku': ['zero', 'chuck', 'op'],
+  };
   const ZAKLAD = [{ id: 'ches4', nazev: 'CHES4', h: { rozt: '0,01', ko: '0,034', r: '', f1: '0,22', f2: '0,2', ra: '', podp: '97,7', upn: '±10', zero: '97,7', chuck: '0', op: '1' } }];
   let stroje = get('stroje', null) || JSON.parse(JSON.stringify(ZAKLAD));
   let strojAkt = get('strojAkt', stroje[0].id);
@@ -240,13 +247,23 @@
   const pojistka = window.hlidejText?.($('zk-pozn'), () => 'zakazka');
 
   /* ---------- Kontrolní seznam ---------- */
+  // řádek s hodnotami vybraného stroje pod bodem (klepnutím se otevřou hodnoty stroje)
+  function hodnotyBodu(t) {
+    const kl = HODNOTY_U_BODU[t]; if (!kl) return '';
+    const st = stroj();
+    const pol = kl.map((k) => {
+      const d = PAR.find((x) => x.k === k), v = st.h[k];
+      return `<span class="zk-hb">${esc(d.kr)} <b>${v ? esc(v) : '–'}</b></span>`;
+    }).join('');
+    return `<button type="button" class="zk-hodn" data-ukaz-stroj title="Upravit hodnoty stroje"><span class="zk-hs">🏭 ${esc(st.nazev)}</span>${pol}</button>`;
+  }
   function vykresli() {
     const hotovo = skupiny.reduce((a, g) => a + g.p.filter((x) => x.ok).length, 0);
     const celkem = skupiny.reduce((a, g) => a + g.p.length, 0);
     $('zk-postup').textContent = `Hotovo ${hotovo} z ${celkem}`;
     $('zk-seznam').innerHTML = skupiny.map((g, gi) =>
       `<h3 class="sub">${esc(g.n)}</h3><ul class="checklist">` +
-      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${esc(k)}</li>`).join('')}</ol>${(p.f || []).map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img class="zk-foto" src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</details>` : ''}</li>`).join('') +
+      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${hodnotyBodu(p.t)}${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${esc(k)}</li>`).join('')}</ol>${(p.f || []).map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img class="zk-foto" src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</details>` : ''}</li>`).join('') +
       '</ul>'
     ).join('');
   }
@@ -256,6 +273,11 @@
     skupiny[g].p[i].ok = e.target.checked; zmena();
   });
   $('zk-seznam').addEventListener('click', (e) => {
+    if (e.target.closest('[data-ukaz-stroj]')) {
+      panelOtevren = true; hodnotyOtevreny = true; vykresliStroje();
+      $('zk-stroje-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     const d = e.target.closest('[data-del]');
     if (d) {
       const g = skupiny[d.dataset.g], p = g.p[d.dataset.del];

@@ -835,3 +835,9 @@ body:has(#kalk.panel.active) > footer { display: none; }
 #zk-smazat-stroj { width: 100%; margin-top: 8px; }
 #zk-smazat-stroj:disabled { opacity: 0.4; }
 .zk-na-drs { width: 100%; margin: 2px 0 8px; }
+/* hodnoty vybraného stroje u bodu kontrolního seznamu */
+.zk-hodn { display: flex; flex-wrap: wrap; gap: 4px 12px; width: 100%; min-height: 0; margin: 2px 0 4px 34px; padding: 6px 10px; text-align: left; font-weight: 400; font-size: 0.85rem; background: var(--code-bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; }
+.zk-hodn .zk-hs { width: 100%; color: var(--muted); font-size: 0.78rem; }
+.zk-hb b { color: var(--accent); }
+.checklist li.done .zk-hodn span { text-decoration: none; color: inherit; }
+.checklist li.done .zk-hodn .zk-hs { color: var(--muted); }
