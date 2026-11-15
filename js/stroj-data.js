@@ -49,7 +49,28 @@ window.STROJ_POZNAMKY = {
       ].join('\n'),
     },
   ],
-  korekce: [],
+  korekce: [
+    {
+      t: 'Korekce rozměru – díra',
+      p: [
+        '1. Menu Select (klávesa na panelu).',
+        '2. Program (klávesa na panelu).',
+        '3. Otevřít program DIRAHOT1.',
+        '4. Najít řádek W_OTVHO1.',
+        '5. Zpětný překlad (softklávesa na panelu).',
+        '',
+        'Při tupém plátku a menším Ø a opětovném braní špony díry: úběr z rozměru 0,03 mm.',
+      ].join('\n'),
+    },
+    {
+      t: 'Díra náboje – 1 špona, reset před sondou',
+      p: [
+        '1205 (vypnout měrný řez).',
+        'Messschnitt_CH2.SPF → uživatelské cykly.',
+        'GOTOF AAA ; měření bez řezu (vynecháš: dej středník na začátek řádku).',
+      ].join('\n'),
+    },
+  ],
   poruchy: [],
   manipulator: [],
 };
