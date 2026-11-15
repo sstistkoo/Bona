@@ -132,7 +132,7 @@
     // Chyby zápisu
     const anyInput = SOLVE.some(isEdited) || !!ref;
     const bad = SOLVE.filter((key) => isEdited(key) && !Number.isFinite(key === 'C' ? cValue() : num(fieldOf(key))));
-    const badName = { C: 'kuželovitost', es: 'horní úchylka', ei: 'dolní úchylka', ref: 'hloubka zadaného Ø', pt: 'hloubka měřicího místa' };
+    const badName = { C: cform === 'half' ? 'úhel α (musí být mezi 0° a 90°)' : 'kuželovitost', es: 'horní úchylka', ei: 'dolní úchylka', ref: 'hloubka zadaného Ø', pt: 'hloubka měřicího místa' };
     ['es', 'ei', 'ref'].forEach((id) => { if ($(id).value.trim() && !Number.isFinite(num($(id)))) bad.push(id); });
     if (ptRows().some((r) => { const t = r.querySelector('.kz-pt-d').value.trim(); return t && !(ev(t) >= 0); })) bad.push('pt');
     const err = bad.length ? 'Neplatný zápis: ' + bad.map((b) => badName[b] || b).join(', ') + '.' : sol.error && anyInput ? sol.error : sol.warn || '';
@@ -144,7 +144,7 @@
     const dev = T.fmtDev(es, ei);
 
     // Kuželovitost ve všech tvarech + suport
-    if (okNum(sol.C)) {
+    if (okNum(sol.C) && !sol.error) {
       const fm = T.taperForms(sol.C);
       $('forms').innerHTML = `<b>${fm.C > 0 ? '1:' + fm.ratio.toFixed(fm.ratio < 100 ? 3 : 1) : 'válec'}</b> │ α ${fm.half.toFixed(5)}° │ vrcholový 2α ${fm.full.toFixed(4)}° │ změna Ø ${fm.C.toFixed(6)} mm/mm`;
     } else $('forms').textContent = '';
@@ -231,6 +231,15 @@
       aTxt: 'α = ' + (okNum(sol.C) ? fmtN(T.taperForms(sol.C).half, 4) + '°' : '?'),
       stForm: (f) => stOf('C') === 'val' ? (f === cform ? 'val' : 'calc') : stOf('C'),
       ref: refM, rows,
+    });
+    svg.setAttribute('viewBox', '0 0 340 ' + geo.h);   // výška náčrtu podle počtu popisků
+    // větší klikací plocha kolem každé kóty (prst je větší než rámeček 19 px), neviditelná
+    svg.querySelectorAll('.sk-edit > .sk-hit').forEach((h) => {
+      const t = h.cloneNode(false);
+      const x = +h.getAttribute('x'), y = +h.getAttribute('y'), w = +h.getAttribute('width'), hh = +h.getAttribute('height');
+      t.setAttribute('class', 'sk-tap'); t.setAttribute('x', x - 8); t.setAttribute('y', y - 5);
+      t.setAttribute('width', w + 16); t.setAttribute('height', hh + 10); t.removeAttribute('rx');
+      h.parentNode.insertBefore(t, h);
     });
   }
 
@@ -392,7 +401,7 @@
   $('stepbtn').addEventListener('click', () => {
     const L = num($('L')), step = num($('step'));
     if (!(L > 0)) { $('err').textContent = 'Pro rozepsání po krocích nejdřív zadej (nebo dopočítej) délku kužele.'; $('err').hidden = false; return; }
-    const s = step > 0 ? step : Math.round(L / 4);
+    const s = step > 0 ? step : L / 4;   // bez kroku: 5 míst rovnoměrně od 0 do L
     ptsEl.innerHTML = '';
     for (let d = 0; d <= L + 1e-9 && ptsEl.children.length < 60; d += s) addPoint(String(Math.round(d * 1000) / 1000), 'A');
     update();

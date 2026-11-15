@@ -37,6 +37,9 @@ function bonaNacrt(src) {
   nahradit(/^  s \+= lg\(.*\n/gm, '', 'legenda – řádky');
   nahradit(/const R = 64,/, 'const R = 40,', 'poloměr oblouku α');         // oblouk α menší, aby se vešel do nižšího kužele
   nahradit(/y\(L \* f\) - 60/, 'y(L * f) - 36', 'poloha popisku α');
+  // kužel se prodlouží jen když je hodně popisků (měřicí místa + zadaný Ø), výška náčrtu se vrací jako h
+  nahradit(/function drawBoreSketch\(svg, m\) \{\n  const L = m\.L;/, 'function drawBoreSketch(svg, m) {\n  const L = m.L;\n  const BOT = Math.min(520, Math.max(240, 110 + (m.rows.length + (m.ref ? 1 : 0)) * 19));', 'dynamická výška');
+  nahradit(/    L,\n    zFromY:/, '    L, h: BOT + 32,\n    zFromY:', 'návrat výšky');
   return src;
 }
 

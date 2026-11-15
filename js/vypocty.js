@@ -848,6 +848,7 @@ const CLS = { val: 'sk-val', calc: 'sk-calc', empty: 'sk-empty' };
  */
 function drawBoreSketch(svg, m) {
   const L = m.L;
+  const BOT = Math.min(520, Math.max(240, 110 + (m.rows.length + (m.ref ? 1 : 0)) * 19));
   const y = z => BOT - (z / L) * (BOT - TOP);
   const yA = y(0), yB = y(L);
   const dir = m.bigSide === 'A' ? -1 : 1;               // Ø roste směrem k větší straně
@@ -949,7 +950,7 @@ function drawBoreSketch(svg, m) {
 
   svg.innerHTML = s;
   return {
-    L,
+    L, h: BOT + 32,
     zFromY: yy => (yy < yB - 2 || yy > yA + 2) ? null : Math.min(L, Math.max(0, (BOT - yy) / (BOT - TOP) * L)),
   };
 }

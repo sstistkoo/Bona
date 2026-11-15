@@ -802,3 +802,4 @@ body:has(#kalk.panel.active) > footer { display: none; }
 .kz-leg-val { color: var(--sk-line); }
 .kz-leg-calc { color: var(--sk-calc); }
 .kz-leg { display: block; margin-top: 4px; color: var(--muted); }
+.kz-svg .sk-tap { fill: transparent; stroke: none; }
