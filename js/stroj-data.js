@@ -17,8 +17,10 @@ window.STROJ_KAT = [
 window.STROJ_POZNAMKY = {
   mda: [
     {
-      t: 'OSTORE2 (SYF\\OSTORE2.SYF)',
+      t: 'Vypnutí otočného nástroje, stůl se točí (OSTORE2)',
       p: [
+        'Program SYF\\OSTORE2.SYF:',
+        '',
         'DIAMOF',
         'GETD (S1)',
         'SETMS (1)',
@@ -32,7 +34,7 @@ window.STROJ_POZNAMKY = {
         'GETD (S1) – převzetí vřetene S1 do kanálu (výměna osy/vřetene bez synchronizace).',
         'SETMS (1) – vřeteno 1 se stává hlavním (master) vřetenem.',
         'G56 – posunutí nulového bodu (G56).',
-        'C_OFF (2) – příkaz stroje (není standardní Sinumerik), pravděpodobně vypnutí osy C; číslo 2 = suport 2 (dle autora).',
+        'C_OFF (2) – příkaz stroje (není standardní Sinumerik): vypnutí otočného nástroje (osy C), aby se stůl točil jako při soustružení čela nožem; číslo 2 = suport 2.',
         'M1=3 S1=80 – vřeteno 1 vpravo, 80 ot/min.',
         'G91 G1 X2=33 Z2=0.16 F0.9 – přírůstkový pohyb suportu 2: X2 = osa X suportu 2 (33 mm v poloměru), Z2 = osa Z suportu 2 (0,16 mm), posuv F0,9.',
         '',
