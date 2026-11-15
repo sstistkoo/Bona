@@ -161,6 +161,36 @@ window.STROJ_POZNAMKY = {
       ].join('\n'),
     },
   ],
-  poruchy: [],
+  poruchy: [
+    {
+      t: 'Porucha – požadavek na údržbu (IWI / IFS)',
+      p: [
+        'Na PC: IWI → IFS (IWI požadavek).',
+        '1. Requestor → nový požadavek.',
+        '2. Typ 01 – Reaktivní údržba (poruchy, závady).',
+        '3. Středisko údržby → UDR.',
+        '4. Struktura – výběr objektu (stroj): Chess4 / Hessap4 / Lk4.',
+        '5. Provoz údržby 2 – studená část.',
+        '6. Šablona úlohy.',
+        '7. Popis závady, např. „filtry vysokotlakého čerpadla – znečištění“.',
+        '8. Priorita 0 – odstranit ihned.',
+        '9. Zaškrtnout „odstávka zařízení“ (ikona se zaškrtnutím).',
+      ].join('\n'),
+    },
+    {
+      t: 'Výměna filtrů (oprava / údržba)',
+      p: [
+        'Postup: nahlásit požadavek na údržbu v IWI / IFS (viz „Porucha – požadavek na údržbu“).',
+        'Příklad: filtry vysokotlakého čerpadla – znečištění → priorita 0, odstranit ihned, odstávka zařízení.',
+      ].join('\n'),
+    },
+    {
+      t: 'Měřicí sonda obrobku K1 – porucha (Marposs)',
+      p: [
+        'K1 = měřicí sonda obrobku Marposs.',
+        'Porucha sondy: vyměnit baterie v sondě.',
+      ].join('\n'),
+    },
+  ],
   manipulator: [],
 };
