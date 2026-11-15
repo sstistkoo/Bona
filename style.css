@@ -803,3 +803,9 @@ body:has(#kalk.panel.active) > footer { display: none; }
 .kz-leg-calc { color: var(--sk-calc); }
 .kz-leg { display: block; margin-top: 4px; color: var(--muted); }
 .kz-svg .sk-tap { fill: transparent; stroke: none; }
+
+/* Nová zakázka – poznámka v rozbalovací záložce */
+#zk-pozn-box { margin-top: 0; }
+#zk-pozn-box > summary { font-size: 1.05rem; font-weight: 700; padding: 6px 0; }
+#zk-pozn-box > summary small { font-weight: 400; color: var(--muted); font-size: 0.8rem; }
+#zk-pozn-box[open] > summary { margin-bottom: 10px; }

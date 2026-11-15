@@ -560,12 +560,12 @@
     <section id="zakazka" class="panel">
       <div class="card">
         <h2>Chystání na novou zakázku</h2>
-        <!-- skryté prvky jen pro starší uloženou verzi zakazka.js v telefonu (jinak spadne a seznam se nevykreslí) -->
-        <details id="zk-pozn-box" hidden><summary><small id="zk-pozn-stav"></small></summary></details>
         <!-- skrytá pole jen pro starší uloženou verzi zakazka.js v telefonu (jinak spadne); lze později smazat -->
         <div hidden><input id="zk-cislo"><input id="zk-vykres"><input id="zk-mat"><input id="zk-prog"></div>
-        <p class="lbl">Poznámka k zakázce</p>
-        <textarea id="zk-pozn" rows="4"></textarea>
+        <details id="zk-pozn-box">
+          <summary>📝 Poznámka k zakázce <small id="zk-pozn-stav"></small></summary>
+          <textarea id="zk-pozn" rows="4"></textarea>
+        </details>
       </div>
       <div class="card">
         <h2>Kontrolní seznam</h2>

@@ -104,8 +104,14 @@
     $(id).value = get(id, '');
     $(id).addEventListener('input', () => set(id, $(id).value));
   });
+  // Poznámka je v rozbalovací záložce; když je prázdná, zůstane sbalená.
+  const stavPozn = () => {
+    $('zk-pozn-stav').textContent = $('zk-pozn').value.trim() ? '· vyplněno' : '';
+  };
   $('zk-pozn').value = get('pozn', '');
-  $('zk-pozn').addEventListener('input', () => set('pozn', $('zk-pozn').value));
+  $('zk-pozn-box').open = !!$('zk-pozn').value.trim();
+  stavPozn();
+  $('zk-pozn').addEventListener('input', () => { set('pozn', $('zk-pozn').value); stavPozn(); });
 
   function vykresli() {
     const hotovo = skupiny.reduce((a, g) => a + g.p.filter((x) => x.ok).length, 0);
@@ -147,6 +153,7 @@
     if (!confirm('Začít novou zakázku? Odškrtne se seznam a vymažou se údaje o zakázce.')) return;
     skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false)));
     POLE.concat('zk-pozn').forEach((id) => { if ($(id)) $(id).value = ''; set(id === 'zk-pozn' ? 'pozn' : id, ''); });
+    stavPozn(); $('zk-pozn-box').open = false;
     uloz();
   });
   vykresli();
