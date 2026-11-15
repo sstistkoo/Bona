@@ -63,6 +63,18 @@ window.STROJ_POZNAMKY = {
       ].join('\n'),
     },
     {
+      t: 'Korekce rozměru – parametry (korekce nástroje)',
+      p: [
+        '1. Menu Select → Parametry.',
+        '2. Klávesa CHANNEL (obrázek 1…N se šipkami): přepnout na kanál 2 – suport (strana).',
+        '3. Detail nástrojů.',
+        '4. Data břitu.',
+        '5. Druhá geometrie (u díry): −0,01 (menší o stovku).',
+        '',
+        'Nebo opotřebení, např. u vrtáku.',
+      ].join('\n'),
+    },
+    {
       t: 'W_OTVHO1 – parametry cyklu (díra na hotovo)',
       p: [
         'Pořadí v řádku: W_OTVHO1(D1, Z0, Z1, R1, K1, KU, D2, KO, F1, F2, SO)',
