@@ -818,23 +818,19 @@ body:has(#kalk.panel.active) > footer { display: none; }
 .zk-lista button { flex: 1; padding: 6px 8px; }
 .zk-lista #zk-stroj-btn { flex: 1.3; font-weight: 700; }
 .zk-lista button:disabled { opacity: 0.4; }
-/* hodnoty pro stroj */
-.zk-parametry { cursor: pointer; }
-.zk-parametry .sub { margin: 12px 0 4px; }
-.zk-par { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
-.zk-par-n small { display: block; color: var(--muted); font-size: 0.78rem; }
-.zk-par b { white-space: nowrap; font-size: 1.05rem; }
-.zk-ra { margin: 2px 0 4px; }
-/* okno se stroji */
-.zk-modal { position: fixed; inset: 0; z-index: 300; background: rgba(0, 0, 0, 0.55); display: flex; align-items: flex-start; justify-content: center; padding: 12px; overflow-y: auto; }
-.zk-modal[hidden] { display: none; }
-.zk-modal-in { width: min(520px, 100%); margin: 0; }
-.zk-modal-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
-.zk-modal-head h2 { margin: 0; border: 0; padding: 0; }
-.zk-modal-head button { width: 44px; padding: 0; flex: none; }
-.zkm-pole label { display: block; margin-bottom: 8px; }
-.zkm-pole input { width: 100%; }
+/* rozbalovací panel se stroji */
+#zk-stroj-btn.open { filter: brightness(1.1); }
+.zk-stroje-panel { margin-bottom: 10px; padding: 10px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
+.zk-stroje-seznam { display: flex; flex-wrap: wrap; gap: 8px; }
+.zk-stroj { background: var(--code-bg); color: var(--text); border: 1px solid var(--border); font-weight: 700; padding: 6px 14px; }
+.zk-stroj.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.zk-plus { width: 48px; padding: 0; font-size: 1.3rem; }
+#zk-novy-radek { margin: 10px 0 0; }
+.zk-hodnoty { margin-top: 10px; }
+.zk-hodnoty label { display: block; margin-bottom: 8px; }
+.zk-hodnoty input { width: 100%; }
+.zk-hodnoty .sub { margin: 12px 0 4px; }
 .zk-kde { color: var(--muted); font-weight: 400; }
-#zkm-smazat, #zkm-hotovo { width: 100%; margin-top: 8px; }
-#zkm-smazat:disabled { opacity: 0.4; }
-body.zk-modal-on { overflow: hidden; }
+.zk-ra { margin: -4px 0 8px; }
+#zk-smazat-stroj { width: 100%; margin-top: 8px; }
+#zk-smazat-stroj:disabled { opacity: 0.4; }
