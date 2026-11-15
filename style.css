@@ -438,3 +438,7 @@ html.zamceno body > :not(#brana) { display: none !important; }
 #brana input { padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #556; background: #11151a; color: #fff; text-align: center; }
 #brana button { padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 0; background: #f0a500; color: #111; font-weight: 700; }
 #brana-chyba { color: #ff7b7b; min-height: 1.2em; }
+
+/* Fotky u poznámek */
+.st-foto { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.st-foto img { width: 100%; height: auto; border-radius: 8px; border: 1px solid #334; display: block; }

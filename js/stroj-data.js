@@ -45,6 +45,7 @@ window.STROJ_POZNAMKY = {
         '6. Zasunutí nože – tentýž přepínač do druhé polohy.',
         '7. Zavření dveří (laser).',
       ].join('\n'),
+      f: ['panel-zasobnik.jpg'],
     },
     {
       t: 'Zapsání nástroje',
@@ -101,6 +102,7 @@ window.STROJ_POZNAMKY = {
         '7. Auto → Start.',
         '8. 2× Start. Pozor na CUT_MEM (hláška o přerušení nulového bodu). Zapsat zpět posunutí nulového bodu (OFFSET X, Z z kroku 1).',
       ].join('\n'),
+      f: ['reset-klavesy-neo.jpg', 'reset-klavesa-machine.jpg', 'upinac-osazeni.jpg'],
     },
   ],
   korekce: [
@@ -128,6 +130,7 @@ window.STROJ_POZNAMKY = {
         '',
         'Nebo opotřebení (sloupce Opot-L 1 až 3 přímo v seznamu zásobníku), např. u vrtáku.',
       ].join('\n'),
+      f: ['zasobnik-parametry.jpg'],
     },
     {
       t: 'W_OTVHO1 – parametry cyklu (díra na hotovo)',
@@ -147,6 +150,7 @@ window.STROJ_POZNAMKY = {
         '_F2 – posuv rad (0.200)',
         '_SO – soudek (prázdné)',
       ].join('\n'),
+      f: ['w-otvho1-dira.jpg'],
     },
     {
       t: 'Díra náboje – vynechání měrného řezu (reset před sondou)',
@@ -159,6 +163,7 @@ window.STROJ_POZNAMKY = {
         '– Otevřít Messschnitt_CH2.SPF (uživatelské cykly).',
         '– Řádek GOTOF AAA ; měření bez řezu: GOTOF AAA nutí program skočit na měrný řez. Středník na začátku řádku z něj udělá poznámku, program měrný řez přeskočí a jde rovnou na sondu a na hotovo.',
       ].join('\n'),
+      f: ['sprungverteiler.jpg', 'goto-cut-mem.jpg'],
     },
   ],
   poruchy: [
@@ -225,6 +230,7 @@ window.STROJ_POZNAMKY = {
         '',
         'Na obrazovce: bílá výplň = obsazená pozice, šedá = prázdná.',
       ].join('\n'),
+      f: ['manipulator-m2.jpg', 'stojan-124.jpg'],
     },
     {
       t: 'Informace o kole a nastavení (menu)',
