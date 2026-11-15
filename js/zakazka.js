@@ -149,6 +149,12 @@
   }
 
   $('zk-reset').addEventListener('click', () => { skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false))); uloz(); });
+  // Vrátí výchozí body, které byly smazané křížkem ✕. Odškrtnutí a vlastní body zůstanou.
+  $('zk-obnovit')?.addEventListener('click', () => {
+    smazano = []; set('smazano', []);
+    skupiny = slij(skupiny);
+    uloz();
+  });
   $('zk-nova').addEventListener('click', () => {
     if (!confirm('Začít novou zakázku? Odškrtne se seznam a vymažou se údaje o zakázce.')) return;
     skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false)));
