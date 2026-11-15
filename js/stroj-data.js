@@ -209,7 +209,7 @@ window.STROJ_POZNAMKY = {
         'F15 – F16: rotace',
         'F17 – F18: ovládání upnutí',
         '',
-        'Rotace chapadel: 0° = okolek nahoru, 180° = okolek dolů.',
+        'Rotace chapadel: 0° = nákolek nahoru, 180° = nákolek dolů.',
       ].join('\n'),
     },
     {
@@ -217,7 +217,7 @@ window.STROJ_POZNAMKY = {
       p: [
         'VD3 – dopravník (nakládání surových kol).',
         'VD4 – dopravník (nakládání obrobených kol, odvoz kol).',
-        'VD5 – dopravník (hotová kola; UZ, Mag.).',
+        'VD5 – dopravník (hotová kola; UZ = ultrazvuk, Mag. = magnetická rezonance).',
         'VD6 – dopravník (za vyvažovačkou).',
         'S2, S3, S4 – sklady (S2 u VD4, S3 u VD5, S4 u VD6).',
         'HES3, HES4 – stroje; VDM3, VDM4 – stroje; VYV – vyvažovačka.',
@@ -242,11 +242,11 @@ window.STROJ_POZNAMKY = {
       t: 'M2 – ruční režim',
       p: [
         'OVLÁDÁNÍ:',
-        '• Pojezd X a Z: když jsou dosaženy, prosvětlují bílou barvou.',
+        '• Pojezd: dvě tlačítka X a Z; když jsou dosaženy, prosvětlí bílou barvou.',
         '• Žádaná pozice: bílé pole = zadávání, šedé pole = přehled pozic; obsazené pozice jsou zabarvené zeleně.',
         '• Šedé pole (přehled pozic): vybrat a Potvrzení.',
-        '• Stisknutím X a Y se aktivuje pohyb manipulátoru.',
-        '• Otočení chapadel: 0° okolek nahoru, 180° okolek dolů.',
+        '• Stisknutím tlačítek X a Z se aktivuje pohyb manipulátoru.',
+        '• Otočení chapadel: 0° nákolek nahoru, 180° nákolek dolů.',
         '• Upínání chapadel: UVOLNI a UPNI.',
         '• Zdvih manipulátoru: nahoru a dolů.',
         '• VD3, VD4 a VD5: rotace 0°.',
