@@ -803,7 +803,7 @@ function ratioToC(text) {
 
 
 
-const TOP = 84, BOT = 322, CX = 170, OUTER = 126, BASE = 58;
+const TOP = 84, BOT = 240, CX = 170, OUTER = 126, BASE = 58;
 
 const TIPS = {
   D: 'D – velký průměr kužele (na hraně)', d: 'd – malý průměr kužele (na hraně)', L: 'Délka kužele',
@@ -932,13 +932,13 @@ function drawBoreSketch(svg, m) {
     const busy = items.flatMap(it => [it.ly, it.yy]);
     let zm = L * 0.5, best = -1;
     [0.5, 0.42, 0.58, 0.34, 0.66, 0.28].forEach(f => {
-      const ly = y(L * f) - 60;
+      const ly = y(L * f) - 36;
       const dmin = busy.length ? Math.min(...busy.map(b => Math.abs(b - ly))) : 999;
       if (dmin > best + 2) { best = dmin; zm = L * f; }
     });
     const Wx = CX + hw(zm), Wy = y(zm);
     const Ux = CX + hw(zm + L * 0.3), Uy = y(zm + L * 0.3);
-    const R = 64, a1 = -Math.PI / 2, a2 = Math.atan2(Uy - Wy, Ux - Wx);
+    const R = 40, a1 = -Math.PI / 2, a2 = Math.atan2(Uy - Wy, Ux - Wx);
     s += ln(Wx, Wy, Wx, Wy - R - 14, 'cs-ext');
     if (slope) {
       s += '<path class="cs-arc tb-alpha-arc" d="M' + Wx.toFixed(1) + ' ' + (Wy - R).toFixed(1) + ' A' + R + ' ' + R + ' 0 0 ' + (a2 > a1 ? 1 : 0) + ' ' +
@@ -947,9 +947,6 @@ function drawBoreSketch(svg, m) {
     s += lbl(Wx - 10, Wy - R + 4, m.aTxt, 'Ca', CLS[m.stForm('half')], { anchor: 'end' });
   }
 
-  const lg = (yy, t) => '<text class="sk-legend" x="170" y="' + yy + '" text-anchor="middle">' + t + '</text>';
-  s += lg(366, 'bílá = zadáno · <tspan class="sk-lk-calc">žlutá = dopočítáno</tspan> · ? = chybí');
-  s += lg(381, '<tspan class="sk-lk">1) 2)</tspan> měřicí místa: <tspan class="sk-lk">↓</tspan> ' + n.b + ', <tspan class="sk-lk">↑</tspan> ' + n.a);
   svg.innerHTML = s;
   return {
     L,

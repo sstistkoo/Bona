@@ -191,7 +191,7 @@
     <section id="kuzel" class="panel">
       <div class="card">
         <div class="kz-head"><h2>Kužel</h2><button type="button" class="kz-i" id="kz-i" aria-label="Nápověda" aria-expanded="false" title="Nápověda">i</button><button type="button" class="secondary kz-clear" id="kz-clear" title="Vymazat všechny zadané hodnoty a měřicí místa">🗑 Vymazat</button></div>
-        <div class="kz-info" id="kz-info" hidden>Stačí 3 údaje (D, d, délka, kuželovitost) – nebo Ø z výkresu v hloubce + délka + kuželovitost. <b>Klepni na kótu v náčrtu</b> a zadej ji, klepnutím do kužele přidáš měřicí místo.</div>
+        <div class="kz-info" id="kz-info" hidden>Stačí 3 údaje (D, d, délka, kuželovitost) – nebo Ø z výkresu v hloubce + délka + kuželovitost. <b>Klepni na kótu v náčrtu</b> a zadej ji, klepnutím do kužele přidáš měřicí místo.<br><span class="kz-leg"><b class="kz-leg-val">bílá = zadáno</b> · <b class="kz-leg-calc">žlutá = dopočítáno</b> · ? = chybí. Měřicí místa 1) 2): ↓ od vrchu, ↑ od spodu.</span></div>
         <div class="seg">
           <button class="seg-btn active" data-kz="hole">Díra</button>
           <button class="seg-btn" data-kz="shaft">Čep / hřídel</button>
@@ -203,7 +203,7 @@
             <button class="seg-btn active" data-kzbig="B">nahoře</button>
           </div>
         </div>
-        <svg class="kz-svg" id="kz-svg" viewBox="0 0 340 390" role="img" aria-label="Náčrt kužele"></svg>
+        <svg class="kz-svg" id="kz-svg" viewBox="0 0 340 272" role="img" aria-label="Náčrt kužele"></svg>
         <div class="warn" id="kz-err" hidden></div>
         <div class="grid kz-five">
           <label>D – velký Ø [mm]<input type="text" id="kz-D" inputmode="decimal" placeholder="např. 215.5" autocomplete="off"></label>

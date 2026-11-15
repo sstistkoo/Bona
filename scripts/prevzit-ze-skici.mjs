@@ -28,6 +28,18 @@ const fnBlock = (lines, name) => {
 };
 const part = (title, body, exp) => `  // ── ${title} ──\n  (function () {\n${body}\n${exp}\n  })();\n`;
 
+// Úpravy náčrtu kužele pro mobil v Boně: nižší kužel (víc místa pro písmo) a bez legendy dole
+// (legenda je v nápovědě ⓘ). Když se kód ve SKICE změní tak, že úprava nesedí, skript spadne – ať se to nepřehlédne.
+function bonaNacrt(src) {
+  const nahradit = (re, za, jmeno) => { if (!re.test(src)) throw new Error('Úprava náčrtu kužele nesedí: ' + jmeno); src = src.replace(re, za); };
+  nahradit(/const TOP = 84, BOT = 322, CX = 170/, 'const TOP = 84, BOT = 240, CX = 170', 'výška kužele');
+  nahradit(/^  const lg = .*\n/m, '', 'legenda – funkce');
+  nahradit(/^  s \+= lg\(.*\n/gm, '', 'legenda – řádky');
+  nahradit(/const R = 64,/, 'const R = 40,', 'poloměr oblouku α');         // oblouk α menší, aby se vešel do nižšího kužele
+  nahradit(/y\(L \* f\) - 60/, 'y(L * f) - 36', 'poloha popisku α');
+  return src;
+}
+
 let v = `// VYGENEROVÁNO skriptem scripts/prevzit-ze-skici.mjs – needitovat ručně.
 // Výpočetní jádra převzatá beze změny ze SKICA 2D CAD/CAM (sstistkoo/2D_CAD-CAM).
 'use strict';
@@ -42,7 +54,7 @@ v += part('ISO 286 (iso286.js + iso286Large.js)',
   '  const deviationsLarge = L.deviationsLarge, itValueLarge = L.itValueLarge;\n' + strip(read(J('calculators/iso286.js'))),
   '  out.deviations = deviations; out.fit = fit; out.itValue = itValue; out.SHAFT_LETTERS = SHAFT_LETTERS; out.HOLE_LETTERS = HOLE_LETTERS;');
 v += part('Kužel (taperBoreMath.js + náčrt taperBoreSketch.js)', '  const deviations = out.deviations;\n' + strip(read(J('calculators/taperBoreMath.js'))) +
-  '\n' + strip(read(J('calculators/taperBoreSketch.js'))),
+  '\n' + bonaNacrt(strip(read(J('calculators/taperBoreSketch.js')))),
   '  out.taperC = taperC; out.taperForms = taperForms; out.solveTaper = solveTaper; out.ratioToC = ratioToC;\n' +
   '  out.taper = { taperC, taperForms, solveTaper, ratioToC, computeTaperBore, isoTolerance, f3, fmtDev, drawBoreSketch };');
 const tq = strip(read(J('calculators/torqueMath.js')));

@@ -232,11 +232,6 @@
       stForm: (f) => stOf('C') === 'val' ? (f === cform ? 'val' : 'calc') : stOf('C'),
       ref: refM, rows,
     });
-    // legenda náčrtu je psaná pro tmavý režim – ve světlém mají barvy jiné názvy
-    if (!matchMedia('(prefers-color-scheme: dark)').matches) {
-      const lg = svg.querySelector('.sk-legend');
-      if (lg) lg.innerHTML = lg.innerHTML.replace('bílá', 'tmavá').replace('žlutá', 'oranžová');
-    }
   }
 
   /* ── Klepnutí do náčrtu → otevřít pole (na mobilu místo vyskakovacího okna) ── */
