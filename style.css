@@ -834,3 +834,4 @@ body:has(#kalk.panel.active) > footer { display: none; }
 .zk-ra { margin: -4px 0 8px; }
 #zk-smazat-stroj { width: 100%; margin-top: 8px; }
 #zk-smazat-stroj:disabled { opacity: 0.4; }
+.zk-na-drs { width: 100%; margin: 2px 0 8px; }

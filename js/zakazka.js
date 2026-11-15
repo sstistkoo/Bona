@@ -139,6 +139,7 @@
       if (d.sk !== sk) { sk = d.sk; html += `<h3 class="sub">${esc(sk)}</h3>`; }
       html += `<label>${esc(d.n)} <small class="zk-kde">${esc(d.kde)}</small><input type="text" data-par="${d.k}" value="${esc(st.h[d.k] || '')}"></label>`;
       if (d.k === 'f1' || d.k === 'f2') html += `<p class="hint zk-ra" id="zk-ra-${d.k}"></p>`;
+      if (d.k === 'ra') html += '<button type="button" class="secondary zk-na-drs" id="zk-na-drs">🔬 Výpočet drsnosti (převezme rádius a posuv)</button>';
     });
     html += `<button type="button" class="secondary" id="zk-smazat-stroj"${stroje.length < 2 ? ' disabled' : ''}>🗑 Smazat stroj ${esc(st.nazev)}</button>`;
     $('zk-hodnoty').innerHTML = html;
@@ -174,7 +175,16 @@
       ['f1', 'f2'].forEach((k) => { const el = $('zk-ra-' + k); if (el) el.textContent = raText(h[k], h.r); });
     }
   });
+  // Přejít na výpočet drsnosti a předvyplnit rádius, posuv _F1 a cílovou Ra vybraného stroje
+  function naDrsnost() {
+    const h = stroj().h, tecka = (v) => String(v ?? '').trim().replace(',', '.');
+    const vypln = (id, v) => { const el = $(id); if (el && tecka(v)) { el.value = tecka(v); el.dispatchEvent(new Event('input')); } };
+    vypln('dr-re', h.r); vypln('dr-f', h.f1); vypln('dr-re2', h.r); vypln('dr-ra', h.ra);
+    if (location.hash === '#drsnost') window.dispatchEvent(new HashChangeEvent('hashchange'));
+    else location.hash = 'drsnost';
+  }
   $('zk-hodnoty').addEventListener('click', (e) => {
+    if (e.target.id === 'zk-na-drs') { naDrsnost(); return; }
     if (e.target.id !== 'zk-smazat-stroj' || stroje.length < 2) return;
     const st = stroj();
     if (!confirm(`Smazat stroj ${st.nazev} i s jeho hodnotami? (Jde vrátit tlačítkem ↶ Zpět.)`)) return;
