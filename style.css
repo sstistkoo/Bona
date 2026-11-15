@@ -767,3 +767,7 @@ body:has(#kalk.panel.active) > footer { display: none; }
 .svg-pop-row .svg-pop-del { color: #dc2626; }
 #kz-zadani .kz-forms { margin: 12px 0 0; }
 #kz-zadani #kz-slide { margin-top: 8px; margin-bottom: 4px; }
+/* Kužel: nadpis vlevo, Vymazat vpravo */
+.kz-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
+.kz-head h2 { margin: 0; font-size: 1.05rem; }
+.kz-clear { min-height: 36px; padding: 4px 12px; font-size: 0.9rem; }
