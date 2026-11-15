@@ -560,10 +560,14 @@
     <section id="zakazka" class="panel">
       <div class="card">
         <h2>Chystání na novou zakázku</h2>
-        <details id="zk-pozn-box">
-          <summary>📝 Poznámka k zakázce <small id="zk-pozn-stav"></small></summary>
-          <textarea id="zk-pozn" rows="4" placeholder="Poznámka k zakázce…"></textarea>
-        </details>
+        <div class="grid">
+          <label>Číslo zakázky<input type="text" id="zk-cislo"></label>
+          <label>Výkres / revize<input type="text" id="zk-vykres"></label>
+          <label>Materiál<input type="text" id="zk-mat"></label>
+          <label>Program<input type="text" id="zk-prog"></label>
+        </div>
+        <p class="lbl">Poznámka k zakázce</p>
+        <textarea id="zk-pozn" rows="4"></textarea>
       </div>
       <div class="card">
         <h2>Kontrolní seznam</h2>
