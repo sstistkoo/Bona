@@ -59,7 +59,7 @@ window.STROJ_POZNAMKY = {
         '4. Najít řádek W_OTVHO1.',
         '5. Zpětný překlad (softklávesa na panelu) – otevře se okno DÍRA NA HOTOVO / W_OTVHOT s parametry cyklu.',
         '',
-        'Při tupém plátku a menším Ø a opětovném braní špony díry: úběr z rozměru 0,03 mm.',
+        'Při tupém plátku a menším Ø a opětovném braní špony díry: ve zpětném překladu zmenšit PRUMER _D1 o 0,03 mm (např. 217.707 → 217.677). Cyklus pak udělá o 0,03 menší průměr.',
       ].join('\n'),
     },
     {
