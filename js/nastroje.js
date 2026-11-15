@@ -120,7 +120,8 @@
           `<div class="tol-r-col"><div${st.hole ? '' : ' class="key"'}><span>Ø max</span><b>${mm(max)} mm</b></div>` +
           `<div${st.hole ? ' class="key"' : ''}><span>Ø min</span><b>${mm(min)} mm</b></div></div>` +
         '</div>' +
-        `<div class="tol-r-tol"><span>${keyLbl}</span><br><b>${mm(keyVal)} mm</b> ${tolTxt}</div>` +
+        // rozhodující rozměr pro obrábění: velký, bíle na černém, tolerance jen v mm
+        `<div class="tol-r-tol"><span>${keyLbl}</span><div class="tol-r-big"><b>${mm(keyVal)} mm</b> <b>${zn}${mm(res.tol / 1000)} mm</b></div></div>` +
         (res.note ? `<div class="tol-r-note">${res.note}</div>` : '');
     }
     [dimEl, upEl, loEl].forEach((e) => e.addEventListener('input', calc));
