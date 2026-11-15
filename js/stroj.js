@@ -34,6 +34,7 @@
     $('st-moje').value = ulozeno(akt);
     $('st-moje').placeholder = 'Moje poznámky – ' + k.nazev.toLowerCase() + '…';
     $('st-stav').textContent = '';
+    pojistka?.obnov();
   }
 
   function ukaz(id) {
@@ -52,6 +53,7 @@
     const b = e.target.closest('[data-st]'); if (b) ukaz(b.dataset.st);
   });
 
+  const pojistka = window.hlidejText?.($('st-moje'), () => 'stroj.' + akt);
   let casovac;
   $('st-moje').addEventListener('input', () => {
     clearTimeout(casovac);

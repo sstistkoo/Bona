@@ -809,3 +809,6 @@ body:has(#kalk.panel.active) > footer { display: none; }
 #zk-pozn-box > summary { font-size: 1.05rem; font-weight: 700; padding: 6px 0; }
 #zk-pozn-box > summary small { font-weight: 400; color: var(--muted); font-size: 0.8rem; }
 #zk-pozn-box[open] > summary { margin-bottom: 10px; }
+
+/* tlačítko „Vrátit smazaný text“ pod poznámkami */
+.vratit-text { margin-top: 6px; }

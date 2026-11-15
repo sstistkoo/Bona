@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.88';
+const VERZE = '0.8.89';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -15,6 +15,38 @@ const store = {
   set(key, val) {
     try { localStorage.setItem('bona.' + key, JSON.stringify(val)); } catch { /* úložiště nedostupné */ }
   },
+};
+
+/* Pojistka poznámek: když se z textu najednou smaže velká část (víc než polovina),
+   uloží se předchozí verze a pod polem se objeví tlačítko „Vrátit smazaný text“. */
+window.hlidejText = function (ta, klic) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'secondary vratit-text'; b.hidden = true;
+  b.textContent = '↩︎ Vrátit smazaný text';
+  ta.after(b);
+  const k = () => 'bona.smazanyText.' + klic();
+  const precti = () => { try { return localStorage.getItem(k()); } catch { return null; } };
+  let pred = ta.value;
+  const ukaz = () => { b.hidden = !precti(); };
+  // pred = nejdelší verze textu od posledního uložení pojistky (zachytí i postupné mazání)
+  ta.addEventListener('input', () => {
+    const p = pred.trim(), n = ta.value.trim();
+    if (n.length >= p.length) { pred = ta.value; return; }
+    if (p.length >= 10 && n.length < p.length / 2) {
+      try { localStorage.setItem(k(), pred); } catch { /* nedostupné */ }
+      pred = ta.value;
+      ukaz();
+    }
+  });
+  b.addEventListener('click', () => {
+    const t = precti(); if (t === null) return;
+    ta.value = t; pred = t;
+    ta.dispatchEvent(new Event('input')); // uloží se běžnou cestou
+    try { localStorage.removeItem(k()); } catch { /* nedostupné */ }
+    ukaz();
+  });
+  ukaz();
+  return { obnov() { pred = ta.value; ukaz(); } }; // po přepnutí kategorie
 };
 
 function casText(min) {
@@ -451,6 +483,12 @@ function pridej() {
 $('s-pridat').addEventListener('click', pridej);
 $('s-novy').addEventListener('keydown', (e) => { if (e.key === 'Enter') pridej(); });
 $('s-reset').addEventListener('click', () => { seznam.forEach((p) => (p.ok = false)); store.set('seznam', seznam); vykresliSeznam(); });
+// Vrátí výchozí body smazané křížkem ✕ (na původní místo). Vlastní body a odškrtnutí zůstanou.
+$('s-obnovit').addEventListener('click', () => {
+  const vlastni = seznam.filter((p) => !VYCHOZI_SEZNAM.includes(p.t));
+  seznam = VYCHOZI_SEZNAM.map((t) => seznam.find((p) => p.t === t) || { t, ok: false }).concat(vlastni);
+  store.set('seznam', seznam); vykresliSeznam();
+});
 vykresliSeznam();
 
 /* ---------- Počítadlo kusů ---------- */
@@ -464,6 +502,7 @@ ukazKusy();
 /* ---------- Poznámky ---------- */
 $('n-text').value = store.get('poznamky', '');
 let casovac;
+window.hlidejText($('n-text'), () => 'poznamky');
 $('n-text').addEventListener('input', () => {
   clearTimeout(casovac);
   $('n-stav').textContent = 'Ukládám…';
@@ -493,6 +532,20 @@ $('zal-ulozit').addEventListener('click', () => {
   $('zal-stav').textContent = `Uloženo ${Object.keys(data).length} položek do souboru ${a.download}.`;
 });
 $('zal-obnovit').addEventListener('click', () => $('zal-soubor').click());
+const PRED_OBNOVOU = 'bonaPredObnovou'; // mimo bona.*, aby ho obnova nesmazala
+function predObnovou() { try { return JSON.parse(localStorage.getItem(PRED_OBNOVOU)); } catch { return null; } }
+$('zal-zpet').hidden = !predObnovou();
+$('zal-zpet').addEventListener('click', () => {
+  const z = predObnovou(); if (!z) return;
+  if (!confirm(`Vrátit data do stavu před obnovou zálohy (${new Date(z.datum).toLocaleString('cs-CZ')})?`)) return;
+  try {
+    zalKlice().forEach((k) => localStorage.removeItem(k));
+    Object.entries(z.data).forEach(([k, v]) => localStorage.setItem(k, v));
+    localStorage.removeItem(PRED_OBNOVOU);
+  } catch (err) { $('zal-stav').textContent = 'Nepovedlo se: ' + (err.message || err); return; }
+  alert('Data vrácena. Aplikace se znovu načte.');
+  location.reload();
+});
 $('zal-soubor').addEventListener('change', async (e) => {
   const f = e.target.files[0];
   e.target.value = '';
@@ -503,6 +556,9 @@ $('zal-soubor').addEventListener('change', async (e) => {
     const klice = Object.keys(z.data).filter((k) => k.startsWith('bona.') && !ZAL_VYNECHAT.has(k) && typeof z.data[k] === 'string');
     const kdy = z.datum ? new Date(z.datum).toLocaleString('cs-CZ') : '?';
     if (!confirm(`Obnovit zálohu z ${kdy} (${klice.length} položek)?\nSoučasné poznámky a nastavení se nahradí.`)) return;
+    // kopie současných dat – lze vrátit tlačítkem „Vrátit stav před obnovou“
+    const ted = {}; zalKlice().forEach((k) => { ted[k] = localStorage.getItem(k); });
+    localStorage.setItem(PRED_OBNOVOU, JSON.stringify({ datum: new Date().toISOString(), data: ted }));
     zalKlice().forEach((k) => localStorage.removeItem(k));
     klice.forEach((k) => localStorage.setItem(k, z.data[k]));
     alert('Záloha obnovena. Aplikace se znovu načte.');

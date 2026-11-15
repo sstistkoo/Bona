@@ -112,6 +112,7 @@
   $('zk-pozn-box').open = !!$('zk-pozn').value.trim();
   stavPozn();
   $('zk-pozn').addEventListener('input', () => { set('pozn', $('zk-pozn').value); stavPozn(); });
+  const pojistka = window.hlidejText?.($('zk-pozn'), () => 'zakazka');
 
   function vykresli() {
     const hotovo = skupiny.reduce((a, g) => a + g.p.filter((x) => x.ok).length, 0);
@@ -157,9 +158,10 @@
   });
   $('zk-nova').addEventListener('click', () => {
     if (!confirm('Začít novou zakázku? Odškrtne se seznam a vymažou se údaje o zakázce.')) return;
+    if ($('zk-pozn').value.trim()) { try { localStorage.setItem('bona.smazanyText.zakazka', $('zk-pozn').value); } catch { /* nedostupné */ } }
     skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false)));
     POLE.concat('zk-pozn').forEach((id) => { if ($(id)) $(id).value = ''; set(id === 'zk-pozn' ? 'pozn' : id, ''); });
-    stavPozn(); $('zk-pozn-box').open = false;
+    stavPozn(); $('zk-pozn-box').open = false; pojistka?.obnov();
     uloz();
   });
   vykresli();
