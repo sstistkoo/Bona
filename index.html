@@ -559,21 +559,38 @@
     <!-- NOVÁ ZAKÁZKA -->
     <section id="zakazka" class="panel">
       <div class="card">
-        <h2>Chystání na novou zakázku</h2>
-        <!-- skrytá pole jen pro starší uloženou verzi zakazka.js v telefonu (jinak spadne); lze později smazat -->
-        <div hidden><input id="zk-cislo"><input id="zk-vykres"><input id="zk-mat"><input id="zk-prog"></div>
+        <div class="zk-lista">
+          <button type="button" id="zk-zpet" class="secondary" title="Krok zpět" aria-label="Krok zpět">↶ Zpět</button>
+          <button type="button" id="zk-vpred" class="secondary" title="Krok dopředu" aria-label="Krok dopředu">Vpřed ↷</button>
+          <button type="button" id="zk-stroj-btn" title="Vybrat stroj a upravit hodnoty">🏭 <span id="zk-stroj-nazev"></span></button>
+        </div>
+        <!-- skryté prvky jen pro starší uloženou verzi zakazka.js v telefonu (jinak spadne); lze později smazat -->
+        <div hidden><input id="zk-cislo"><input id="zk-vykres"><input id="zk-mat"><input id="zk-prog"><button id="zk-reset"></button><button id="zk-obnovit"></button></div>
         <details id="zk-pozn-box">
           <summary>📝 Poznámka k zakázce <small id="zk-pozn-stav"></small></summary>
           <textarea id="zk-pozn" rows="4"></textarea>
         </details>
       </div>
       <div class="card">
+        <h2 id="zk-par-nadpis">Hodnoty pro stroj</h2>
+        <div id="zk-parametry" class="zk-parametry" role="button" title="Klepni pro úpravu"></div>
+        <p class="hint">Klepnutím na hodnoty nebo na 🏭 je upravíš.</p>
+      </div>
+      <div class="card">
         <h2>Kontrolní seznam</h2>
         <p class="hint" id="zk-postup"></p>
         <div id="zk-seznam"></div>
-        <button id="zk-reset" class="secondary">Odškrtnout vše</button>
-        <button id="zk-obnovit" class="secondary">↩︎ Obnovit smazané body (původní seznam)</button>
-        <button id="zk-nova" class="secondary">Nová zakázka (vyčistit vše)</button>
+        <button id="zk-nova" class="secondary">🔄 Nová zakázka – obnovit vše</button>
+      </div>
+      <div id="zk-modal" class="zk-modal" hidden>
+        <div class="zk-modal-in card" role="dialog" aria-modal="true" aria-label="Stroje a hodnoty">
+          <div class="zk-modal-head"><h2>🏭 Stroje a hodnoty</h2><button type="button" id="zkm-zavrit" class="secondary" aria-label="Zavřít">✕</button></div>
+          <div class="seg seg-wrap" id="zkm-stroje"></div>
+          <div class="row"><input type="text" id="zkm-novy" placeholder="Název nového stroje…"><button type="button" class="secondary" id="zkm-pridat">+ Přidat stroj</button></div>
+          <div id="zkm-pole" class="zkm-pole"></div>
+          <button type="button" class="secondary" id="zkm-smazat"></button>
+          <button type="button" id="zkm-hotovo">Hotovo</button>
+        </div>
       </div>
     </section>
 

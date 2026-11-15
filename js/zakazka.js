@@ -98,12 +98,120 @@
   }
   let skupiny = slij(get('seznam2', null));
 
-  const POLE = ['zk-cislo', 'zk-vykres', 'zk-mat', 'zk-prog'];
-  POLE.forEach((id) => {
-    if (!$(id)) return;
-    $(id).value = get(id, '');
-    $(id).addEventListener('input', () => set(id, $(id).value));
+  /* ---------- Stroje a hodnoty pro nastavování ---------- */
+  // sk = skupina, k = klíč, n = název, kde = kde se hodnota najde ve stroji
+  const PAR = [
+    { sk: 'Rozteč', k: 'rozt', n: 'Korekce rozteče (R23 = … + korekce)', kde: 'PARAMDER' },
+    { sk: 'Kužel díry', k: 'ko', n: 'Konus _KO', kde: 'DIRAHOT1 / W_OTVHO1' },
+    { sk: 'Drsnost', k: 'r', n: 'Rádius nože rε [mm]', kde: 'nástroj' },
+    { sk: 'Drsnost', k: 'f1', n: 'Posuv _F1 [mm/ot]', kde: 'DIRAHOT1 / W_OTVHO1' },
+    { sk: 'Drsnost', k: 'f2', n: 'Posuv RAD _F2 [mm/ot]', kde: 'DIRAHOT1 / W_OTVHO1' },
+    { sk: 'Drsnost', k: 'ra', n: 'Drsnost Ra [µm]', kde: 'výkres' },
+    { sk: 'Podpěrky', k: 'podp', n: 'Podpěrky („íčko“)', kde: 'VAR_DEF_1 / VAR_DEF_2' },
+    { sk: 'Upnutí čelistí', k: 'upn', n: 'Rozsah upnutí H2 / H3 (max a min)', kde: 'VAR_DEF (skutečná poloha z Upínače)' },
+    { sk: 'Uživatelská data', k: 'zero', n: 'Zero_Offset', kde: 'Parametry → Uživatelská data' },
+    { sk: 'Uživatelská data', k: 'chuck', n: 'Chuck_Stat', kde: 'Parametry → Uživatelská data' },
+    { sk: 'Uživatelská data', k: 'op', n: 'OP_Step', kde: 'Parametry → Uživatelská data' },
+  ];
+  const ZAKLAD = [{ id: 'ches4', nazev: 'CHES4', h: { rozt: '0,01', ko: '0,034', r: '', f1: '0,22', f2: '0,2', ra: '', podp: '97,7', upn: '±10', zero: '97,7', chuck: '0', op: '1' } }];
+  let stroje = get('stroje', null) || JSON.parse(JSON.stringify(ZAKLAD));
+  let strojAkt = get('strojAkt', stroje[0].id);
+  const stroj = () => stroje.find((x) => x.id === strojAkt) || stroje[0];
+  const cislo = (v) => parseFloat(String(v ?? '').replace(',', '.'));
+  const f3 = (x) => x.toLocaleString('cs-CZ', { maximumFractionDigits: 2 });
+
+  function vykresliHodnoty() {
+    const st = stroj();
+    $('zk-stroj-nazev').textContent = st.nazev;
+    $('zk-par-nadpis').textContent = 'Hodnoty pro ' + st.nazev;
+    let html = '', sk = '';
+    PAR.forEach((d) => {
+      if (d.sk !== sk) { sk = d.sk; html += `<h3 class="sub">${esc(sk)}</h3>`; }
+      const v = st.h[d.k];
+      html += `<div class="zk-par"><span class="zk-par-n">${esc(d.n)}<small>${esc(d.kde)}</small></span><b>${v ? esc(v) : '–'}</b></div>`;
+      // teoretická drsnost z posuvu a rádiusu: Ra ≈ f² / (32·rε)
+      if ((d.k === 'f1' || d.k === 'f2') && cislo(st.h.r) > 0 && cislo(v) > 0) {
+        html += `<p class="hint zk-ra">→ teoretická Ra ≈ ${f3(cislo(v) ** 2 / (32 * cislo(st.h.r)) * 1000)} µm</p>`;
+      }
+    });
+    $('zk-parametry').innerHTML = html;
+  }
+
+  /* Okno (modal) se stroji */
+  function vykresliModal() {
+    const st = stroj();
+    $('zkm-stroje').innerHTML = stroje.map((x) => `<button type="button" class="seg-btn${x.id === st.id ? ' active' : ''}" data-stroj="${esc(x.id)}">${esc(x.nazev)}</button>`).join('');
+    let html = `<label>Název stroje<input type="text" data-nazev value="${esc(st.nazev)}"></label>`, sk = '';
+    PAR.forEach((d) => {
+      if (d.sk !== sk) { sk = d.sk; html += `<h3 class="sub">${esc(sk)}</h3>`; }
+      html += `<label>${esc(d.n)} <small class="zk-kde">${esc(d.kde)}</small><input type="text" inputmode="decimal" data-par="${d.k}" value="${esc(st.h[d.k] || '')}"></label>`;
+    });
+    $('zkm-pole').innerHTML = html;
+    $('zkm-smazat').textContent = '🗑 Smazat stroj ' + st.nazev;
+    $('zkm-smazat').disabled = stroje.length < 2;
+  }
+  const otevriModal = () => { vykresliModal(); $('zk-modal').hidden = false; document.body.classList.add('zk-modal-on'); };
+  const zavriModal = () => { $('zk-modal').hidden = true; document.body.classList.remove('zk-modal-on'); };
+  $('zk-stroj-btn').addEventListener('click', otevriModal);
+  $('zk-parametry').addEventListener('click', otevriModal);
+  $('zkm-zavrit').addEventListener('click', zavriModal);
+  $('zkm-hotovo').addEventListener('click', zavriModal);
+  $('zk-modal').addEventListener('click', (e) => { if (e.target.id === 'zk-modal') zavriModal(); });
+  $('zkm-stroje').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-stroj]'); if (!b) return;
+    strojAkt = b.dataset.stroj; zmena(); vykresliModal();
   });
+  $('zkm-pole').addEventListener('change', (e) => {
+    const st = stroj();
+    if (e.target.dataset.par) st.h[e.target.dataset.par] = e.target.value.trim();
+    else if (e.target.dataset.nazev !== undefined) st.nazev = e.target.value.trim() || st.nazev;
+    zmena(); vykresliModal();
+  });
+  function pridejStroj() {
+    const n = $('zkm-novy').value.trim(); if (!n) return;
+    const id = 's' + Date.now();
+    stroje.push({ id, nazev: n, h: {} });
+    strojAkt = id; $('zkm-novy').value = ''; zmena(); vykresliModal();
+  }
+  $('zkm-pridat').addEventListener('click', pridejStroj);
+  $('zkm-novy').addEventListener('keydown', (e) => { if (e.key === 'Enter') pridejStroj(); });
+  $('zkm-smazat').addEventListener('click', () => {
+    if (stroje.length < 2) return;
+    const st = stroj();
+    if (!confirm(`Smazat stroj ${st.nazev} i s jeho hodnotami? (Jde vrátit tlačítkem ↶ Zpět.)`)) return;
+    stroje = stroje.filter((x) => x.id !== st.id); strojAkt = stroje[0].id;
+    zmena(); vykresliModal();
+  });
+
+  /* ---------- Krok zpět / dopředu ---------- */
+  // Pamatuje se seznam (odškrtnutí, smazané a přidané body) a stroje s hodnotami. Poznámka má vlastní pojistku.
+  const MAX_KROKU = 40;
+  const stav = () => JSON.stringify({
+    s: skupiny.map((g) => ({ n: g.n, p: g.p.map((p) => ({ t: p.t, ok: p.ok })) })),
+    smazano, stroje, strojAkt,
+  });
+  let zpet = get('zpet', []), vpred = get('vpred', []), posledni = stav();
+  function ulozVse() {
+    set('seznam2', skupiny); set('smazano', smazano); set('stroje', stroje); set('strojAkt', strojAkt);
+    set('zpet', zpet); set('vpred', vpred);
+    $('zk-zpet').disabled = !zpet.length; $('zk-vpred').disabled = !vpred.length;
+    vykresli(); vykresliHodnoty();
+  }
+  function zmena() {
+    const ted = stav();
+    if (ted !== posledni) { zpet.push(posledni); zpet = zpet.slice(-MAX_KROKU); vpred = []; posledni = ted; }
+    ulozVse();
+  }
+  function nastav(json) {
+    const z = JSON.parse(json);
+    smazano = z.smazano || []; skupiny = slij(z.s); stroje = z.stroje; strojAkt = z.strojAkt;
+    posledni = json; ulozVse();
+    if (!$('zk-modal').hidden) vykresliModal();
+  }
+  $('zk-zpet').addEventListener('click', () => { if (!zpet.length) return; vpred.push(posledni); nastav(zpet.pop()); });
+  $('zk-vpred').addEventListener('click', () => { if (!vpred.length) return; zpet.push(posledni); nastav(vpred.pop()); });
+
+  /* ---------- Poznámka k zakázce ---------- */
   // Poznámka je v rozbalovací záložce; když je prázdná, zůstane sbalená.
   const stavPozn = () => {
     $('zk-pozn-stav').textContent = $('zk-pozn').value.trim() ? '· vyplněno' : '';
@@ -114,6 +222,7 @@
   $('zk-pozn').addEventListener('input', () => { set('pozn', $('zk-pozn').value); stavPozn(); });
   const pojistka = window.hlidejText?.($('zk-pozn'), () => 'zakazka');
 
+  /* ---------- Kontrolní seznam ---------- */
   function vykresli() {
     const hotovo = skupiny.reduce((a, g) => a + g.p.filter((x) => x.ok).length, 0);
     const celkem = skupiny.reduce((a, g) => a + g.p.length, 0);
@@ -124,18 +233,17 @@
       `</ul><div class="row"><input type="text" data-add="${gi}" placeholder="Přidat do skupiny…"><button class="secondary" data-addbtn="${gi}">Přidat</button></div>`
     ).join('');
   }
-  const uloz = () => { set('seznam2', skupiny); vykresli(); };
 
   $('zk-seznam').addEventListener('change', (e) => {
     const { g, i } = e.target.dataset; if (g === undefined || i === undefined) return;
-    skupiny[g].p[i].ok = e.target.checked; uloz();
+    skupiny[g].p[i].ok = e.target.checked; zmena();
   });
   $('zk-seznam').addEventListener('click', (e) => {
     const d = e.target.closest('[data-del]');
     if (d) {
       const g = skupiny[d.dataset.g], p = g.p[d.dataset.del];
-      if (VYCHOZI.some(([n, ps]) => n === g.n && ps.some((x) => x.t === p.t))) { smazano.push(g.n + '|' + p.t); set('smazano', smazano); }
-      g.p.splice(d.dataset.del, 1); uloz(); return;
+      if (VYCHOZI.some(([n, ps]) => n === g.n && ps.some((x) => x.t === p.t))) smazano.push(g.n + '|' + p.t);
+      g.p.splice(d.dataset.del, 1); zmena(); return;
     }
     const a = e.target.closest('[data-addbtn]');
     if (a) pridej(a.dataset.addbtn);
@@ -146,23 +254,19 @@
   function pridej(gi) {
     const inp = $('zk-seznam').querySelector(`[data-add="${gi}"]`);
     const t = inp.value.trim(); if (!t) return;
-    skupiny[gi].p.push({ t, ok: false }); uloz();
+    skupiny[gi].p.push({ t, ok: false }); zmena();
   }
 
-  $('zk-reset').addEventListener('click', () => { skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false))); uloz(); });
-  // Vrátí výchozí body, které byly smazané křížkem ✕. Odškrtnutí a vlastní body zůstanou.
-  $('zk-obnovit')?.addEventListener('click', () => {
-    smazano = []; set('smazano', []);
-    skupiny = slij(skupiny);
-    uloz();
-  });
+  // Obnovit vše: odškrtnout, vrátit smazané body, vymazat poznámku. Vlastní body a stroje zůstanou.
   $('zk-nova').addEventListener('click', () => {
-    if (!confirm('Začít novou zakázku? Odškrtne se seznam a vymažou se údaje o zakázce.')) return;
+    if (!confirm('Nová zakázka – obnovit vše?\nOdškrtne se seznam, vrátí se smazané body a vymaže se poznámka.\n(Seznam jde vrátit tlačítkem ↶ Zpět, poznámku tlačítkem „Vrátit smazaný text“.)')) return;
     if ($('zk-pozn').value.trim()) { try { localStorage.setItem('bona.smazanyText.zakazka', $('zk-pozn').value); } catch { /* nedostupné */ } }
+    smazano = [];
+    skupiny = slij(skupiny);
     skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false)));
-    POLE.concat('zk-pozn').forEach((id) => { if ($(id)) $(id).value = ''; set(id === 'zk-pozn' ? 'pozn' : id, ''); });
+    $('zk-pozn').value = ''; set('pozn', '');
     stavPozn(); $('zk-pozn-box').open = false; pojistka?.obnov();
-    uloz();
+    zmena();
   });
-  vykresli();
+  ulozVse();
 })();
