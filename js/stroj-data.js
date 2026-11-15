@@ -18,7 +18,7 @@ window.STROJ_POZNAMKY = {
     {
       t: 'Měření sondou',
       p: [
-        'Menu Select → Menu 2 → tlačítko s ikonou ▲ v rámečku → měření.',
+        'Menu Select → Menu 2 → klávesa ^ → měření.',
         '',
         'Čísla v nabídce měření:',
         '1 – koncové měření',
@@ -42,7 +42,7 @@ window.STROJ_POZNAMKY = {
         '2. Vybrat program: CH1 = 1. operace, CH2 = 2. operace.',
         '3. Zjistit číslo operace.',
         '4. Tlačítko upínač osazení (obrázek čelistí, vpravo vedle C3): zkontrolovat, popřípadě zadat číslo operace.',
-        '5. Tlačítko NEO: mačkat, dokud není šedé.',
+        '5. Tlačítko NEO: mačkat, dokud obrázek obrobku není šedý. Šedé = neobrobené, zelené = obrobené, červené = zmetek.',
         '6. Auto → Start.',
         '7. OFFSET X, Z: zkontrolovat a zapsat. Posunutí nulového bodu se vynuluje při najíždění po resetu.',
         '8. 2× Start. Pozor na CUT_MEM (hláška o přerušení nulového bodu) – zapsat posunutí nulového bodu.',
