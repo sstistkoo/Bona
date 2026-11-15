@@ -560,6 +560,8 @@
     <section id="zakazka" class="panel">
       <div class="card">
         <h2>Chystání na novou zakázku</h2>
+        <!-- skryté prvky jen pro starší uloženou verzi zakazka.js v telefonu (jinak spadne a seznam se nevykreslí) -->
+        <details id="zk-pozn-box" hidden><summary><small id="zk-pozn-stav"></small></summary></details>
         <div class="grid">
           <label>Číslo zakázky<input type="text" id="zk-cislo"></label>
           <label>Výkres / revize<input type="text" id="zk-vykres"></label>
