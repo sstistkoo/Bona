@@ -16,7 +16,21 @@ window.STROJ_KAT = [
 window.STROJ_POZNAMKY = {
   sonda: [],
   nastroje: [],
-  reset: [],
+  reset: [
+    {
+      t: 'Reset a najetí programu',
+      p: [
+        '1. Menu Select → Program.',
+        '2. Vybrat program: CH1 = 1. operace, CH2 = 2. operace.',
+        '3. Zjistit číslo operace.',
+        '4. Tlačítko upínač osazení (obrázek čelistí, vpravo vedle C3): zkontrolovat, popřípadě zadat číslo operace.',
+        '5. Tlačítko NEO: mačkat, dokud není šedé.',
+        '6. Auto → Start.',
+        '7. OFFSET X, Z: zkontrolovat a zapsat. Posunutí nulového bodu se vynuluje při najíždění po resetu.',
+        '8. 2× Start. Pozor na CUT_MEM (hláška o přerušení nulového bodu) – zapsat posunutí nulového bodu.',
+      ].join('\n'),
+    },
+  ],
   korekce: [],
   poruchy: [],
   manipulator: [],
