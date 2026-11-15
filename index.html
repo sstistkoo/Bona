@@ -32,7 +32,6 @@
     <nav class="tabs" role="tablist">
       <button class="tab active" data-tab="kalk">Řezné podm.</button>
       <button class="tab" data-tab="cas">Čas obrábění</button>
-      <button class="tab" data-tab="drsnost">Drsnost</button>
       <button class="tab" data-tab="tol">Tolerance</button>
       <button class="tab" data-tab="kuzel">Kužel</button>
       <button class="tab" data-tab="teplo">Roztažnost</button>
@@ -63,7 +62,11 @@
   <main>
     <!-- KALKULAČKA -->
     <section id="kalk" class="panel active">
-      <div class="card">
+      <div class="seg kalk-sw" role="tablist">
+        <button class="seg-btn active" data-kpohled="rez">Řezné podmínky</button>
+        <button class="seg-btn" data-kpohled="drs">Drsnost povrchu</button>
+      </div>
+      <div id="kalk-rez">      <div class="card">
         <h2>Řezná rychlost ↔ otáčky</h2>
         <div class="grid">
           <label>Průměr D [mm]<input type="number" id="k-d" value="920" inputmode="decimal"></label>
@@ -82,6 +85,29 @@
           <label>Otáčky n [ot/min]<input type="number" id="p-n" value="40" inputmode="decimal"></label>
         </div>
         <div class="result" id="p-out"></div>
+      </div>
+          </div>
+      <div id="kalk-drs" hidden>
+      <div class="card">
+        <div class="grid">
+          <label>Materiál obrobku<select id="dr-mat"></select></label>
+          <label>Materiál nástroje<select id="dr-tool"></select></label>
+          <label>Posuv f [mm/ot]<input type="text" id="dr-f" inputmode="decimal" value="0.6"></label>
+          <label>Vc [m/min]<input type="text" id="dr-vc" inputmode="decimal" value="120"></label>
+          <label>Rádius špičky rε [mm]<input type="text" id="dr-re" inputmode="decimal" value="1.6"></label>
+        </div>
+        <div class="chips" id="dr-radii"></div>
+        <div class="result" id="dr-out"></div>
+        <h3 class="sub">Jaký posuv pro požadovanou drsnost?</h3>
+        <div class="grid">
+          <label>Cílová Ra [µm]<input type="text" id="dr-ra" inputmode="decimal" placeholder="např. 3.2"></label>
+        </div>
+        <div class="chips" id="dr-ra-presets"></div>
+        <div class="result" id="dr-rev"></div>
+        <p class="hint" id="dr-k"></p>
+        <p class="lbl">Třídy drsnosti ISO 1302 (Ra µm)</p>
+        <div class="classbar" id="dr-classes"></div>
+      </div>
       </div>
     </section>
 
@@ -180,29 +206,6 @@
     </section>
 
     <!-- DRSNOST -->
-    <section id="drsnost" class="panel">
-      <div class="card">
-        <h2>Drsnost povrchu</h2>
-        <div class="grid">
-          <label>Materiál obrobku<select id="dr-mat"></select></label>
-          <label>Materiál nástroje<select id="dr-tool"></select></label>
-          <label>Posuv f [mm/ot]<input type="text" id="dr-f" inputmode="decimal" value="0.6"></label>
-          <label>Vc [m/min]<input type="text" id="dr-vc" inputmode="decimal" value="120"></label>
-          <label>Rádius špičky rε [mm]<input type="text" id="dr-re" inputmode="decimal" value="1.6"></label>
-        </div>
-        <div class="chips" id="dr-radii"></div>
-        <div class="result" id="dr-out"></div>
-        <h3 class="sub">Jaký posuv pro požadovanou drsnost?</h3>
-        <div class="grid">
-          <label>Cílová Ra [µm]<input type="text" id="dr-ra" inputmode="decimal" placeholder="např. 3.2"></label>
-        </div>
-        <div class="chips" id="dr-ra-presets"></div>
-        <div class="result" id="dr-rev"></div>
-        <p class="hint" id="dr-k"></p>
-        <p class="lbl">Třídy drsnosti ISO 1302 (Ra µm)</p>
-        <div class="classbar" id="dr-classes"></div>
-      </div>
-    </section>
 
     <!-- ROZTAŽNOST -->
     <section id="teplo" class="panel">

@@ -723,3 +723,7 @@ details > summary { -webkit-tap-highlight-color: transparent; }
 @media (prefers-color-scheme: dark) { .calc-card .ck.clr { color: #f87171; } }
 /* u kalkulačky bez patičky s verzí */
 body:has(#calc.panel.active) > footer { display: none; }
+
+/* Řezné podmínky | Drsnost povrchu – přepínač nahoře */
+.kalk-sw { margin-bottom: 14px; background: var(--card); box-shadow: var(--shadow); }
+.kalk-sw .seg-btn { padding: 11px 6px; font-size: 0.95rem; }
