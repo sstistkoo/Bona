@@ -706,6 +706,8 @@ details > summary { -webkit-tap-highlight-color: transparent; }
 
 /* ── Kalkulačka: displej nahoře, historie pod klávesami ── */
 .calc-card #calc-in { margin-top: 0; }
-.calc-card .calc-hist { max-height: 210px; margin-top: 12px; border-top: 1px solid var(--border); }
-.calc-card .calc-hist:empty { display: none; }
+.calc-hist-wrap { margin-top: 12px; border-top: 1px solid var(--border); }
+.calc-hist-top { display: flex; align-items: center; justify-content: space-between; padding: 4px 0 2px 6px; font-size: 0.8rem; color: var(--muted); }
+#calc-hist-x { width: 36px; height: 32px; min-height: 0; padding: 0; background: none; color: var(--muted); border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; }
+.calc-card .calc-hist { max-height: 210px; }
 .calc-card .calc-hist .h { padding: 7px 6px; }

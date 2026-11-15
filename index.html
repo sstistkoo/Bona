@@ -382,7 +382,10 @@
         <input type="text" id="calc-in" inputmode="none" placeholder="0" autocomplete="off" aria-label="Výraz">
         <div class="calc-res" id="calc-res">&nbsp;</div>
         <div class="calc-keys" id="calc-keys"></div>
-        <div class="calc-hist" id="calc-hist" aria-label="Historie výpočtů"></div>
+        <div class="calc-hist-wrap" id="calc-hist-wrap" hidden>
+          <div class="calc-hist-top"><span>Historie</span><button type="button" id="calc-hist-x" aria-label="Vymazat historii" title="Vymazat historii">✕</button></div>
+          <div class="calc-hist" id="calc-hist" aria-label="Historie výpočtů"></div>
+        </div>
       </div>
     </section>
 

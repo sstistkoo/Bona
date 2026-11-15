@@ -269,6 +269,7 @@
       // historie pod klávesnicí, nejnovější nahoře – klávesy se neposouvají
       histEl.innerHTML = hist.slice(-20).reverse().map((h) => `<div class="h" data-v="${h.v}"><span>${escHtml(h.e)}</span> = <b>${h.v}</b></div>`).join('');
       histEl.scrollTop = 0;
+      $('calc-hist-wrap').hidden = !hist.length;
     }
     function nahled() {
       const s = inEl.value.trim();
@@ -311,6 +312,7 @@
     inEl.addEventListener('input', () => { hotovo = false; nahled(); });
     inEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); rovnase(); } });
     histEl.addEventListener('click', (e) => { const h = e.target.closest('.h'); if (h) { novyPoVysledku(''); vloz(h.dataset.v); } });
+    $('calc-hist-x').addEventListener('click', () => { hist = []; save('calcHist', hist); kresliHist(); });
     kresliHist();
   })();
 })();
