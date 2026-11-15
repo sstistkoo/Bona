@@ -230,7 +230,7 @@ window.STROJ_POZNAMKY = {
     {
       t: 'Porucha – požadavek na údržbu (IWI / IFS)',
       p: [
-        'Na PC: IWI → menu Requestor → Nový požadavek. Povinná pole (hvězdička) shora dolů:',
+        'Na PC: intranet → levý panel → IWI. Pak menu Requestor → Nový požadavek. Povinná pole (hvězdička) shora dolů:',
         '1. Místo: provoz údržby 2 – studená část (dle sešitu).',
         '2. Typ: 01 – Reaktivní údržba (poruchy, závady).',
         '3. Středisko údržby: UDR.',
