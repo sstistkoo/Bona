@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.29';
+const VERZE = '0.8.30';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);

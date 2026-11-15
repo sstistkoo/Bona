@@ -29,8 +29,8 @@ window.STROJ_POZNAMKY = {
       ].join('\n'),
     },
     {
-      t: 'Sonda – chyba měření (K1, pozice 5)',
-      p: 'Chyba – K1 obrobek, měrné pozice 5 pod Dif: zkontrolovat rozdíl, tolerance 0,01.',
+      t: 'Sonda – naměřeno mimo rozsah (K1, pozice 5)',
+      p: 'Chyba – sonda naměřila hodnotu mimo rozsah (K1 obrobek, měrná pozice 5 pod Dif): zkontrolovat rozdíl, tolerance 0,01.',
     },
   ],
   nastroje: [
@@ -188,7 +188,7 @@ window.STROJ_POZNAMKY = {
       t: 'Měřicí sonda obrobku K1 – porucha (Marposs)',
       p: [
         'K1 = měřicí sonda obrobku Marposs.',
-        'Porucha sondy: vyměnit baterie v sondě.',
+        'Porucha: sonda nereaguje, protože v ní chybí (došly) baterie → vyměnit baterie v sondě.',
       ].join('\n'),
     },
   ],
