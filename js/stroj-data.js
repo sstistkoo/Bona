@@ -65,6 +65,27 @@ window.STROJ_POZNAMKY = {
         'Délka L se měří od čela upínače (dosedací plochy) po špičku vrtáku.',
       ].join('\n'),
     },
+    {
+      t: 'Data břitu – délka 1 a délka 2 (pravý suport)',
+      p: [
+        'Délka 1 = hodnota X (vodorovně, od osy po střed/špičku nástroje).',
+        'Délka 2 = hodnota Z (svisle, od čela upínače dolů ke středu/špičce nástroje).',
+        'Příklad na náčrtku: délka 1 = X, −50; délka 2 = Z, cca 120 mm.',
+      ].join('\n'),
+    },
+    {
+      t: 'Fréza FR – nastavit 2. geometrii (radius)',
+      p: [
+        'FR = fréza → nastavit 2. geometrii (radius).',
+        'Příklad FR25: radius 12,5 + 0,2 (díra menší o 0,4 mm).',
+      ].join('\n'),
+    },
+    {
+      t: 'Vřeteno – nastavení nože',
+      p: [
+        'U vřetena se nastavuje nůž, který se zrovna nastavuje: zadává se průměr (Ø) na displeji.',
+      ].join('\n'),
+    },
   ],
   reset: [
     {
