@@ -12,7 +12,9 @@
   let akt = (() => { try { return JSON.parse(localStorage.getItem('bona.strojKat')); } catch { return null; } })();
   if (!KAT.some((k) => k.id === akt)) akt = KAT[0].id;
 
-  $('st-seg').innerHTML = KAT.map((k) => `<button class="seg-btn" data-st="${k.id}">${k.ikona} ${k.nazev}</button>`).join('');
+  // poslední tlačítko není kategorie poznámek, ale odkaz na záložku Nová zakázka
+  $('st-seg').innerHTML = KAT.map((k) => `<button class="seg-btn" data-st="${k.id}">${k.ikona} ${k.nazev}</button>`).join('') +
+    '<button class="seg-btn" data-jdi="zakazka">📋 Nová zakázka</button>';
 
   const poznamka = (p, kat) =>
     `<details class="ref"><summary><span class="sb">${kat ? `<span class="st-kat">${esc(kat)}</span> ` : ''}${esc(p.t)}</span></summary>` +
@@ -44,7 +46,11 @@
   }
   window.strojUkaz = ukaz;
 
-  $('st-seg').addEventListener('click', (e) => { const b = e.target.closest('[data-st]'); if (b) ukaz(b.dataset.st); });
+  $('st-seg').addEventListener('click', (e) => {
+    const j = e.target.closest('[data-jdi]');
+    if (j) { document.querySelector('.tab[data-tab="' + j.dataset.jdi + '"]')?.click(); return; }
+    const b = e.target.closest('[data-st]'); if (b) ukaz(b.dataset.st);
+  });
 
   let casovac;
   $('st-moje').addEventListener('input', () => {
