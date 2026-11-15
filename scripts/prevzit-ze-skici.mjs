@@ -64,6 +64,8 @@ v += part('VBD a držáky (vbdIso.js, holderIsoData.js, insert.js)',
   strip(read(J('calculators/vbdIso.js'))) + '\n' + strip(read(J('calculators/holderIsoData.js'))) +
   '\n  const vbdIsoData = VBD_ISO;\n' + holderIso + '\n' + parseHolder,
   '  out.vbd = { VBD_ISO, SHAPES, CLEARANCE_DEG, THICKNESS_MM, RADIUS_MM, sizeInfo, parseVbdCode, describePosition, clampingForType, holdersFor, HOLDER_STYLES, holderIso, parseHolderCode };');
+v += part('Geometrické tolerance – značky ISO 1101 (toleranceGdt.js)', strip(read(J('calculators/toleranceGdt.js'))),
+  '  out.gdtSectionHTML = gdtSectionHTML;');
 v += '  return out;\n})();\n';
 fs.writeFileSync(path.join(ROOT, 'js/vypocty.js'), v);
 

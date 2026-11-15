@@ -81,39 +81,31 @@
     <!-- TOLERANCE -->
     <section id="tol" class="panel">
       <div class="card">
-        <h2>Tolerance – ČSN EN ISO 286</h2>
-        <div class="seg">
+        <h2>Tolerance</h2>
+        <p class="tol-lbl">Tolerované rozměry – ČSN EN ISO 286-1</p>
+        <div class="seg tol-src">
           <button class="seg-btn active" data-tsrc="iso">Třída a stupeň ISO</button>
           <button class="seg-btn" data-tsrc="custom">Vlastní úchylky</button>
         </div>
-        <div class="tol-top">
-          <div class="seg">
-            <button class="seg-btn active" data-tmode="hole">Díra</button>
-            <button class="seg-btn" data-tmode="shaft">Hřídel</button>
-          </div>
-          <label class="tol-dim"><span>Ø</span><input type="text" id="tol-dim" inputmode="decimal" placeholder="rozměr mm" aria-label="Jmenovitý průměr v mm"></label>
+        <div class="tol-main">
+          <button type="button" class="tol-mode active" data-tmode="hole">Díra</button>
+          <label class="tol-dim"><span>Ø</span><input type="text" id="tol-dim" inputmode="decimal" placeholder="Rozměr mm" aria-label="Jmenovitý průměr v mm" autocomplete="off"></label>
+          <button type="button" class="tol-mode" data-tmode="shaft">Hřídel</button>
+        </div>
+        <div class="tol-custom" id="tol-custom" hidden>
+          <div class="tol-range"><span>Rozmezí</span><button type="button" class="tol-unit" id="tol-unit" title="Přepnout jednotku úchylek (mm / µm)">mm</button></div>
+          <label class="tol-dev" aria-label="Horní úchylka"><button type="button" class="tol-sign" title="Přepnout znaménko">±</button><input type="text" id="tol-up" inputmode="decimal" placeholder="např. -0,255" autocomplete="off"></label>
+          <label class="tol-dev" aria-label="Dolní úchylka"><button type="button" class="tol-sign" title="Přepnout znaménko">±</button><input type="text" id="tol-lo" inputmode="decimal" placeholder="např. -0,304" autocomplete="off"></label>
         </div>
         <div id="tol-iso">
-          <p class="lbl">Třída</p><div class="chips" id="tol-class"></div>
-          <p class="lbl">Stupeň IT</p><div class="chips" id="tol-it"></div>
+          <p class="lbl">Třída</p><div class="chips tol-chips" id="tol-class"></div>
+          <p class="lbl">Stupeň</p><div class="chips tol-chips" id="tol-it"></div>
         </div>
-        <div id="tol-custom" hidden>
-          <div class="tol-unitrow">
-            <span>Úchylky v</span>
-            <div class="seg">
-              <button class="seg-btn active" data-tunit="mm">mm</button>
-              <button class="seg-btn" data-tunit="um">µm</button>
-            </div>
-          </div>
-          <div class="grid">
-            <label><span id="tol-up-l">Horní úchylka [mm]</span><input type="text" id="tol-up" data-neg inputmode="decimal" placeholder="např. -0,222"></label>
-            <label><span id="tol-lo-l">Dolní úchylka [mm]</span><input type="text" id="tol-lo" data-neg inputmode="decimal" placeholder="např. -0,322"></label>
-          </div>
-        </div>
-        <div class="result" id="tol-out">Zadejte rozměr…</div>
-        <button class="secondary copy" data-copy="tol">📋 Kopírovat</button>
-        <details><summary>Volné míry – ČSN EN ISO 2768-1</summary><div id="tol-free"></div></details>
-        <details><summary>Volné geometrické tolerance – ČSN EN ISO 2768-2</summary><div id="tol-geo"></div></details>
+        <div class="result tol-res" id="tol-out">Zadejte rozměr…</div>
+        <details class="tol-free"><summary>Volné míry – ČSN EN ISO 2768-1 <small>(■ m = střední třída)</small></summary><div id="tol-free"></div></details>
+        <details class="tol-free"><summary>Volné geometrické tolerance – ČSN EN ISO 2768-2 <small>(třídy H, K, L)</small></summary><div id="tol-geo"></div></details>
+        <div id="tol-gdt"></div>
+        <button class="secondary copy tol-copy" data-copy="tol">📋 Kopírovat</button>
       </div>
     </section>
 

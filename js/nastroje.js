@@ -49,31 +49,37 @@
     chips(itEl, Array.from({ length: 18 }, (_, i) => i + 1), st.it, (v) => { st.it = v; calc(); });
 
     const setSrc = seg('[data-tsrc]', 'tsrc', (v) => { st.custom = v === 'custom'; ukaz(); calc(); });
+    // Díra | Ø rozměr | Hřídel – dvě samostatná tlačítka kolem pole (jako ve SKICE)
     const setMode = seg('[data-tmode]', 'tmode', (v) => { st.hole = v === 'hole'; kreslitTridy(); calc(); });
     function ukaz() { $('tol-iso').hidden = st.custom; $('tol-custom').hidden = !st.custom; }
     setSrc(st.custom ? 'custom' : 'iso'); setMode(st.hole ? 'hole' : 'shaft'); ukaz(); kreslitTridy();
 
-    // Jednotka vlastních úchylek: mm nebo µm (výpočet jede dál v mm)
+    // Jednotka vlastních úchylek: jedno tlačítko mm ⇄ µm (výpočet jede dál v mm)
+    const unitEl = $('tol-unit');
     function jednotkaUI() {
-      const u = st.um ? 'µm' : 'mm';
-      $('tol-up-l').textContent = `Horní úchylka [${u}]`;
-      $('tol-lo-l').textContent = `Dolní úchylka [${u}]`;
-      upEl.placeholder = st.um ? 'např. -222' : 'např. -0,222';
-      loEl.placeholder = st.um ? 'např. -322' : 'např. -0,322';
+      unitEl.textContent = st.um ? 'µm' : 'mm';
+      upEl.placeholder = st.um ? 'např. -255' : 'např. -0,255';
+      loEl.placeholder = st.um ? 'např. -304' : 'např. -0,304';
     }
-    const setUnit = seg('[data-tunit]', 'tunit', (v) => {
-      const um = v === 'um';
-      if (um !== st.um) {                 // převést už zadané hodnoty, ať zůstanou stejné
-        const k = um ? 1000 : 0.001;
-        [upEl, loEl].forEach((inp) => { const x = val(inp); if (Number.isFinite(x)) inp.value = r(x * k, 6); });
-      }
-      st.um = um; jednotkaUI(); calc();
+    unitEl.addEventListener('mousedown', (e) => e.preventDefault());
+    unitEl.addEventListener('click', () => {
+      const k = st.um ? 0.001 : 1000; // převést už zadané hodnoty, ať zůstanou stejné
+      [upEl, loEl].forEach((inp) => { const x = val(inp); if (Number.isFinite(x)) inp.value = r(x * k, 6); });
+      st.um = !st.um; jednotkaUI(); calc();
     });
-    setUnit(st.um ? 'um' : 'mm'); jednotkaUI();
+    jednotkaUI();
+    // ± před polem (číselná klávesnice iOS nemá mínus)
+    document.querySelectorAll('#tol .tol-sign').forEach((b) => {
+      b.addEventListener('mousedown', (e) => e.preventDefault());
+      b.addEventListener('click', () => {
+        const inp = b.parentNode.querySelector('input'), v = inp.value.trim();
+        inp.value = v.startsWith('-') ? v.slice(1) : '-' + v.replace(/^\+/, '');
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    });
 
     const sign = (v) => { const x = Math.round(v * 100) / 100; return x > 0 ? '+' + x : x < 0 ? '−' + Math.abs(x) : '0'; };
     const mm = (v) => String(parseFloat(v.toFixed(5)));
-    const mm3 = (v) => { const s = mm(v); const d = (s.split('.')[1] || '').length; return d >= 3 ? s : v.toFixed(3); };
 
     function calc() {
       st.dim = dimEl.value; st.up = upEl.value; st.lo = loEl.value; save('tol', st);
@@ -81,16 +87,17 @@
       const dim = val(dimEl);
       if (dim === null) { out.textContent = 'Zadejte rozměr…'; return; }
       if (!(dim > 0)) { out.textContent = 'Neplatný rozměr'; return; }
+      if (!st.custom && dim > 3150) { out.textContent = 'Rozměr mimo rozsah ISO 286 (0–3150 mm)'; return; }
       let res, label;
       if (st.custom) {
         let up = val(upEl), lo = val(loEl);
         if (up === null || lo === null) { out.textContent = 'Zadejte horní i dolní úchylku…'; return; }
         if (!Number.isFinite(up) || !Number.isFinite(lo)) { out.textContent = 'Neplatná úchylka'; return; }
-        if (up < lo) [up, lo] = [lo, up];
         if (st.um) { up /= 1000; lo /= 1000; }
+        if (up < lo) [up, lo] = [lo, up]; // zadáno naopak → přizpůsobit
         res = { upper: up * 1000, lower: lo * 1000, tol: Math.round((up - lo) * 1e6) / 1000 };
-        const fmm = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + r(Math.abs(v), 4);
-        label = st.um ? `Ø${dim} ${sign(up * 1000)} / ${sign(lo * 1000)} µm` : `Ø${dim} ${fmm(up)} / ${fmm(lo)}`;
+        const f4 = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + r(Math.abs(v), 4);
+        label = `Ø${dim} ${f4(up)} / ${f4(lo)}`;
       } else {
         const letter = st.hole ? st.cls.hole : st.cls.shaft;
         res = V.deviations(letter, parseInt(st.it, 10), dim);
@@ -99,18 +106,21 @@
       }
       const max = dim + res.upper / 1000, min = dim + res.lower / 1000;
       const kind = st.hole ? 'Díra' : 'Hřídel';
-      // Rozhodující rozměr: díra = Ø min (od něj se přidává), hřídel = Ø max
-      kopie.tol = `${kind} ${label} | ${sign(res.upper)} / ${sign(res.lower)} µm | max ${mm(max)} / min ${mm(min)} mm`;
-      const bunka = (lbl, v, dev, key) =>
-        `<div class="tc${key ? ' key' : ''}"><small>${lbl}${key ? ' ◂ rozhodující' : ''}</small><b>${mm3(v)}</b><small>${dev}</small></div>`;
+      // Rozhodující rozměr: díra = Ø min (tolerance +), hřídel = Ø max (tolerance −)
+      const keyLbl = st.hole ? 'Ø min' : 'Ø max', keyVal = st.hole ? min : max;
+      const zn = st.hole ? '+' : '−';
+      const tolTxt = `${zn}${res.tol} µm (${zn}${mm(res.tol / 1000)} mm)`;
+      kopie.tol = `${kind} ${label} │ ${sign(res.upper)} / ${sign(res.lower)} µm │ max ${mm(max)} / min ${mm(min)} mm │ ${keyLbl} ${mm(keyVal)} mm ${tolTxt}`;
       out.innerHTML =
-        `<div class="tol-head"><span class="badge ${st.hole ? 'hole' : 'shaft'}">${kind}</span> <b>${label}</b></div>` +
-        `<div class="tol-grid">` +
-          bunka('Ø max', max, `horní ${sign(res.upper)} µm`, !st.hole) +
-          bunka('Ø min', min, `dolní ${sign(res.lower)} µm`, st.hole) +
-        `</div>` +
-        `<div class="tol-foot"><span>Tolerance <b>${res.tol} µm</b> (${mm(res.tol / 1000)} mm)</span><span>Střed <b>${mm((max + min) / 2)}</b></span></div>` +
-        (res.note ? `<p class="hint">${res.note}</p>` : '');
+        `<div class="tol-r-head"><span class="badge ${st.hole ? 'hole' : 'shaft'}">${kind}</span> <b>${label}</b></div>` +
+        '<div class="tol-r-cols">' +
+          `<div class="tol-r-col"><div><span>Horní</span><b>${sign(res.upper)} µm</b></div><div><span>Dolní</span><b>${sign(res.lower)} µm</b></div></div>` +
+          `<div class="tol-r-col"><div${st.hole ? '' : ' class="key"'}><span>Ø max</span><b>${mm(max)} mm</b></div>` +
+          `<div${st.hole ? ' class="key"' : ''}><span>Ø min</span><b>${mm(min)} mm</b></div></div>` +
+        '</div>' +
+        `<div class="tol-r-key"><span>${keyLbl}</span><b>${mm(keyVal)} mm</b> <em>${tolTxt}</em></div>` +
+        `<div class="tol-r-mid">Střed tolerance <b>${mm((max + min) / 2)} mm</b></div>` +
+        (res.note ? `<div class="tol-r-note">${res.note}</div>` : '');
     }
     [dimEl, upEl, loEl].forEach((e) => e.addEventListener('input', calc));
     calc();
@@ -119,9 +129,9 @@
     const free = [[3, 0.05, 0.1, 0.2, null], [6, 0.05, 0.1, 0.3, 0.5], [30, 0.1, 0.2, 0.5, 1.0], [120, 0.15, 0.3, 0.8, 1.5],
       [400, 0.2, 0.5, 1.2, 2.5], [1000, 0.3, 0.8, 2.0, 4.0], [2000, 0.5, 1.2, 3.0, 6.0], [4000, null, 2.0, 4.0, 8.0]];
     let prev = 0.5;
-    $('tol-free').innerHTML = '<table class="tbl"><thead><tr><th>Rozměr (mm)</th><th>f</th><th class="hl">m</th><th>c</th><th>v</th></tr></thead><tbody>' +
-      free.map((row) => { const t = `<tr><td>${prev} – ${row[0]}</td>` + row.slice(1).map((x, i) => `<td${i === 1 ? ' class="hl"' : ''}>${x === null ? '—' : '±' + x}</td>`).join('') + '</tr>'; prev = row[0]; return t; }).join('') +
-      '</tbody></table><p class="hint">m = střední třída (nejčastější na výkresech).</p>';
+    $('tol-free').innerHTML = '<table class="tbl"><thead><tr><th>Rozměr (mm)</th><th>f</th><th class="tol-m tol-m-top">m</th><th>c</th><th>v</th></tr></thead><tbody>' +
+      free.map((row) => { const t = `<tr><td>${prev} – ${row[0]}</td>` + row.slice(1).map((x, i) => `<td${i === 1 ? ` class="tol-m${row === free[free.length - 1] ? ' tol-m-bot' : ''}"` : ''}>${x === null ? '—' : '±' + x}</td>`).join('') + '</tr>'; prev = row[0]; return t; }).join('') +
+      '</tbody></table>';
 
     // ISO 2768-2 [rozsah, H, K, L]
     const geo = [
@@ -132,7 +142,10 @@
     ];
     $('tol-geo').innerHTML = geo.map(([t, rows]) => `<p class="lbl">${t}</p><table class="tbl"><thead><tr><th>Rozsah</th><th>H</th><th>K</th><th>L</th></tr></thead><tbody>` +
       rows.map((x) => `<tr>${x.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('') + '</tbody></table>').join('') +
-      '<p class="hint">Hodnoty = šířka tolerančního pásma (mm).</p>';
+      '<p class="hint">Hodnoty = šířka tolerančního pásma (mm). Rovnoběžnost: větší z tolerance rozměru a rovinnosti/přímosti. ' +
+      'Kruhovitost: tolerance průměru, nejvýše však kruhové házení. Souosost: bez vlastní hodnoty, nejvýše kruhové házení.</p>';
+    // Geometrické tolerance – značky ISO 1101 (převzato ze SKICA)
+    $('tol-gdt').outerHTML = V.gdtSectionHTML().replace('<details class="tol-free">', '<details class="tol-free" id="tol-gdt">');
   })();
 
   /* ══════════════ DRSNOST ══════════════ */

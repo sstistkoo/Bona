@@ -394,26 +394,98 @@ body.menu-open { overflow: hidden; }
 @keyframes flash { from { box-shadow: 0 0 0 4px var(--accent); } to { box-shadow: 0 0 0 0 transparent; } }
 input.flash { animation: flash 1.2s ease-out; }
 
-/* ══════════ Tolerance – kompaktní ══════════ */
-.tol-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: stretch; margin-bottom: 4px; }
-.tol-top .seg { margin: 0; }
-label.tol-dim { flex-direction: row; align-items: center; gap: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); padding-left: 10px; }
-label.tol-dim span { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-label.tol-dim input { border: none; background: transparent; font-weight: 700; font-size: 1.1rem; }
+/* ══════════ Tolerance – rozložení jako ve SKICE ══════════ */
+.tol-lbl { font-size: 0.85rem; color: var(--muted); margin: 0 0 6px; }
+.tol-src { margin-bottom: 10px; }
+/* Díra | Ø rozměr | Hřídel */
+.tol-main { display: flex; gap: 6px; align-items: stretch; margin-bottom: 10px; }
+.tol-mode {
+  flex: none; min-width: 72px; padding: 0 12px; background: var(--code-bg); color: var(--text);
+  border: 1px solid var(--border); font-weight: 600;
+}
+.tol-mode.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+label.tol-dim {
+  flex: 1 1 auto; min-width: 0; flex-direction: row; align-items: center; gap: 0;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--bg); padding-left: 12px;
+}
+label.tol-dim span { font-size: 1.15rem; font-weight: 700; color: var(--muted); }
+label.tol-dim input { border: none; background: transparent; font-weight: 700; font-size: 1.15rem; text-align: center; min-width: 0; }
+label.tol-dim input:focus { outline: none; background: transparent; }
 label.tol-dim:focus-within { outline: 2px solid var(--accent); }
-.tol-unitrow { display: flex; align-items: center; gap: 10px; margin: 10px 0 6px; font-size: 0.85rem; color: var(--muted); }
-.tol-unitrow .seg { margin: 0; width: 140px; }
-.tol-unitrow .seg-btn { padding: 6px 0; }
-.tol-head { margin-bottom: 8px; font-family: Consolas, monospace; }
-.tol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.tol-grid .tc { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--border); min-width: 0; }
-.tol-grid .tc small { color: var(--muted); font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tol-grid .tc b { font-family: Consolas, monospace; font-size: 1.3rem; white-space: nowrap; }
-.tol-grid .tc.key { border-color: var(--accent); outline: 1px solid var(--accent); }
-.tol-grid .tc.key b { color: var(--accent); }
-.tol-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; margin-top: 8px; font-size: 0.9rem; }
-.tol-foot b { font-family: Consolas, monospace; }
-.tol-foot b { font-size: 1rem; }
+/* Rozmezí [mm] | ± horní | ± dolní */
+.tol-custom { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; }
+.tol-range { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--muted); }
+.tol-unit {
+  min-height: 32px; min-width: 44px; padding: 2px 8px; font-size: 0.85rem; font-weight: 700;
+  background: var(--code-bg); color: var(--accent); border: 1px solid var(--border);
+}
+.tol-dev { flex: 1 1 0; min-width: 0; flex-direction: row; align-items: stretch; gap: 4px; }
+.tol-dev input { min-width: 0; text-align: center; font-family: Consolas, monospace; font-weight: 700; padding: 10px 4px; }
+.tol-sign {
+  flex: none; width: 36px; padding: 0; background: var(--code-bg); color: var(--text);
+  border: 1px solid var(--border); font-size: 1.1rem;
+}
+/* mřížka tříd a stupňů */
+.tol-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 5px; }
+.tol-chips .chip { min-width: 0; padding: 8px 2px; font-family: Consolas, monospace; }
+/* výsledek */
+.tol-res { font-size: 1rem; }
+.tol-r-head { font-size: 1.05rem; margin-bottom: 10px; text-align: center; }
+.tol-r-head b { font-family: Consolas, monospace; font-size: 1.1rem; color: var(--text) !important; }
+.tol-r-cols { display: flex; align-items: stretch; margin-bottom: 8px; }
+.tol-r-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.tol-r-col + .tol-r-col { border-left: 1px solid var(--border); padding-left: 10px; margin-left: 10px; }
+.tol-r-col > div { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 6px; flex-wrap: wrap; padding: 2px 6px; margin: 0 -6px; border-radius: 6px; }
+.tol-r-col span { color: var(--muted); font-size: 0.8rem; }
+.tol-r-col b { font-family: Consolas, monospace; font-size: 1rem !important; color: var(--text) !important; white-space: nowrap; }
+.tol-r-col > div.key { background: var(--accent); }
+.tol-r-col > div.key span, .tol-r-col > div.key b { color: var(--accent-text) !important; }
+.tol-r-key { border-top: 1px solid var(--border); padding-top: 8px; text-align: center; font-family: Consolas, monospace; }
+.tol-r-key span { display: block; color: var(--muted); font-size: 0.8rem; font-family: inherit; }
+.tol-r-key b { font-size: 1.3rem; }
+.tol-r-key em { font-style: normal; font-weight: 700; color: var(--accent); white-space: nowrap; }
+.tol-r-mid { text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+.tol-r-mid b { font-size: 0.9rem !important; color: var(--text) !important; font-family: Consolas, monospace; }
+.tol-r-note { color: var(--muted); font-size: 0.8rem; margin-top: 6px; }
+/* sbalitelné tabulky a Kopírovat */
+.tol-free { margin-top: 10px; }
+.tol-free > summary { font-size: 0.92rem; }
+.tol-free > summary small { font-weight: 400; color: var(--muted); }
+.tol-copy { width: 100%; margin-top: 14px; }
+.tbl .tol-m { border-left: 2px solid var(--accent); border-right: 2px solid var(--accent); font-weight: 700; }
+.tbl th.tol-m-top { border-top: 2px solid var(--accent); }
+.tbl td.tol-m-bot { border-bottom: 2px solid var(--accent); }
+
+/* ── Geometrické tolerance ISO 1101 (převzato ze SKICA) ── */
+.gdt { display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem; }
+.gdt-group { margin-top: 8px; padding-bottom: 2px; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); }
+.gdt-item, .gdt-mrow { display: flex; gap: 10px; align-items: flex-start; }
+.gdt-ico {
+  flex: none; width: 32px; height: 32px; padding: 4px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg);
+  fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.gdt-ico .gdt-fill { fill: var(--text); stroke: none; }
+.gdt-txt { flex: 1 1 auto; min-width: 0; }
+.gdt-name { font-weight: 600; }
+.gdt-zone { color: var(--muted); line-height: 1.4; }
+.gdt-check { line-height: 1.4; margin-top: 2px; }
+.gdt-check b { color: var(--accent); }
+.gdt-base { font-size: 0.7rem; font-weight: 600; padding: 1px 6px; border-radius: 8px; white-space: nowrap; color: #fff; vertical-align: 1px; }
+.gdt-base-yes { background: #b45309; }
+.gdt-base-no { background: var(--accent); color: var(--accent-text); }
+.gdt-base-opt { background: #6b7280; }
+.gdt-msym { flex: none; width: 40px; text-align: center; padding-top: 1px; }
+.gdt-mod { display: inline-block; min-width: 14px; font-weight: 700; text-align: center; line-height: 14px; }
+.gdt-circ { width: 15px; height: 15px; font-size: 9px; border: 1.5px solid currentColor; border-radius: 50%; vertical-align: middle; }
+.gdt-ted { display: inline-block; padding: 0 4px; border: 1.5px solid var(--text); font-weight: 600; }
+.gdt-datum { display: inline-block; padding: 0 5px; border: 1.5px solid var(--text); border-bottom-width: 4px; font-weight: 700; }
+.gdt-ex { display: flex; flex-direction: column; gap: 3px; }
+.gdt-frame { display: inline-flex; align-self: flex-start; border: 1.5px solid var(--text); background: var(--bg); }
+.gdt-frame > span { display: inline-flex; align-items: center; gap: 3px; min-height: 28px; padding: 0 8px; font-weight: 600; font-family: Consolas, monospace; }
+.gdt-frame > span + span { border-left: 1.5px solid var(--text); }
+.gdt-frame .gdt-ico { width: 24px; height: 24px; padding: 1px; border: none; background: none; }
+.gdt-note { padding: 6px 8px; border-left: 3px solid var(--accent); background: var(--code-bg); border-radius: 0 6px 6px 0; color: var(--muted); line-height: 1.4; }
+.gdt-note b { color: var(--text); }
 
 /* ── Stroj – poznámky ── */
 #st-hledat { margin-bottom: 12px; }
@@ -484,7 +556,6 @@ button:active { transform: scale(0.97); filter: brightness(0.95); }
 .result { background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 10px; }
 .result b { color: var(--accent); }
 .result .warn { border-left: 4px solid var(--warn); }
-.tol-grid .tc b { color: var(--text); }
 .warn { border-radius: 8px; }
 
 /* poznámky ke stroji: kategorie jako štítky */
