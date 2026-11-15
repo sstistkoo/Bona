@@ -81,7 +81,12 @@ window.STROJ_POZNAMKY = {
     },
     {
       t: 'Sonda – naměřeno mimo rozsah (K1, pozice 5)',
-      p: 'Chyba – sonda naměřila hodnotu mimo rozsah (K1 obrobek, měrná pozice 5 pod Dif): zkontrolovat rozdíl, tolerance 0,01.',
+      p: [
+        'Chyba – sonda naměřila hodnotu mimo rozsah (K1 obrobek, měrná pozice 5 pod Dif): zkontrolovat rozdíl, tolerance 0,01.',
+        '',
+        'Když je Dif větší než 0,01 (např. skočilo 0,05): při seřizování, po výměně plátku, to nevadí a jede se dál.',
+        'Ostatní pozice 2 až 8 v nabídce měření nejsou vysvětlené a asi nejsou důležité.',
+      ].join('\n'),
     },
   ],
   nastroje: [
@@ -112,7 +117,7 @@ window.STROJ_POZNAMKY = {
         '2. Displej → Detail nástroje.',
         '3. Displej → Data břitu.',
         '4. Displej → GEOMETRIE = L (délka vrtáku), 2× Input.',
-        '5. Zpět (<<) – 2×.',
+        '5. Zpět: 2× softklávesa „<<“, pak klávesa MACHINE. (Klávesa ^ vlevo dole vrací o úroveň zpět, klávesa „>“ přepíná lištu softkláves.)',
         '',
         'Délka L se měří od čela upínače (dosedací plochy) po špičku vrtáku.',
       ].join('\n'),
@@ -130,7 +135,10 @@ window.STROJ_POZNAMKY = {
       p: [
         'FR = fréza → nastavit 2. geometrii (radius).',
         'Příklad FR25: radius 12,5 + 0,2 (díra menší o 0,4 mm).',
+        '',
+        'Podrobnosti nástroje (např. FR_R3): Název, Duplo, Typ 120 Stopková fréza, břity #1–#9, stav (odblokován, aktivní…), TOFFL_L1 až L3. Softklávesy: Data břitů, Seznam zásobníku, Seznam nástrojů, <<.',
       ].join('\n'),
+      f: ['podrobnosti-nastroje.jpg'],
     },
     {
       t: 'Spindel – nůž s displejem',

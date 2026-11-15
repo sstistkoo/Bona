@@ -51,9 +51,9 @@
         t: 'Kontrola VAR_DEF 1 a 2 (podpěrky, upnutí čelistí)',
         d: [
           'Zkontrolovat programy VAR_DEF_1 a VAR_DEF_2.',
-          'Podpěrky („íčko“): 97,7 (CHES4). Zjistit z předchozí zakázky, jak to má být, a přepsat do nové.',
+          'Podpěrky („íčko“) jsou ve stejném programu (VAR_DEF): 97,7 (CHES4). Zjistit z předchozí zakázky, jak to má být, a přepsat do nové.',
           'Upnutí čelistí: Menu Select → Menu 1 → softklávesa Upínač. Čelisti se upnou na obrobek na nějakou hodnotu (Skutečná poloha). Od ní se nastavuje rozsah upnutí: minimum o 10 méně a maximum o 10 více, než na kolik se upnulo (pole „Dílec upnut“ – min. a max. mezní hodnota pro hlídání upínacího bodu; na fotce např. 219 a 239).',
-          'Tyto hodnoty (od skutečné polohy) se musí zapsat v programu do H2 a H3 (upnutí čelistí, max a min).',
+          'Tyto hodnoty se zadávají do H2 a H3 v programu VAR_DEF (upnutí čelistí, max a min). Postup upnutí ještě upřesnit.',
         ],
         f: ['upinac-menu1.jpg'],
       },
