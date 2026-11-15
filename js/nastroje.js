@@ -78,7 +78,8 @@
       });
     });
 
-    const sign = (v) => { const x = Math.round(v * 100) / 100; return x > 0 ? '+' + x : x < 0 ? '−' + Math.abs(x) : '0'; };
+    // formát čísel přesně jako ve SKICE (tolerance.js)
+    const sign = (v) => { const x = Math.round(v * 100) / 100; return x > 0 ? '+' + x : '' + x; };
     const mm = (v) => String(parseFloat(v.toFixed(5)));
 
     function calc() {
@@ -96,7 +97,7 @@
         if (st.um) { up /= 1000; lo /= 1000; }
         if (up < lo) [up, lo] = [lo, up]; // zadáno naopak → přizpůsobit
         res = { upper: up * 1000, lower: lo * 1000, tol: Math.round((up - lo) * 1e6) / 1000 };
-        const f4 = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + r(Math.abs(v), 4);
+        const f4 = (v) => (v > 0 ? '+' : '') + r(v, 4);
         label = `Ø${dim} ${f4(up)} / ${f4(lo)}`;
       } else {
         const letter = st.hole ? st.cls.hole : st.cls.shaft;
@@ -108,18 +109,18 @@
       const kind = st.hole ? 'Díra' : 'Hřídel';
       // Rozhodující rozměr: díra = Ø min (tolerance +), hřídel = Ø max (tolerance −)
       const keyLbl = st.hole ? 'Ø min' : 'Ø max', keyVal = st.hole ? min : max;
-      const zn = st.hole ? '+' : '−';
+      const zn = st.hole ? '+' : '−'; // jako SKICA
       const tolTxt = `${zn}${res.tol} µm (${zn}${mm(res.tol / 1000)} mm)`;
       kopie.tol = `${kind} ${label} │ ${sign(res.upper)} / ${sign(res.lower)} µm │ max ${mm(max)} / min ${mm(min)} mm │ ${keyLbl} ${mm(keyVal)} mm ${tolTxt}`;
+      // stejné HTML jako ve SKICE
       out.innerHTML =
-        `<div class="tol-r-head"><span class="badge ${st.hole ? 'hole' : 'shaft'}">${kind}</span> <b>${label}</b></div>` +
+        `<div class="tol-r-head"><span class="tol-r-kind ${st.hole ? 'hole' : 'shaft'}">${kind}</span> <strong>${label}</strong></div>` +
         '<div class="tol-r-cols">' +
           `<div class="tol-r-col"><div><span>Horní</span><b>${sign(res.upper)} µm</b></div><div><span>Dolní</span><b>${sign(res.lower)} µm</b></div></div>` +
           `<div class="tol-r-col"><div${st.hole ? '' : ' class="key"'}><span>Ø max</span><b>${mm(max)} mm</b></div>` +
           `<div${st.hole ? ' class="key"' : ''}><span>Ø min</span><b>${mm(min)} mm</b></div></div>` +
         '</div>' +
-        `<div class="tol-r-key"><span>${keyLbl}</span><b>${mm(keyVal)} mm</b> <em>${tolTxt}</em></div>` +
-        `<div class="tol-r-mid">Střed tolerance <b>${mm((max + min) / 2)} mm</b></div>` +
+        `<div class="tol-r-tol"><span>${keyLbl}</span><br><b>${mm(keyVal)} mm</b> ${tolTxt}</div>` +
         (res.note ? `<div class="tol-r-note">${res.note}</div>` : '');
     }
     [dimEl, upEl, loEl].forEach((e) => e.addEventListener('input', calc));
