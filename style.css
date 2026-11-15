@@ -428,3 +428,13 @@ label.tol-dim:focus-within { outline: 2px solid var(--accent); }
 .zk-d { flex-basis: 100%; margin: 0 0 8px 32px; }
 .zk-d ol { margin: 4px 0 0; padding-left: 20px; }
 .zk-d ol li { display: list-item; border: none; padding: 4px 0; }
+
+/* Přihlašovací brána */
+html.zamceno body > :not(#brana) { display: none !important; }
+#brana { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #1b2026; z-index: 9999; }
+#brana form { display: flex; flex-direction: column; gap: 12px; width: min(320px, 86vw); text-align: center; color: #eee; }
+#brana h2 { margin: 0; font-size: 2rem; }
+#brana p { margin: 0; opacity: .8; }
+#brana input { padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #556; background: #11151a; color: #fff; text-align: center; }
+#brana button { padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 0; background: #f0a500; color: #111; font-weight: 700; }
+#brana-chyba { color: #ff7b7b; min-height: 1.2em; }
