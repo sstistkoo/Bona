@@ -33,7 +33,38 @@ window.STROJ_POZNAMKY = {
       p: 'Chyba – K1 obrobek, měrné pozice 5 pod Dif: zkontrolovat rozdíl, tolerance 0,01.',
     },
   ],
-  nastroje: [],
+  nastroje: [
+    {
+      t: 'Výměna nástroje (zásobník)',
+      p: [
+        '1. Tlačítko s ikonou dvou obdélníků (vlevo nahoře) – chvilku počkat.',
+        '2. Klíč C2 / C1 – dveře levé / pravé.',
+        '3. Otevření dveří (zásobník + dveře ↑).',
+        '4. Natočení zásobníku (tlačítko s ikonou zásobníku a šipkami).',
+        '5. Vyndání nože (otočný přepínač).',
+        '6. Zasunutí nože (otočný přepínač).',
+        '7. Zavření dveří (laser).',
+      ].join('\n'),
+    },
+    {
+      t: 'Zapsání nástroje',
+      p: [
+        'Menu Select → Parametry → Nástroj (záložka 1 zleva).',
+      ].join('\n'),
+    },
+    {
+      t: 'Výměna vrtáku',
+      p: [
+        '1. Displej: najet na pozici v tabulce (přepínání zásobníku).',
+        '2. Displej → Detail nástroje.',
+        '3. Displej → Data břitu.',
+        '4. Displej → GEOMETRIE = L (délka vrtáku), 2× Input.',
+        '5. Zpět (<<) – 2×.',
+        '',
+        'Délka L se měří od čela upínače (dosedací plochy) po špičku vrtáku.',
+      ].join('\n'),
+    },
+  ],
   reset: [
     {
       t: 'Reset a najetí programu',
