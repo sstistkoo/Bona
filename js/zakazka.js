@@ -1,5 +1,5 @@
 'use strict';
-// Chystání na novou zakázku – kontrolní seznam po skupinách (upravitelný) + údaje o zakázce. Ukládá se v prohlížeči.
+// Chystání na novou zakázku – kontrolní seznam po skupinách (upravitelný) + poznámka k zakázce. Ukládá se v prohlížeči.
 
 (function () {
   const $ = (id) => document.getElementById(id);
@@ -98,13 +98,15 @@
   }
   let skupiny = slij(get('seznam2', null));
 
-  const POLE = ['zk-cislo', 'zk-vykres', 'zk-mat', 'zk-prog'];
-  POLE.forEach((id) => {
-    $(id).value = get(id, '');
-    $(id).addEventListener('input', () => set(id, $(id).value));
-  });
+  // Poznámka je v rozbalovací záložce; když je prázdná, zůstane sbalená.
+  const stavPozn = () => {
+    const t = $('zk-pozn').value.trim();
+    $('zk-pozn-stav').textContent = t ? '· vyplněno' : '';
+  };
   $('zk-pozn').value = get('pozn', '');
-  $('zk-pozn').addEventListener('input', () => set('pozn', $('zk-pozn').value));
+  $('zk-pozn-box').open = !!$('zk-pozn').value.trim();
+  stavPozn();
+  $('zk-pozn').addEventListener('input', () => { set('pozn', $('zk-pozn').value); stavPozn(); });
 
   function vykresli() {
     const hotovo = skupiny.reduce((a, g) => a + g.p.filter((x) => x.ok).length, 0);
@@ -143,9 +145,9 @@
 
   $('zk-reset').addEventListener('click', () => { skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false))); uloz(); });
   $('zk-nova').addEventListener('click', () => {
-    if (!confirm('Začít novou zakázku? Odškrtne se seznam a vymažou se údaje o zakázce.')) return;
+    if (!confirm('Začít novou zakázku? Odškrtne se seznam a vymaže se poznámka k zakázce.')) return;
     skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false)));
-    POLE.concat('zk-pozn').forEach((id) => { $(id).value = ''; set(id === 'zk-pozn' ? 'pozn' : id, ''); });
+    $('zk-pozn').value = ''; set('pozn', ''); stavPozn(); $('zk-pozn-box').open = false;
     uloz();
   });
   vykresli();
