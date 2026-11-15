@@ -246,14 +246,109 @@
     setTimeout(() => { el.focus({ preventScroll: true }); if (el.select) el.select(); }, 300);
     el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
   }
+  /* ── Okénko u náčrtu: klepnutí na kótu / do kužele otevře malé okno, hodnota se zapíše do pole dole ── */
+  let okno = null;                                 // { el, zrus }
+  function zavriOkno() { if (okno) { okno.zrus(); okno.el.remove(); okno = null; } }
+  function otevriOkno(e, o) {
+    zavriOkno();
+    const el = document.createElement('div');
+    el.className = 'svg-pop';
+    el.setAttribute('role', 'dialog');
+    el.innerHTML = '<div class="svg-pop-label">' + o.label + (o.unit ? ' <small>' + o.unit + '</small>' : '') + '</div>' +
+      (o.hint ? '<div class="svg-pop-hint">' + o.hint + '</div>' : '') +
+      (o.choices ? '<div class="svg-pop-choices">' + o.choices.map((c) =>
+        '<button type="button" data-v="' + c.value + '"' + (c.value === o.choice ? ' class="on"' : '') + '>' + c.text + '</button>').join('') + '</div>' : '') +
+      '<div class="svg-pop-row"><input type="text" ' + (o.text ? 'inputmode="text" ' : 'inputmode="decimal" ') + 'autocomplete="off" aria-label="' + o.label.replace(/"/g, '') + '">' +
+      '<button type="button" class="svg-pop-ok">OK</button>' +
+      (o.onDelete ? '<button type="button" class="svg-pop-del" title="Odebrat" aria-label="Odebrat">🗑</button>' : '') +
+      '<button type="button" class="svg-pop-x" title="Zavřít" aria-label="Zavřít">✕</button></div>';
+    document.body.appendChild(el);
+    const inp = el.querySelector('input');
+    inp.value = o.value ?? '';
+    let choice = o.choice;
+    el.querySelectorAll('.svg-pop-choices button').forEach((bt) => bt.addEventListener('click', () => {
+      choice = bt.dataset.v;
+      el.querySelectorAll('.svg-pop-choices button').forEach((x) => x.classList.toggle('on', x === bt));
+      inp.focus();
+    }));
+    // u místa klepnutí, ale vždy celé ve viditelné části obrazovky (i nad klávesnicí telefonu)
+    const vv = window.visualViewport;
+    const umistit = () => {
+      const r = el.getBoundingClientRect();
+      const t0 = vv ? vv.offsetTop : 0, l0 = vv ? vv.offsetLeft : 0;
+      const vw = vv ? vv.width : innerWidth, vh = vv ? vv.height : innerHeight;
+      const x = e.clientX - r.width / 2;
+      let y = e.clientY + 16;
+      if (y + r.height > t0 + vh - 8) y = e.clientY - r.height - 16;
+      el.style.left = Math.max(l0 + 8, Math.min(x, l0 + vw - r.width - 8)) + 'px';
+      el.style.top = Math.max(t0 + 8, Math.min(y, t0 + vh - r.height - 8)) + 'px';
+    };
+    umistit();
+    vv?.addEventListener('resize', umistit); vv?.addEventListener('scroll', umistit);
+    const pryc = (ev2) => { if (!el.contains(ev2.target) && !ev2.target.closest?.('[data-edit]')) zavriOkno(); };
+    const t = setTimeout(() => document.addEventListener('pointerdown', pryc, true), 0);
+    okno = { el, zrus: () => { clearTimeout(t); document.removeEventListener('pointerdown', pryc, true); vv?.removeEventListener('resize', umistit); vv?.removeEventListener('scroll', umistit); } };
+
+    const potvrdit = () => {
+      const raw = inp.value.trim();
+      if (raw !== '' && !o.text && !Number.isFinite(ev(raw))) { inp.classList.add('svg-pop-bad'); inp.focus(); return; }
+      zavriOkno();
+      o.onCommit(raw, choice);
+    };
+    el.querySelector('.svg-pop-ok').addEventListener('click', potvrdit);
+    el.querySelector('.svg-pop-x').addEventListener('click', zavriOkno);
+    el.querySelector('.svg-pop-del')?.addEventListener('click', () => { zavriOkno(); o.onDelete(); });
+    inp.addEventListener('input', () => inp.classList.remove('svg-pop-bad'));
+    el.addEventListener('keydown', (k) => {
+      if (k.key === 'Enter') { k.preventDefault(); potvrdit(); }
+      if (k.key === 'Escape') { k.preventDefault(); zavriOkno(); }
+    });
+    inp.focus({ preventScroll: true }); inp.select();
+  }
+  const zapis = (inp, raw) => { inp.value = raw; inp.dispatchEvent(new Event('input', { bubbles: true })); };
+  const sideChoices = () => [{ value: 'A', text: N.a }, { value: 'B', text: N.b }, { value: 'AB', text: 'z obou' }];
+  const POPISKY = { D: 'D – velký průměr', d: 'd – malý průměr', L: 'Délka kužele L' };
+
   svg.addEventListener('click', (e) => {
     const g = e.target.closest('[data-edit]');
     if (g) {
       const key = g.dataset.edit;
-      if (key === 'swap') { bigSide = bigSide === 'A' ? 'B' : 'A'; update(); return; }
-      if (key.startsWith('pt:')) { const row = ptRows()[+key.slice(3)]; if (row) jdiNa(row.querySelector('.kz-pt-d')); return; }
-      const map = { D: 'D', d: 'd', L: 'L', C: 'K', Ca: 'a', refD: 'refD', refAdd: 'refD', ref: 'ref' };
-      jdiNa($(map[key] || key));
+      if (key === 'swap') { zavriOkno(); bigSide = bigSide === 'A' ? 'B' : 'A'; update(); return; }
+      if (key === 'C' || key === 'Ca') {
+        const el = $(key === 'Ca' ? 'a' : 'K');
+        otevriOkno(e, {
+          label: key === 'Ca' ? 'Úhel α – sklon k ose' : 'Kuželovitost', unit: key === 'Ca' ? '°' : '1:x nebo a:b', value: el.value, text: key !== 'Ca',
+          hint: key === 'Ca' ? 'Kuželovitost 1:x se dopočítá' : 'např. 300 (= 1:300) nebo poměr 7:24 – úhel α se dopočítá',
+          onCommit: (raw) => zapis(el, raw),
+        });
+      } else if (SOLVE.includes(key)) {
+        const el = fieldOf(key);
+        otevriOkno(e, {
+          label: POPISKY[key], unit: 'mm', value: el.value,
+          hint: isEdited(key) ? 'Prázdné = smazat zadání' : el.value ? 'Dopočítáno – zadáním hodnotu zafixuješ' : (key === 'L' ? 'Lze i výraz, např. 34+135+25' : ''),
+          onCommit: (raw) => zapis(el, raw),
+        });
+      } else if (key === 'refD' || key === 'refAdd') {
+        otevriOkno(e, {
+          label: 'Ø z výkresu v hloubce', unit: 'mm', value: $('refD').value, hint: 'Prázdné = bez zadaného Ø. Hloubku pak nastavíš klepnutím na „hloubka Ø“.',
+          onCommit: (raw) => zapis($('refD'), raw),
+        });
+      } else if (key === 'ref') {
+        otevriOkno(e, {
+          label: 'Hloubka zadaného průměru', unit: 'mm', value: $('ref').value, hint: '0 = průměr na hraně',
+          choices: [{ value: 'A', text: N.a }, { value: 'B', text: N.b }], choice: $('refSide').value,
+          onCommit: (raw, ch) => { $('refSide').value = ch; zapis($('ref'), raw); },
+        });
+      } else if (key.startsWith('pt:')) {
+        const row = ptRows()[+key.slice(3)];
+        if (!row) return;
+        const inp = row.querySelector('.kz-pt-d'), sel = row.querySelector('.kz-pt-s');
+        otevriOkno(e, {
+          label: 'Měřicí místo – hloubka', unit: 'mm', value: inp.value, choices: sideChoices(), choice: sel.value,
+          onCommit: (raw, ch) => { sel.value = ch; zapis(inp, raw); },
+          onDelete: () => { row.remove(); if (!ptRows().length) addPoint(); update(); },
+        });
+      }
       return;
     }
     // klepnutí do kužele → nové měřicí místo od bližší strany
@@ -264,12 +359,15 @@
     if (z === null || z === undefined || Math.abs(q.x - 170) > 126) return;
     const side = z < geo.L / 2 ? 'A' : 'B';
     const depth = Math.round((side === 'A' ? z : geo.L - z) * 10) / 10;
-    const empty = ptRows().find((rr) => rr.querySelector('.kz-pt-d').value.trim() === '');
-    const row = empty || addPoint();
-    row.querySelector('.kz-pt-s').value = side;
-    row.querySelector('.kz-pt-d').value = String(depth);
-    update();
-    jdiNa(row.querySelector('.kz-pt-d'));
+    otevriOkno(e, {
+      label: 'Nové měřicí místo – hloubka', unit: 'mm', value: String(depth), choices: sideChoices(), choice: side,
+      onCommit: (raw, ch) => {
+        if (!raw) return;
+        const row = ptRows().find((rr) => rr.querySelector('.kz-pt-d').value.trim() === '') || addPoint();
+        row.querySelector('.kz-pt-s').value = ch;
+        zapis(row.querySelector('.kz-pt-d'), raw);
+      },
+    });
   });
 
   /* ── Vstupy ── */
