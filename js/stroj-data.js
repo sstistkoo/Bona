@@ -37,19 +37,20 @@ window.STROJ_POZNAMKY = {
     {
       t: 'Výměna nástroje (zásobník)',
       p: [
-        '1. Tlačítko s ikonou dvou obdélníků (vlevo nahoře) – chvilku počkat.',
+        '1. Tlačítko s ikonou dvou obdélníků (první řada vlevo) – chvilku počkat, než se přepne.',
         '2. Klíč C2 / C1 – dveře levé / pravé.',
         '3. Otevření dveří (zásobník + dveře ↑).',
-        '4. Natočení zásobníku (tlačítko s ikonou zásobníku a šipkami).',
-        '5. Vyndání nože (otočný přepínač).',
-        '6. Zasunutí nože (otočný přepínač).',
+        '4. Natočení zásobníku – tlačítko v první řadě úplně vpravo.',
+        '5. Vyndání nože – otočný přepínač (zásobník + šipka ven) do polohy vyndání.',
+        '6. Zasunutí nože – tentýž přepínač do druhé polohy.',
         '7. Zavření dveří (laser).',
       ].join('\n'),
     },
     {
       t: 'Zapsání nástroje',
       p: [
-        'Menu Select → Parametry → Nástroj (záložka 1 zleva).',
+        'Menu Select → Parametry → Nástroj (softklávesa).',
+        'Když softklávesa Nástroj není vidět, přepnout lištu softkláves na další tlačítka (klávesa „>“).',
       ].join('\n'),
     },
     {
