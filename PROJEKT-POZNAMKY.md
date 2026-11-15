@@ -10,7 +10,12 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 ## Struktura aplikace
 - `index.html`, `app.js`, `style.css`, `sw.js` (service worker, network-first), `js/*.js`
 - **Stroj** (`js/stroj-data.js` + `js/stroj.js`): kategorie Sonda, Nástroje, Reset, Korekce, Poruchy, Manipulátor. Poznámky jsou `{t, p}`, `p` = víceřádkový text.
-- **Nová zakázka** (`js/zakazka.js`): checklist, výchozí kroky v kódu (`VYCHOZI`), v localStorage jen odškrtnutí a vlastní/smazané položky.
+- **Nová zakázka** (`js/zakazka.js`): checklist, výchozí kroky v kódu (`VYCHOZI`), v localStorage jen odškrtnutí a smazané položky (pole „Přidat do skupiny“ autor nechtěl – doplňky jdou do poznámky).
+  - Stroje (`PAR`, `ZAKLAD` = CHES4) s hodnotami: rozteč PARAMDER, konus/posuvy DIRAHOT1 / W_OTVHO1, rádius, Ra, podpěrky VAR_DEF, upnutí ±10, Zero_Offset, Chuck_Stat, OP_Step. Tlačítko nahoře ukazuje vybraný stroj, rozbalí stroje + ＋.
+  - Hodnoty se ukazují u bodů seznamu (`HODNOTY_U_BODU`) a v textech postupu přes `{klic}` (`{stroj}` = název).
+  - Krok zpět/vpřed: snímky stavu (seznam + stroje) v `bona.zak.zpet/vpred`, max 40. Poznámka do toho nepatří (má pojistku).
+  - Výpočet upnutí čelistí u bodu VAR_DEF: skutečná poloha ± rozsah stroje.
+  - Jedno tlačítko „Nová zakázka – obnovit vše“ (odškrtne, vrátí smazané body, vymaže poznámku a polohu).
 - Odkazy přes hash: `#sonda`, `#reset`, `#korekce`, `#zakazka` …
 
 ## Postup změn
@@ -33,7 +38,10 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 ## Funkce přidané navíc
 - Přihlašovací brána `js/heslo.js` (SHA-256 otisk v kódu, heslo se pamatuje v telefonu). Není to skutečná ochrana – repozitář i web jsou veřejné.
 - Fotky u poznámek: `img/` + pole `f` u poznámky (zmenšit na 1000 px, JPEG ~72). Service worker si je pro offline najde sám v `js/stroj-data.js` a `js/zakazka.js` – do `sw.js` je není třeba dopisovat.
-- Záloha dat (sekce Poznámky): export/import všech klíčů `bona.*` do JSON, kromě `bona.pristup`.
+- Záloha dat (sekce Poznámky): export/import všech klíčů `bona.*` do JSON, kromě `bona.pristup`. Před obnovou se uloží kopie (`bonaPredObnovou`) → tlačítko „Vrátit stav před obnovou“. Po 14 dnech bez zálohy lišta s připomenutím („Později“ = +3 dny).
+- Pojistky proti ztrátě dat: `window.hlidejText` (app.js) u poznámek – při smazání víc než poloviny textu tlačítko „Vrátit smazaný text“; Směna má „Obnovit smazané body“.
+- Kotva `#…` z adresy se po otevření sekce smaže – po dalším načtení se otevře kalkulačka.
+- Service worker stahuje s `cache: 'no-cache'` a po aktualizaci se stránka jednou sama obnoví (dřív se míchaly staré a nové soubory).
 - Mobil: spodní lišta (`BNAV` v `app.js`), menu s hledáním a „Naposledy“; na šířku karty vedle sebe.
 - `js/vypocty.js` je generovaný ze SKICA (`scripts/prevzit-ze-skici.mjs`) – needitovat ani nerozdělovat ručně.
 - Veřejnost: v poznámce Manipulátor (volant) je uvedeno heslo operátora k volantu – případně odebrat.
@@ -52,6 +60,7 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 - Názvy: konus = `_KO`, posuv = `_F1/_F2`, úběr 0,03 jde do `_D1`; „íčko“ = podpěrky.
 
 ## Otevřené otázky (zatím nezodpovězeno)
+- Nová zakázka, VAR_DEF: „Postup upnutí ještě upřesnit“ – čeká na autora.
 - Nástroje: ověřit klávesu „>“ (přepnutí softkláves; klávesa ^ = o úroveň zpět potvrzeno). Délky 1/2 a radius FR25 potvrzeno.
 - Manipulátor: sklady S2–S4 potvrzeny; v ruční obrazovce jsou tlačítka X a Y (v sešitu X a Z).
 - MDA OSTORE2: C_OFF (2) potvrzeno (vypnutí režimu C-osy pro osu/vřeteno 2); G56 z dokumentace.

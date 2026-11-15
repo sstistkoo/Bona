@@ -22,7 +22,7 @@ Na telefonu ji lze přidat na plochu jako aplikaci (v prohlížeči „Přidat n
 - **Převodník** – mm/palce, úhly (° / rad / ° ′ ″), Ra ↔ Rz, TPI ↔ stoupání, tvrdost HRC/HB/HV, moment, síla, rychlost
 - **Nm** – vlastní seznam nožů s momenty, tabulky šroubů VBD, moment šroubu M podle VDI 2230, klíč s prodloužením, převody jednotek
 - **Stroj** – poznámky ke stroji v kategoriích Sonda, Nástroje, Reset, Korekce, Poruchy, Manipulátor, MDA; fotky obrazovek a panelů u poznámek, hledání napříč všemi a vlastní poznámky ke každé kategorii
-- **Nová zakázka** – údaje o zakázce a upravitelný kontrolní seznam chystání (podklady, upnutí, nástroje, stroj, první kus)
+- **Nová zakázka** – kontrolní seznam chystání zakázky s postupy a fotkami, krok zpět/vpřed, stroje s hodnotami pro nastavování (rozteč, kužel, drsnost, podpěrky, upnutí, uživatelská data), výpočet rozsahu upnutí čelistí, poznámka k zakázce
 - **Směna** – kontrolní seznam (lze upravit) a počítadlo kusů
 - **Poznámky** – ukládají se automaticky v prohlížeči
 

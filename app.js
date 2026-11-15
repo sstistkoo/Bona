@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.96';
+const VERZE = '0.8.98';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -523,6 +523,7 @@ function zalKlice() {
   return k.sort();
 }
 $('zal-ulozit').addEventListener('click', () => {
+  store.set('zalohaDatum', Date.now()); store.set('zalohaOdlozit', 0); document.getElementById('zal-pripom')?.remove();
   const data = {};
   zalKlice().forEach((k) => { data[k] = localStorage.getItem(k); });
   const obsah = JSON.stringify({ aplikace: 'bona', verze: VERZE, datum: new Date().toISOString(), data }, null, 1);
@@ -583,3 +584,22 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 }
 // prohlížeč po načtení odroluje na #kotvu – vrátit stránku nahoru
 window.addEventListener('load', () => { if (location.hash) setTimeout(() => window.scrollTo(0, 0), 0); });
+
+/* ---------- Připomenutí zálohy – data jsou jen v telefonu ---------- */
+(function pripomenZalohu() {
+  const DEN = 864e5, DNI = 14, ted = Date.now();
+  let posl = store.get('zalohaDatum', null);
+  if (!posl) { // ještě nikdy nezálohováno – počítat od prvního spuštění této verze
+    posl = store.get('zalohaPrvni', null);
+    if (!posl) { store.set('zalohaPrvni', ted); return; }
+  }
+  if (ted - posl < DNI * DEN || ted < store.get('zalohaOdlozit', 0)) return;
+  const dni = Math.floor((ted - posl) / DEN);
+  const bar = document.createElement('div');
+  bar.id = 'zal-pripom'; bar.className = 'zal-pripom';
+  bar.innerHTML = `<span>💾 ${store.get('zalohaDatum', null) ? `Poslední záloha dat je stará ${dni} dní.` : 'Data v telefonu ještě nemáš zálohovaná.'}</span>` +
+    '<button type="button" id="zal-pr-ano">Zálohovat</button><button type="button" class="secondary" id="zal-pr-ne">Později</button>';
+  document.querySelector('main').before(bar);
+  $('zal-pr-ano').addEventListener('click', () => { tabBtn('poznamky').click(); $('zaloha').scrollIntoView({ behavior: 'smooth' }); });
+  $('zal-pr-ne').addEventListener('click', () => { store.set('zalohaOdlozit', ted + 3 * DEN); bar.remove(); });
+})();
