@@ -854,3 +854,15 @@ body:has(#kalk.panel.active) > footer { display: none; }
 .zal-pripom span { flex: 1 1 100%; }
 .zal-pripom button { flex: 1; min-height: 40px; }
 .zk-d li { overflow-wrap: anywhere; }
+/* záznamy upnutí */
+.zk-upn-g { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#zk-upn-ulozit { width: 100%; margin-top: 8px; }
+.zk-upn-z { margin-top: 10px; }
+.zk-upn-z > summary { font-weight: 700; }
+.zk-upn-z label { display: block; margin-top: 6px; }
+.zk-upn-z input { width: 100%; margin-top: 4px; }
+.zk-upn-sez { list-style: none; padding: 0; margin: 8px 0 0; }
+.zk-upn-sez li { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-top: 1px solid var(--border); }
+.zk-upn-sez li span { flex: 1; }
+.zk-upn-sez small { display: block; color: var(--muted); }
+.zk-upn-sez .del { background: none; color: var(--muted); width: 40px; min-height: 40px; padding: 0; }

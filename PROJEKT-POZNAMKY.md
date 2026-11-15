@@ -15,6 +15,7 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
   - Hodnoty se ukazují u bodů seznamu (`HODNOTY_U_BODU`) a v textech postupu přes `{klic}` (`{stroj}` = název).
   - Krok zpět/vpřed: snímky stavu (seznam + stroje) v `bona.zak.zpet/vpred`, max 40. Poznámka do toho nepatří (má pojistku).
   - Výpočet upnutí čelistí u bodu VAR_DEF: skutečná poloha ± rozsah stroje.
+  - Záznamy upnutí (`stroje[].upnZ` = {d: Ø, p: skutečná poloha, t}) – v každém rozsahu čelistí (pole `cel`, CHES4 Nagel: 864-938; 1084-1158; 1304-1378) přímka nejmenších čtverců → odhad polohy pro nový Ø. Vztah zatím neověřený: Upínač otevřeno 60, zavřeno bez dílce 365, Ø 926 → 173 (meze 165/185).
   - Jedno tlačítko „Nová zakázka – obnovit vše“ (odškrtne, vrátí smazané body, vymaže poznámku a polohu).
 - Odkazy přes hash: `#sonda`, `#reset`, `#korekce`, `#zakazka` …
 
