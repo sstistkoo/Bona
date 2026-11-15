@@ -217,11 +217,11 @@ window.STROJ_POZNAMKY = {
       p: [
         'VD3 – dopravník (nakládání surových kol).',
         'VD4 – dopravník (nakládání obrobených kol, odvoz kol).',
-        'VD5 – dopravník (hotová kola; UZ = ultrazvuk, Mag. = magnetická rezonance).',
+        'VD5 – dopravník (hotová kola; UZ = ultrazvuk, Mag. = magnetická zkouška).',
         'VD6 – dopravník (za vyvažovačkou).',
         'S2, S3, S4 – sklady (S2 u VD4, S3 u VD5, S4 u VD6).',
         'HES3, HES4 – stroje; VDM3, VDM4 – stroje; VYV – vyvažovačka.',
-        'Sklad S2: HES4 – 122, hotová – 124, 123.',
+        'Stroj HES4 = 123; stojan na surová kola 122, stojan na hotová kola 124.',
         '',
         'Na obrazovce: bílá výplň = obsazená pozice, šedá = prázdná.',
       ].join('\n'),
