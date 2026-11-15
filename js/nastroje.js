@@ -257,7 +257,19 @@
     const inEl = $('calc-in'), resEl = $('calc-res'), histEl = $('calc-hist');
     let hist = load('calcHist', []);
     let ans = hist.length ? hist[hist.length - 1].v : 0;
-    const prep = (s) => s.replace(/ans/gi, '(' + ans + ')').replace(/×/g, '*').replace(/÷/g, '/');
+    // Úprava výrazu před výpočtem: doplní chybějící × (2pi, 3(2), (1)(2), 2sqrt(9)) a neuzavřené závorky
+    const FN = 'asin|acos|atan|sinr|cosr|tanr|sin|cos|tan|sqrt|abs|log|ln|round|floor|ceil|pi';
+    const reKrat1 = new RegExp('(\\d|\\)|pi)(?=\\(|' + FN + ')', 'gi'); // číslo / ) / pi  před ( nebo funkcí
+    const reKrat2 = /(\)|pi)(?=[\d.])/gi;                                    // ) / pi  před číslem
+    function prep(v) {
+      let x = String(v).replace(/ans/gi, '(' + ans + ')').replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/').replace(/\s+/g, '');
+      x = x.replace(/(\d+(?:\.\d*)?)e([+-]?\d+)/gi, '($1*10^($2))'); // velké výsledky typu 1e+22
+      x = x.replace(reKrat1, '$1*').replace(reKrat2, '$1*');
+      const chybi = (x.match(/\(/g) || []).length - (x.match(/\)/g) || []).length;
+      if (chybi > 0) x += ')'.repeat(chybi);
+      return x;
+    }
+    const deleniNulou = (v) => /\/0+(?:\.0*)?(?![\d.])/.test(prep(v));
     // Rozložení jako běžná kalkulačka; f(x) rozbalí řadu vědeckých funkcí
     const keys = [
       ['sin(', 'cos(', 'tan(', 'sqrt('],
@@ -282,13 +294,13 @@
     function nahled() {
       const s = inEl.value.trim();
       if (!s) { resEl.innerHTML = '&nbsp;'; return; }
-      const v = ev(prep(s.replace(/−/g, '-')));
+      const v = ev(prep(s));
       resEl.textContent = Number.isFinite(v) ? '= ' + parseFloat(v.toFixed(10)) : ' ';
     }
     function rovnase() {
       const s = inEl.value.trim(); if (!s) return;
-      const v = ev(prep(s.replace(/−/g, '-')));
-      if (!Number.isFinite(v)) { resEl.textContent = 'Chyba ve výrazu'; return; }
+      const v = ev(prep(s));
+      if (!Number.isFinite(v)) { resEl.textContent = deleniNulou(s) ? 'Dělení nulou' : 'Chyba ve výrazu'; return; }
       const x = parseFloat(v.toFixed(10));
       hist.push({ e: s, v: x }); hist = hist.slice(-50); save('calcHist', hist);
       ans = x; inEl.value = String(x); resEl.innerHTML = '&nbsp;'; kresliHist();
@@ -298,6 +310,20 @@
     let hotovo = false;
     const POKRACUJE = new Set(['+', '−', '×', '÷', '^', ')']);
     function novyPoVysledku(k) { if (hotovo && !POKRACUJE.has(k)) inEl.value = ''; hotovo = false; }
+    // Znaménko hned po znaménku nahradí to předchozí (5 × × 2 dřív dalo 5² = 25).
+    // Výjimka: minus po × ÷ ^ ( = záporné číslo (5×-2).
+    function vlozZnamenko(k) {
+      const t = k === '−' ? '-' : k, v = inEl.value;
+      const konec = inEl.selectionEnd ?? v.length;
+      let a = inEl.selectionStart ?? v.length;
+      if (t === '-') { if (a > 0 && /[+-]/.test(v[a - 1])) a--; }
+      else {
+        while (a > 0 && /[+\-×÷^*/]/.test(v[a - 1])) a--;
+        if (a === 0 || v[a - 1] === '(') return; // × ÷ + ^ na začátku nebo po „(“ nedává smysl
+      }
+      inEl.setSelectionRange(a, konec);
+      vloz(t);
+    }
     function vloz(t) {
       const a = inEl.selectionStart ?? inEl.value.length, b = inEl.selectionEnd ?? a;
       inEl.value = inEl.value.slice(0, a) + t + inEl.value.slice(b);
@@ -310,7 +336,8 @@
       else if (k === 'C') { inEl.value = ''; hotovo = false; nahled(); }
       else if (k === '⌫') { inEl.value = inEl.value.slice(0, -1); hotovo = false; nahled(); }
       else if (k === 'f(x)') { sci = !sci; save('calcSci', sci); ukazSci(); }
-      else { novyPoVysledku(k); vloz(k === '−' ? '-' : k); }
+      else if (['+', '−', '×', '÷', '^'].includes(k)) { novyPoVysledku(k); vlozZnamenko(k); }
+      else { novyPoVysledku(k); vloz(k); }
     });
     inEl.addEventListener('input', () => { hotovo = false; nahled(); });
     inEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); rovnase(); } });
