@@ -266,8 +266,9 @@
     $('calc-keys').innerHTML = keys.map((row) => `<div class="calc-row">${row.map((k) => `<button type="button" class="ck${/[0-9.]/.test(k) ? ' num' : ''}${k === '=' ? ' eq' : ''}" data-k="${k}">${k}</button>`).join('')}</div>`).join('');
 
     function kresliHist() {
-      histEl.innerHTML = hist.slice(-8).map((h) => `<div class="h" data-v="${h.v}"><span>${escHtml(h.e)}</span> = <b>${h.v}</b></div>`).join('');
-      histEl.scrollTop = histEl.scrollHeight;
+      // historie pod klávesnicí, nejnovější nahoře – klávesy se neposouvají
+      histEl.innerHTML = hist.slice(-20).reverse().map((h) => `<div class="h" data-v="${h.v}"><span>${escHtml(h.e)}</span> = <b>${h.v}</b></div>`).join('');
+      histEl.scrollTop = 0;
     }
     function nahled() {
       const s = inEl.value.trim();
@@ -282,7 +283,12 @@
       const x = parseFloat(v.toFixed(10));
       hist.push({ e: s, v: x }); hist = hist.slice(-50); save('calcHist', hist);
       ans = x; inEl.value = String(x); resEl.innerHTML = '&nbsp;'; kresliHist();
+      hotovo = true;
     }
+    // Po „=“: číslo / funkce začne nový příklad, znaménko pokračuje s výsledkem (jako běžná kalkulačka)
+    let hotovo = false;
+    const POKRACUJE = new Set(['+', '−', '×', '÷', '^', ')']);
+    function novyPoVysledku(k) { if (hotovo && !POKRACUJE.has(k)) inEl.value = ''; hotovo = false; }
     function vloz(t) {
       const a = inEl.selectionStart ?? inEl.value.length, b = inEl.selectionEnd ?? a;
       inEl.value = inEl.value.slice(0, a) + t + inEl.value.slice(b);
@@ -292,19 +298,19 @@
       const b = e.target.closest('.ck'); if (!b) return;
       const k = b.dataset.k;
       if (k === '=') rovnase();
-      else if (k === 'C') { inEl.value = ''; nahled(); }
-      else if (k === '⌫') { inEl.value = inEl.value.slice(0, -1); nahled(); }
+      else if (k === 'C') { inEl.value = ''; hotovo = false; nahled(); }
+      else if (k === '⌫') { inEl.value = inEl.value.slice(0, -1); hotovo = false; nahled(); }
       else if (k === '⌨') { // systémová klávesnice jen na požádání (jinak zakrývá tlačítka)
         const zap = inEl.inputMode !== 'text';
         inEl.inputMode = zap ? 'text' : 'none';
         b.classList.toggle('on', zap);
         inEl.blur(); if (zap) setTimeout(() => inEl.focus(), 50);
       }
-      else vloz(k === '−' ? '-' : k === 'ANS' ? 'ans' : k);
+      else { novyPoVysledku(k); vloz(k === '−' ? '-' : k === 'ANS' ? 'ans' : k); }
     });
-    inEl.addEventListener('input', nahled);
+    inEl.addEventListener('input', () => { hotovo = false; nahled(); });
     inEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); rovnase(); } });
-    histEl.addEventListener('click', (e) => { const h = e.target.closest('.h'); if (h) vloz(h.dataset.v); });
+    histEl.addEventListener('click', (e) => { const h = e.target.closest('.h'); if (h) { novyPoVysledku(''); vloz(h.dataset.v); } });
     kresliHist();
   })();
 })();

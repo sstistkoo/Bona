@@ -703,3 +703,9 @@ details > summary { -webkit-tap-highlight-color: transparent; }
   .top-akce { gap: 5px; }
   .top-btn { width: 42px; height: 42px; }
 }
+
+/* ── Kalkulačka: displej nahoře, historie pod klávesami ── */
+.calc-card #calc-in { margin-top: 0; }
+.calc-card .calc-hist { max-height: 210px; margin-top: 12px; border-top: 1px solid var(--border); }
+.calc-card .calc-hist:empty { display: none; }
+.calc-card .calc-hist .h { padding: 7px 6px; }

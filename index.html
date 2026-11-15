@@ -378,13 +378,11 @@
 
     <!-- KALKULAČKA -->
     <section id="calc" class="panel">
-      <div class="card">
-        <h2>Kalkulačka</h2>
-        <div class="calc-hist" id="calc-hist"></div>
-        <input type="text" id="calc-in" inputmode="none" placeholder="0" autocomplete="off">
+      <div class="card calc-card">
+        <input type="text" id="calc-in" inputmode="none" placeholder="0" autocomplete="off" aria-label="Výraz">
         <div class="calc-res" id="calc-res">&nbsp;</div>
         <div class="calc-keys" id="calc-keys"></div>
-        <p class="hint">Úhly ve stupních. Funkce: sin, cos, tan, asin, acos, atan, sqrt, abs, log, ln, round. Konstanta pi. Mocnina ^. ANS = poslední výsledek.</p>
+        <div class="calc-hist" id="calc-hist" aria-label="Historie výpočtů"></div>
       </div>
     </section>
 
