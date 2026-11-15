@@ -127,14 +127,14 @@ window.STROJ_POZNAMKY = {
       p: [
         'Délka 1 = hodnota X (vodorovně, od osy po střed/špičku nástroje).',
         'Délka 2 = hodnota Z (svisle, od čela upínače dolů ke středu/špičce nástroje).',
-        'Příklad na náčrtku: délka 1 = X, −50; délka 2 = Z, cca 120 mm.',
+        'Hodnoty na náčrtku (X −50, Z cca 120 mm) jsou jen příklad.',
       ].join('\n'),
     },
     {
       t: 'Fréza FR – nastavit 2. geometrii (radius)',
       p: [
         'FR = fréza → nastavit 2. geometrii (radius).',
-        'Příklad FR25: radius 12,5 + 0,2 (díra menší o 0,4 mm).',
+        'Příklad FR25 = fréza Ø 25 mm (radius 12,5). Když se u ní nastaví radius 12,5 + 0,2, je to jako by se nastavila fréza Ø 25,4, i když má jen 25. Fréza se postaví blíž ke středu a díra bude menší (o 0,4 mm na průměru).',
         '',
         'Podrobnosti nástroje (např. FR_R3): Název, Duplo, Typ 120 Stopková fréza, břity #1–#9, stav (odblokován, aktivní…), TOFFL_L1 až L3. Softklávesy: Data břitů, Seznam zásobníku, Seznam nástrojů, <<.',
       ].join('\n'),

@@ -49,7 +49,7 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 - Názvy: konus = `_KO`, posuv = `_F1/_F2`, úběr 0,03 jde do `_D1`; „íčko“ = podpěrky.
 
 ## Otevřené otázky (zatím nezodpovězeno)
-- Nástroje: ověřit klávesu „>“ (přepnutí softkláves; klávesa ^ = o úroveň zpět potvrzeno), délky 1/2 (−50 / 120), radius FR25 (+0,2 / díra o 0,4 menší).
+- Nástroje: ověřit klávesu „>“ (přepnutí softkláves; klávesa ^ = o úroveň zpět potvrzeno). Délky 1/2 a radius FR25 potvrzeno.
 - Manipulátor: S2 (VD3, VD4) a S3 (VD5) potvrzeno, S4 u VD6 dle sešitu; v ruční obrazovce jsou tlačítka X a Y (v sešitu X a Z).
 - MDA OSTORE2: C_OFF (2) potvrzeno (vypnutí režimu C-osy pro osu/vřeteno 2); G56 z dokumentace.
 - „Nahrát program“ na konci „Přepsání programu“: samostatný krok, nebo duplicita?
