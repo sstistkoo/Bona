@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.48';
+const VERZE = '0.8.49';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -35,6 +35,7 @@ document.querySelectorAll('.tab').forEach((btn) => {
     // posunout jen lištu (ne stránku), aby byla aktivní záložka uprostřed
     lista.scrollTo({ left: btn.offsetLeft - (lista.clientWidth - btn.offsetWidth) / 2, behavior: zmena ? 'smooth' : 'auto' });
     if (zmena) window.scrollTo(0, 0); // nová záložka začíná nahoře
+    ukazAktualni();
   });
 });
 const tabBtn = (id) => [...document.querySelectorAll('.tab')].find((b) => b.dataset.tab === id);
@@ -46,6 +47,7 @@ function otevri(id) {
     store.set('strojKat', k.id);
     window.strojUkaz?.(k.id);
     tabBtn('stroj').click();
+    ukazAktualni();
   } else tabBtn(id)?.click();
 }
 function zalozkaZAdresy() {
@@ -64,20 +66,78 @@ const MENU = [
   ['Dílna', [['zakazka', '📋'], ['smena', '✅'], ['poznamky', '📝']]],
 ];
 const menu = document.getElementById('menu'), menuBtn = document.getElementById('menu-btn');
+const menuHledat = document.getElementById('menu-hledat');
+const POLOZKY = {}; // id → { ic, txt }
+MENU.forEach(([, items]) => items.forEach(([id, ic, txt]) => { POLOZKY[id] = { ic, txt: txt || tabBtn(id).textContent }; }));
 document.getElementById('menu-in').innerHTML = MENU.map(([g, items]) =>
-  `<p class="menu-g">${g}</p><div class="menu-grid">` +
-  items.map(([id, ic, txt]) => `<button type="button" class="menu-i" data-go="${id}"><span>${ic}</span>${txt || tabBtn(id).textContent}</button>`).join('') + '</div>').join('');
+  `<div class="menu-sek"><p class="menu-g">${g}</p><div class="menu-grid">` +
+  items.map(([id]) => `<button type="button" class="menu-i" data-go="${id}"><span>${POLOZKY[id].ic}</span>${POLOZKY[id].txt}</button>`).join('') + '</div></div>').join('');
+
+// aktuální sekce: id záložky, u Stroje vybraná kategorie
+function aktualniId() {
+  const t = document.querySelector('.tab.active')?.dataset.tab;
+  return t === 'stroj' ? store.get('strojKat', window.STROJ_KAT[0].id) : t;
+}
+
+/* Spodní lišta (mobil) – rychlé sekce + Vše */
+const BNAV = ['kalk', 'tol', 'sinumerik', 'stroj'];
+const bnav = document.getElementById('bnav');
+bnav.innerHTML = BNAV.map((id) => {
+  const p = id === 'stroj' ? { ic: '🛠️', txt: 'Stroj' } : POLOZKY[id];
+  return `<button type="button" class="bnav-i" data-bn="${id}"><span>${p.ic}</span>${p.txt.replace(' 840D', '').replace('Řezné podm.', 'Řezné')}</button>`;
+}).join('') + '<button type="button" class="bnav-i" id="bnav-vse"><span>☰</span>Vše</button>';
+bnav.addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.id === 'bnav-vse') { menuOtevrit(menu.hidden); return; }
+  menuOtevrit(false);
+  tabBtn(b.dataset.bn).click();
+});
+
+function ukazAktualni() {
+  const t = document.querySelector('.tab.active')?.dataset.tab;
+  const p = POLOZKY[aktualniId()] || POLOZKY[t];
+  document.getElementById('cur-tab').textContent = p ? p.ic + ' ' + p.txt : '';
+  document.title = p ? p.txt + ' – Bona' : 'Bona – CNC pomocník';
+  bnav.querySelectorAll('[data-bn]').forEach((b) => b.classList.toggle('active', b.dataset.bn === t && menu.hidden));
+}
+// změna kategorie Stroje přepíše titulek (stroj.js se načítá až po app.js)
+document.getElementById('st-seg')?.addEventListener('click', () => setTimeout(ukazAktualni, 0));
+
+function menuFiltr() {
+  const q = norm(menuHledat.value);
+  let nic = true;
+  menu.querySelectorAll('.menu-sek').forEach((s) => {
+    let vid = false;
+    s.querySelectorAll('.menu-i').forEach((b) => {
+      const ok = !q || norm(b.textContent + ' ' + b.dataset.go).includes(q);
+      b.hidden = !ok; vid ||= ok;
+    });
+    s.hidden = !vid; nic &&= !vid;
+  });
+  document.getElementById('menu-nic').hidden = !nic;
+}
+function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+menuHledat.addEventListener('input', menuFiltr);
+menuHledat.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const b = menu.querySelector('.menu-i:not([hidden])');
+  if (b) { otevri(b.dataset.go); menuOtevrit(false); }
+});
+
 function menuOtevrit(ano) {
   menu.hidden = !ano;
   menuBtn.setAttribute('aria-expanded', String(ano));
   menuBtn.textContent = ano ? '✕' : '☰';
   document.body.classList.toggle('menu-open', ano);
+  document.getElementById('bnav-vse').classList.toggle('active', ano);
   if (ano) {
     menu.style.setProperty('--menu-top', document.querySelector('.top').getBoundingClientRect().bottom + 'px');
-    let akt = document.querySelector('.tab.active')?.dataset.tab;
-    if (akt === 'stroj') akt = store.get('strojKat', 'sonda');
+    const akt = aktualniId();
     menu.querySelectorAll('.menu-i').forEach((b) => b.classList.toggle('active', b.dataset.go === akt));
+    menuHledat.value = ''; menuFiltr();
   }
+  ukazAktualni();
 }
 menuBtn.addEventListener('click', () => menuOtevrit(menu.hidden));
 menu.addEventListener('click', (e) => {
