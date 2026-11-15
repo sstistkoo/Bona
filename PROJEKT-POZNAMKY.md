@@ -32,7 +32,10 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 
 ## Funkce přidané navíc
 - Přihlašovací brána `js/heslo.js` (SHA-256 otisk v kódu, heslo se pamatuje v telefonu). Není to skutečná ochrana – repozitář i web jsou veřejné.
-- Fotky u poznámek: `img/` + pole `f` u poznámky (zmenšit na 1000 px, JPEG ~72).
+- Fotky u poznámek: `img/` + pole `f` u poznámky (zmenšit na 1000 px, JPEG ~72). Service worker si je pro offline najde sám v `js/stroj-data.js` a `js/zakazka.js` – do `sw.js` je není třeba dopisovat.
+- Záloha dat (sekce Poznámky): export/import všech klíčů `bona.*` do JSON, kromě `bona.pristup`.
+- Mobil: spodní lišta (`BNAV` v `app.js`), menu s hledáním a „Naposledy“; na šířku karty vedle sebe.
+- `js/vypocty.js` je generovaný ze SKICA (`scripts/prevzit-ze-skici.mjs`) – needitovat ani nerozdělovat ručně.
 - Veřejnost: v poznámce Manipulátor (volant) je uvedeno heslo operátora k volantu – případně odebrat.
 
 ## Ovládání stroje – ověřené (podle autora)

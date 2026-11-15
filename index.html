@@ -46,6 +46,7 @@
   <div class="menu" id="menu" hidden>
     <div class="menu-in">
       <input type="search" id="menu-hledat" class="menu-hledat" placeholder="🔍 Najít nástroj…" autocomplete="off" aria-label="Najít nástroj">
+      <div id="menu-nedavne" hidden></div>
       <div id="menu-in"></div>
       <p class="hint" id="menu-nic" hidden>Nic nenalezeno.</p>
     </div>
@@ -587,6 +588,17 @@
         <p class="hint">Korekce, nástroje, programy, zvláštnosti zakázek… Ukládá se jen v tomto prohlížeči.</p>
         <textarea id="n-text" rows="14" placeholder="Např.: Program WHEEL_920 – T3 korekce Z +0.05 po výměně destičky"></textarea>
         <p class="hint" id="n-stav"></p>
+      </div>
+
+      <div class="card" id="zaloha">
+        <h2>💾 Záloha dat</h2>
+        <p class="hint" style="margin-top:0">Poznámky, kontrolní seznamy, počítadlo, vlastní nože a nastavení jsou uložené jen v tomto telefonu. Záloha je uloží do souboru – ten si pošli e-mailem nebo ulož na Disk a v novém telefonu ho obnov.</p>
+        <div class="zal-btns">
+          <button type="button" id="zal-ulozit">⬇️ Uložit zálohu</button>
+          <button type="button" class="secondary" id="zal-obnovit">⬆️ Obnovit ze souboru</button>
+        </div>
+        <input type="file" id="zal-soubor" accept=".json,application/json" hidden>
+        <p class="hint" id="zal-stav"></p>
       </div>
     </section>
   </main>

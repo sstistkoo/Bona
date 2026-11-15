@@ -501,7 +501,8 @@ details > summary { -webkit-tap-highlight-color: transparent; }
 
 /* menu */
 .menu-in { padding-top: 12px; }
-.menu-hledat { position: sticky; top: 0; z-index: 1; margin-bottom: 4px; box-shadow: 0 6px 10px -6px rgba(0, 0, 0, 0.15); }
+.menu-in > .srch { position: sticky; top: 0; z-index: 1; margin-bottom: 4px; }
+.menu-hledat { box-shadow: 0 6px 10px -6px rgba(0, 0, 0, 0.15); }
 .menu-i { border-radius: 12px; border-color: var(--line); }
 .menu-i.active { background: var(--accent-soft); }
 .menu-sek[hidden] { display: none; }
@@ -549,4 +550,39 @@ details > summary { -webkit-tap-highlight-color: transparent; }
 
   .card > h2:first-child { font-size: 1.05rem; }
   footer { padding-bottom: 24px; }
+}
+
+/* ── vyhledávací pole s křížkem ✕ ── */
+.srch { position: relative; display: block; }
+.srch input { padding-right: 46px; }
+.srch input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+.srch-x {
+  position: absolute; right: 4px; bottom: 4px; width: 40px; height: 40px; min-height: 0; padding: 0;
+  background: none; color: var(--muted); font-size: 1rem; border-radius: 999px;
+}
+.srch input:placeholder-shown + .srch-x { display: none; }
+
+/* ── menu: naposledy použité ── */
+#menu-nedavne .menu-g { margin-top: 10px; }
+.menu-recent { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.menu-recent::-webkit-scrollbar { display: none; }
+.menu-r {
+  flex: none; display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--text); border: 1px solid var(--line); font-size: 0.9rem; white-space: nowrap;
+}
+.menu-r span { font-size: 1.1rem; }
+
+/* ── záloha dat ── */
+.zal-btns { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-top: 12px; }
+
+/* ── telefon na šířku: bez řádku záložek, karty vedle sebe ── */
+@media (min-width: 701px) and (max-height: 500px) {
+  .tabs { display: none; }
+  .top { padding-bottom: 8px; }
+  .top-row h1 .sub-desk { display: none; }
+  .top-row h1 .cur { display: inline; color: var(--text); font-weight: 600; font-size: 1.05rem; margin: 0; }
+  .top-row h1 .cur::before { content: '·'; color: var(--muted); margin-right: 8px; }
+  main { max-width: none; padding: 12px max(12px, env(safe-area-inset-right)) 12px max(12px, env(safe-area-inset-left)); }
+  .panel.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; align-items: start; }
+  .panel.active > .card { margin-bottom: 0; }
 }

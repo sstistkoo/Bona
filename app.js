@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.49';
+const VERZE = '0.8.50';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -100,6 +100,24 @@ function ukazAktualni() {
   document.getElementById('cur-tab').textContent = p ? p.ic + ' ' + p.txt : '';
   document.title = p ? p.txt + ' – Bona' : 'Bona – CNC pomocník';
   bnav.querySelectorAll('[data-bn]').forEach((b) => b.classList.toggle('active', b.dataset.bn === t && menu.hidden));
+  zapisNedavne(aktualniId());
+}
+
+/* Naposledy použité – nahoře v menu */
+const NEDAVNE_MAX = 4;
+function zapisNedavne(id) {
+  if (!POLOZKY[id]) return;
+  const a = store.get('nedavne', []);
+  if (a[0] === id) return;
+  store.set('nedavne', [id, ...a.filter((x) => x !== id && POLOZKY[x])].slice(0, NEDAVNE_MAX + 1));
+}
+function vykresliNedavne() {
+  const akt = aktualniId();
+  const ids = store.get('nedavne', []).filter((x) => x !== akt && POLOZKY[x]).slice(0, NEDAVNE_MAX);
+  const el = document.getElementById('menu-nedavne');
+  el.hidden = !ids.length;
+  el.innerHTML = '<p class="menu-g">Naposledy</p><div class="menu-recent">' +
+    ids.map((id) => `<button type="button" class="menu-r" data-go="${id}"><span>${POLOZKY[id].ic}</span>${POLOZKY[id].txt}</button>`).join('') + '</div>';
 }
 // změna kategorie Stroje přepíše titulek (stroj.js se načítá až po app.js)
 document.getElementById('st-seg')?.addEventListener('click', () => setTimeout(ukazAktualni, 0));
@@ -116,6 +134,8 @@ function menuFiltr() {
     s.hidden = !vid; nic &&= !vid;
   });
   document.getElementById('menu-nic').hidden = !nic;
+  if (q) document.getElementById('menu-nedavne').hidden = true;
+  else vykresliNedavne();
 }
 function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
 menuHledat.addEventListener('input', menuFiltr);
@@ -163,6 +183,20 @@ document.querySelectorAll('input[data-neg]').forEach((inp) => {
     inp.value = v.startsWith('-') ? v.slice(1) : '-' + v.replace(/^\+/, '');
     inp.dispatchEvent(new Event('input', { bubbles: true }));
   });
+  wrap.appendChild(b);
+});
+
+/* ---------- Křížek ✕ k vymazání u vyhledávacích polí ---------- */
+document.querySelectorAll('input[type=search]').forEach((inp) => {
+  if (!inp.placeholder) inp.placeholder = ' '; // viditelnost křížku řídí CSS :placeholder-shown
+  const wrap = document.createElement('span');
+  wrap.className = 'srch';
+  inp.parentNode.insertBefore(wrap, inp);
+  wrap.appendChild(inp);
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'srch-x'; b.textContent = '✕'; b.setAttribute('aria-label', 'Vymazat hledání');
+  b.addEventListener('mousedown', (e) => e.preventDefault());
+  b.addEventListener('click', () => { inp.value = ''; inp.dispatchEvent(new Event('input', { bubbles: true })); inp.focus(); });
   wrap.appendChild(b);
 });
 
@@ -378,6 +412,45 @@ $('n-text').addEventListener('input', () => {
     store.set('poznamky', $('n-text').value);
     $('n-stav').textContent = 'Uloženo ' + new Date().toLocaleTimeString('cs-CZ');
   }, 400);
+});
+
+/* ---------- Záloha a obnova dat (všechny klíče bona.*) ---------- */
+const ZAL_VYNECHAT = new Set(['bona.pristup']); // přístup se nezálohuje
+function zalKlice() {
+  const k = [];
+  try { for (let i = 0; i < localStorage.length; i++) { const x = localStorage.key(i); if (x.startsWith('bona.') && !ZAL_VYNECHAT.has(x)) k.push(x); } }
+  catch { /* úložiště nedostupné */ }
+  return k.sort();
+}
+$('zal-ulozit').addEventListener('click', () => {
+  const data = {};
+  zalKlice().forEach((k) => { data[k] = localStorage.getItem(k); });
+  const obsah = JSON.stringify({ aplikace: 'bona', verze: VERZE, datum: new Date().toISOString(), data }, null, 1);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([obsah], { type: 'application/json' }));
+  a.download = 'bona-zaloha-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  $('zal-stav').textContent = `Uloženo ${Object.keys(data).length} položek do souboru ${a.download}.`;
+});
+$('zal-obnovit').addEventListener('click', () => $('zal-soubor').click());
+$('zal-soubor').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
+  try {
+    const z = JSON.parse(await f.text());
+    if (z?.aplikace !== 'bona' || typeof z.data !== 'object') throw new Error('Tohle není záloha aplikace Bona.');
+    const klice = Object.keys(z.data).filter((k) => k.startsWith('bona.') && !ZAL_VYNECHAT.has(k) && typeof z.data[k] === 'string');
+    const kdy = z.datum ? new Date(z.datum).toLocaleString('cs-CZ') : '?';
+    if (!confirm(`Obnovit zálohu z ${kdy} (${klice.length} položek)?\nSoučasné poznámky a nastavení se nahradí.`)) return;
+    zalKlice().forEach((k) => localStorage.removeItem(k));
+    klice.forEach((k) => localStorage.setItem(k, z.data[k]));
+    alert('Záloha obnovena. Aplikace se znovu načte.');
+    location.reload();
+  } catch (err) {
+    $('zal-stav').textContent = 'Obnova se nepovedla: ' + (err.message || err);
+  }
 });
 
 $('verze').textContent = 'verze ' + VERZE;
