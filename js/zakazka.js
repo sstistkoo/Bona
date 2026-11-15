@@ -132,6 +132,7 @@
 
   // Rozbalovací panel: stroje + tlačítko ＋, pod vybraným strojem jeho hodnoty (dají se rovnou upravit)
   function vykresliStroje(sPoli = true) {
+    $('zk-stroj-btn').textContent = '🏭 ' + stroj().nazev + (panelOtevren ? ' ▴' : ' ▾'); // tlačítko ukazuje vybraný stroj
     $('zk-stroj-btn').classList.toggle('open', panelOtevren);
     $('zk-stroj-btn').setAttribute('aria-expanded', panelOtevren);
     $('zk-stroje-panel').hidden = !panelOtevren;
