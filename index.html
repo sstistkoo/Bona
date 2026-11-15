@@ -562,12 +562,8 @@
         <h2>Chystání na novou zakázku</h2>
         <!-- skryté prvky jen pro starší uloženou verzi zakazka.js v telefonu (jinak spadne a seznam se nevykreslí) -->
         <details id="zk-pozn-box" hidden><summary><small id="zk-pozn-stav"></small></summary></details>
-        <div class="grid">
-          <label>Číslo zakázky<input type="text" id="zk-cislo"></label>
-          <label>Výkres / revize<input type="text" id="zk-vykres"></label>
-          <label>Materiál<input type="text" id="zk-mat"></label>
-          <label>Program<input type="text" id="zk-prog"></label>
-        </div>
+        <!-- skrytá pole jen pro starší uloženou verzi zakazka.js v telefonu (jinak spadne); lze později smazat -->
+        <div hidden><input id="zk-cislo"><input id="zk-vykres"><input id="zk-mat"><input id="zk-prog"></div>
         <p class="lbl">Poznámka k zakázce</p>
         <textarea id="zk-pozn" rows="4"></textarea>
       </div>

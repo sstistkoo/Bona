@@ -100,6 +100,7 @@
 
   const POLE = ['zk-cislo', 'zk-vykres', 'zk-mat', 'zk-prog'];
   POLE.forEach((id) => {
+    if (!$(id)) return;
     $(id).value = get(id, '');
     $(id).addEventListener('input', () => set(id, $(id).value));
   });
@@ -145,7 +146,7 @@
   $('zk-nova').addEventListener('click', () => {
     if (!confirm('Začít novou zakázku? Odškrtne se seznam a vymažou se údaje o zakázce.')) return;
     skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false)));
-    POLE.concat('zk-pozn').forEach((id) => { $(id).value = ''; set(id === 'zk-pozn' ? 'pozn' : id, ''); });
+    POLE.concat('zk-pozn').forEach((id) => { if ($(id)) $(id).value = ''; set(id === 'zk-pozn' ? 'pozn' : id, ''); });
     uloz();
   });
   vykresli();
