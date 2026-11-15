@@ -67,11 +67,12 @@ window.STROJ_POZNAMKY = {
       p: [
         '1. Menu Select → Parametry.',
         '2. Klávesa CHANNEL (obrázek 1…N se šipkami): přepnout na kanál 2 – suport (strana).',
-        '3. Detail nástrojů.',
-        '4. Data břitu.',
-        '5. Druhá geometrie (u díry): −0,01 (menší o stovku).',
+        '3. V seznamu zásobníku najet kurzorem na správný nástroj (správná pozice nože).',
+        '4. Detaily nástroje (softklávesa vpravo).',
+        '5. Data břitu.',
+        '6. Druhá geometrie (u díry): −0,01 (menší o stovku).',
         '',
-        'Nebo opotřebení, např. u vrtáku.',
+        'Nebo opotřebení (sloupce Opot-L 1 až 3 přímo v seznamu zásobníku), např. u vrtáku.',
       ].join('\n'),
     },
     {
