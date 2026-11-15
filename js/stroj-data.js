@@ -81,9 +81,10 @@ window.STROJ_POZNAMKY = {
       ].join('\n'),
     },
     {
-      t: 'Vřeteno – nastavení nože',
+      t: 'Spindel – nůž s displejem',
       p: [
-        'U vřetena se nastavuje nůž, který se zrovna nastavuje: zadává se průměr (Ø) na displeji.',
+        'Spindel je nůž, který má na sobě displej pro přesné nastavení plátků.',
+        'Nastavuje se průměr (Ø) na tomto displeji.',
       ].join('\n'),
     },
   ],
