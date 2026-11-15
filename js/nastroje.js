@@ -258,12 +258,20 @@
     let hist = load('calcHist', []);
     let ans = hist.length ? hist[hist.length - 1].v : 0;
     const prep = (s) => s.replace(/ans/gi, '(' + ans + ')').replace(/×/g, '*').replace(/÷/g, '/');
+    // Rozložení jako běžná kalkulačka; f(x) rozbalí řadu vědeckých funkcí
     const keys = [
-      ['sin(', 'cos(', 'tan(', 'sqrt('], ['(', ')', '^', 'pi'],
-      ['7', '8', '9', '÷'], ['4', '5', '6', '×'], ['1', '2', '3', '−'], ['0', '.', 'ANS', '+'],
-      ['C', '⌫', '⌨', '='],
+      ['sin(', 'cos(', 'tan(', 'sqrt('],
+      ['C', '⌫', 'f(x)', '÷'],
+      ['(', ')', '^', 'pi'],
+      ['7', '8', '9', '×'], ['4', '5', '6', '−'], ['1', '2', '3', '+'],
+      ['0', '.', '='],
     ];
-    $('calc-keys').innerHTML = keys.map((row) => `<div class="calc-row">${row.map((k) => `<button type="button" class="ck${/[0-9.]/.test(k) ? ' num' : ''}${k === '=' ? ' eq' : ''}" data-k="${k}">${k}</button>`).join('')}</div>`).join('');
+    const tridy = (k) => (/^[0-9.]$/.test(k) ? ' num' : '') + (k === '=' ? ' eq wide' : '') + (k === 'C' || k === '⌫' ? ' clr' : '') + (k === 'f(x)' ? ' sci-btn' : '');
+    $('calc-keys').innerHTML = keys.map((row, i) => `<div class="calc-row${i === 0 ? ' sci-row' : ''}">${row.map((k) => `<button type="button" class="ck${tridy(k)}" data-k="${k}">${k}</button>`).join('')}</div>`).join('');
+    // vědecká řada: zapamatuje se, jestli byla otevřená
+    let sci = load('calcSci', false);
+    const ukazSci = () => { $('calc-keys').querySelector('.sci-row').hidden = !sci; $('calc-keys').querySelector('.sci-btn').classList.toggle('on', sci); };
+    ukazSci();
 
     function kresliHist() {
       // historie pod klávesnicí, nejnovější nahoře – klávesy se neposouvají
@@ -301,13 +309,8 @@
       if (k === '=') rovnase();
       else if (k === 'C') { inEl.value = ''; hotovo = false; nahled(); }
       else if (k === '⌫') { inEl.value = inEl.value.slice(0, -1); hotovo = false; nahled(); }
-      else if (k === '⌨') { // systémová klávesnice jen na požádání (jinak zakrývá tlačítka)
-        const zap = inEl.inputMode !== 'text';
-        inEl.inputMode = zap ? 'text' : 'none';
-        b.classList.toggle('on', zap);
-        inEl.blur(); if (zap) setTimeout(() => inEl.focus(), 50);
-      }
-      else { novyPoVysledku(k); vloz(k === '−' ? '-' : k === 'ANS' ? 'ans' : k); }
+      else if (k === 'f(x)') { sci = !sci; save('calcSci', sci); ukazSci(); }
+      else { novyPoVysledku(k); vloz(k === '−' ? '-' : k); }
     });
     inEl.addEventListener('input', () => { hotovo = false; nahled(); });
     inEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); rovnase(); } });

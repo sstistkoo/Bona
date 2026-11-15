@@ -711,3 +711,13 @@ details > summary { -webkit-tap-highlight-color: transparent; }
 #calc-hist-x { width: 36px; height: 32px; min-height: 0; padding: 0; background: none; color: var(--muted); border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; }
 .calc-card .calc-hist { max-height: 210px; }
 .calc-card .calc-hist .h { padding: 7px 6px; }
+.calc-card .calc-keys { max-width: none; }
+.calc-card .calc-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.calc-card .calc-row[hidden] { display: none; }
+.calc-card .ck { min-height: 0; padding: 15px 0; font-size: 1.15rem; }
+.calc-card .ck.wide { grid-column: span 2; }
+.calc-card .ck.clr { color: #dc2626; font-weight: 700; }
+.calc-card .ck.sci-btn { font-style: italic; }
+.calc-card .ck.sci-btn.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.calc-card .sci-row .ck { background: var(--accent-soft); padding: 12px 0; font-size: 1.05rem; }
+@media (prefers-color-scheme: dark) { .calc-card .ck.clr { color: #f87171; } }
