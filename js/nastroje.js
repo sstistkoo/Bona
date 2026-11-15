@@ -194,13 +194,6 @@
     ['dr-f', 'dr-vc', 'dr-re', 'dr-re2', 'dr-ra'].forEach((id) => $(id).addEventListener('input', calc));
     ['dr-mat', 'dr-tool'].forEach((id) => $(id).addEventListener('change', calc));
     calc();
-    // sbalení / rozbalení lišt se pamatuje
-    const stavList = load('drListy', {});
-    document.querySelectorAll('#kalk-drs details').forEach((d) => {
-      const klic = d.id || 'dr-conv';
-      if (klic in stavList) d.open = !!stavList[klic];
-      d.addEventListener('toggle', () => { stavList[klic] = d.open; save('drListy', stavList); });
-    });
 
     // Převod Ra ↔ Rz (orientační poměr, výchozí 4 jako ve výpočtu výše)
     const raE = $('rr-ra'), rzE = $('rr-rz'), rrOut = $('rr-out');

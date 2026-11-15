@@ -114,20 +114,21 @@
       </div>
       </div>
       <div id="kalk-drs" hidden>
-        <div class="card" id="dr-conv">
-          <details class="dr-conv-d"><summary>Převod Ra ↔ Rz</summary>
-          <div class="grid">
-            <label>Ra [µm]<input type="text" id="rr-ra" inputmode="decimal" placeholder="např. 1.6" autocomplete="off"></label>
-            <label>Rz [µm]<input type="text" id="rr-rz" inputmode="decimal" placeholder="např. 6.3" autocomplete="off"></label>
-          </div>
-          <p class="lbl">Poměr Rz / Ra</p>
-          <div class="chips" id="rr-k"></div>
-          <div class="result" id="rr-out">Zadej Ra nebo Rz…</div>
-          <p class="hint">Přesný převod neexistuje, závisí na tvaru profilu. Běžně Rz ≈ 4 až 7 × Ra (soustružení kolem 4, broušení výš). Výpočet drsnosti v této sekci počítá s 4.</p>
-        </details>
+        <div class="card">
+          <details class="dr-d" id="dr-d2" open><summary>Jaký posuv pro požadovanou drsnost</summary>
+            <div class="grid">
+              <label>Rádius špičky rε [mm]<input type="text" id="dr-re2" inputmode="decimal" value="1.6"></label>
+              <label>Cílová Ra [µm]<input type="text" id="dr-ra" inputmode="decimal" placeholder="např. 3.2"></label>
+            </div>
+            <div class="chips" id="dr-radii2"></div>
+            <p class="lbl">Cílová Ra</p>
+            <div class="chips" id="dr-ra-presets"></div>
+            <div class="result" id="dr-rev"></div>
+            <p class="hint" id="dr-k"></p>
+          </details>
         </div>
         <div class="card">
-          <details class="dr-d" id="dr-d1" open><summary>Jaká bude drsnost <small>(z řezných podmínek)</small></summary>
+          <details class="dr-d" id="dr-d1"><summary>Jaká bude drsnost <small>(z řezných podmínek)</small></summary>
             <div class="grid">
               <label>Materiál obrobku<select id="dr-mat"></select></label>
               <label>Materiál nástroje<select id="dr-tool"></select></label>
@@ -141,18 +142,17 @@
             <div class="classbar" id="dr-classes"></div>
           </details>
         </div>
-        <div class="card">
-          <details class="dr-d" id="dr-d2" open><summary>Jaký posuv pro požadovanou drsnost</summary>
-            <div class="grid">
-              <label>Rádius špičky rε [mm]<input type="text" id="dr-re2" inputmode="decimal" value="1.6"></label>
-              <label>Cílová Ra [µm]<input type="text" id="dr-ra" inputmode="decimal" placeholder="např. 3.2"></label>
-            </div>
-            <div class="chips" id="dr-radii2"></div>
-            <p class="lbl">Cílová Ra</p>
-            <div class="chips" id="dr-ra-presets"></div>
-            <div class="result" id="dr-rev"></div>
-            <p class="hint" id="dr-k"></p>
-          </details>
+        <div class="card" id="dr-conv">
+          <details class="dr-conv-d"><summary>Převod Ra ↔ Rz</summary>
+          <div class="grid">
+            <label>Ra [µm]<input type="text" id="rr-ra" inputmode="decimal" placeholder="např. 1.6" autocomplete="off"></label>
+            <label>Rz [µm]<input type="text" id="rr-rz" inputmode="decimal" placeholder="např. 6.3" autocomplete="off"></label>
+          </div>
+          <p class="lbl">Poměr Rz / Ra</p>
+          <div class="chips" id="rr-k"></div>
+          <div class="result" id="rr-out">Zadej Ra nebo Rz…</div>
+          <p class="hint">Přesný převod neexistuje, závisí na tvaru profilu. Běžně Rz ≈ 4 až 7 × Ra (soustružení kolem 4, broušení výš). Výpočet drsnosti v této sekci počítá s 4.</p>
+        </details>
         </div>
       </div>
     </section>

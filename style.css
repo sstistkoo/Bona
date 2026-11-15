@@ -741,3 +741,5 @@ body:has(#calc.panel.active) > footer { display: none; }
 #kalk-drs summary small { font-weight: 400; color: var(--muted); font-size: 0.8rem; }
 #kalk-drs details[open] > summary { margin-bottom: 10px; }
 #dr-out .tbl b { font-size: 1rem; }
+/* v sekci Řezné podmínky / Čas / Drsnost bez patičky s verzí */
+body:has(#kalk.panel.active) > footer { display: none; }
