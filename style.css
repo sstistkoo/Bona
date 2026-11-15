@@ -721,3 +721,5 @@ details > summary { -webkit-tap-highlight-color: transparent; }
 .calc-card .ck.sci-btn.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 .calc-card .sci-row .ck { background: var(--accent-soft); padding: 12px 0; font-size: 1.05rem; }
 @media (prefers-color-scheme: dark) { .calc-card .ck.clr { color: #f87171; } }
+/* u kalkulačky bez patičky s verzí */
+body:has(#calc.panel.active) > footer { display: none; }
