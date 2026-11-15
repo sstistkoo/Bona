@@ -180,8 +180,7 @@
     const h = stroj().h, tecka = (v) => String(v ?? '').trim().replace(',', '.');
     const vypln = (id, v) => { const el = $(id); if (el && tecka(v)) { el.value = tecka(v); el.dispatchEvent(new Event('input')); } };
     vypln('dr-re', h.r); vypln('dr-f', h.f1); vypln('dr-re2', h.r); vypln('dr-ra', h.ra);
-    if (location.hash === '#drsnost') window.dispatchEvent(new HashChangeEvent('hashchange'));
-    else location.hash = 'drsnost';
+    location.hash = 'drsnost'; // app.js otevře výpočet a kotvu z adresy zase smaže
   }
   $('zk-hodnoty').addEventListener('click', (e) => {
     if (e.target.id === 'zk-na-drs') { naDrsnost(); return; }

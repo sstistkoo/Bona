@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.93';
+const VERZE = '0.8.94';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -99,6 +99,8 @@ function zalozkaZAdresy() {
   const id = decodeURIComponent(location.hash.slice(1));
   const ok = !!(tabBtn(id) || strojKat(id) || id in ALIAS);
   if (ok) { otevri(id); window.scrollTo(0, 0); setTimeout(() => window.scrollTo(0, 0), 0); }
+  // #kotvu z adresy po otevření smazat – jinak by se po dalším načtení otevřela znovu místo kalkulačky
+  if (location.hash) { try { history.replaceState(null, '', location.pathname + location.search); } catch { /* nic */ } }
   return ok;
 }
 
