@@ -729,3 +729,8 @@ body:has(#calc.panel.active) > footer { display: none; }
 .kalk-sw .seg-btn { padding: 11px 6px; font-size: 0.95rem; }
 .kalk-sw .seg-btn { padding: 11px 2px; font-size: 0.88rem; }
 #rr-out small { color: var(--muted); font-size: 0.8rem; }
+/* převodník Ra ↔ Rz ve sbalené liště */
+#dr-conv { padding-top: 10px; padding-bottom: 10px; }
+#dr-conv details { margin-top: 0; }
+#dr-conv summary { font-size: 1.05rem; font-weight: 700; padding: 6px 0; }
+#dr-conv details[open] > summary { margin-bottom: 10px; }
