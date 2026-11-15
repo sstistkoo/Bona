@@ -11,9 +11,25 @@ window.STROJ_KAT = [
   { id: 'korekce', nazev: 'Korekce', ikona: '🎯', popis: 'Korekce nástrojů a posunutí nulových bodů' },
   { id: 'poruchy', nazev: 'Poruchy', ikona: '⚠️', popis: 'Poruchy, alarmy a jak je řešit' },
   { id: 'manipulator', nazev: 'Manipulátor', ikona: '🦾', popis: 'Manipulátor – zakládání a odebírání kol' },
+  { id: 'mda', nazev: 'MDA', ikona: '⌨️', popis: 'Programy pro ruční režim (MDA)' },
 ];
 
 window.STROJ_POZNAMKY = {
+  mda: [
+    {
+      t: 'OSTORE2 (SYF\\OSTORE2.SYF)',
+      p: [
+        'DIAMOF',
+        'GETD (S1)',
+        'SETMS (1)',
+        'G56',
+        'C_OFF (2)',
+        'M1=3 S1=80',
+        'G91 G1 X2=33 Z2=0.16 F0.9',
+      ].join('\n'),
+      f: ['mda-ostore2.jpg'],
+    },
+  ],
   sonda: [
     {
       t: 'Měření sondou',

@@ -54,6 +54,6 @@ git clone https://github.com/sstistkoo/2D_CAD-CAM ../2D_CAD-CAM
 node scripts/prevzit-ze-skici.mjs ../2D_CAD-CAM
 ```
 
-Odkaz na konkrétní záložku: `…/Bona/#tol`, `#kuzel`, `#drsnost`, `#trig`, `#calc`, `#sinumerik`, `#prevod`, `#nm`, `#teplo`, `#rez`, `#geo`, `#vbd`, `#stroj`, `#zakazka`; přímo kategorie poznámek: `#sonda`, `#nastroje`, `#reset`, `#korekce`, `#poruchy`, `#manipulator`.
+Odkaz na konkrétní záložku: `…/Bona/#tol`, `#kuzel`, `#drsnost`, `#trig`, `#calc`, `#sinumerik`, `#prevod`, `#nm`, `#teplo`, `#rez`, `#geo`, `#vbd`, `#stroj`, `#zakazka`; přímo kategorie poznámek: `#sonda`, `#nastroje`, `#reset`, `#korekce`, `#poruchy`, `#manipulator`, `#mda`.
 
 > Údaje v aplikaci jsou orientační. Vždy platí dokumentace stroje, výkres a technologický postup.
