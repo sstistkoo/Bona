@@ -734,3 +734,10 @@ body:has(#calc.panel.active) > footer { display: none; }
 #dr-conv details { margin-top: 0; }
 #dr-conv summary { font-size: 1.05rem; font-weight: 700; padding: 6px 0; }
 #dr-conv details[open] > summary { margin-bottom: 10px; }
+/* drsnost: každý výpočet ve vlastní rozbalovací liště */
+#kalk-drs .card { padding-top: 10px; padding-bottom: 10px; }
+#kalk-drs details { margin-top: 0; }
+#kalk-drs summary { font-size: 1.05rem; font-weight: 700; padding: 6px 0; }
+#kalk-drs summary small { font-weight: 400; color: var(--muted); font-size: 0.8rem; }
+#kalk-drs details[open] > summary { margin-bottom: 10px; }
+#dr-out .tbl b { font-size: 1rem; }

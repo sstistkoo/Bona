@@ -163,14 +163,15 @@
     $('dr-mat').innerHTML = mats.map(([n], i) => `<option value="${i}">${n}</option>`).join('');
     $('dr-tool').innerHTML = tools.map(([n], i) => `<option value="${i}">${n}</option>`).join('');
     $('dr-classes').innerHTML = classes.map(([c, v]) => `<div data-c="${c}"><b>${c}</b><span>${v}</span></div>`).join('');
-    const reEl = $('dr-re'), raEl = $('dr-ra');
+    const reEl = $('dr-re'), re2El = $('dr-re2'), raEl = $('dr-ra');
     chips($('dr-radii'), [0.4, 0.8, 1.2, 1.6, 2.4, 3.2], reEl.value, (v) => { reEl.value = v; calc(); });
+    chips($('dr-radii2'), [0.4, 0.8, 1.2, 1.6, 2.4, 3.2], re2El.value, (v) => { re2El.value = v; calc(); });
     chips($('dr-ra-presets'), [0.8, 1.6, 3.2, 6.3, 12.5], null, (v) => { raEl.value = v; calc(); });
 
     function calc() {
-      const f = val($('dr-f')), vc = val($('dr-vc')), re = val(reEl), raT = val(raEl);
+      const f = val($('dr-f')), vc = val($('dr-vc')), re = val(reEl), re2 = val(re2El), raT = val(raEl);
       const k = mats[$('dr-mat').value][1] * tools[$('dr-tool').value][1] * (vc > 0 ? kVc(vc) : 1);
-      $('dr-k').textContent = `Celkový korekční faktor Σk = ${k.toFixed(2)} (materiál × nástroj × Vc)`;
+      $('dr-k').textContent = `Korekce Σk = ${k.toFixed(2)} – bere se z materiálu, nástroje a Vc v bloku „Jaká bude drsnost“.`;
       $('dr-classes').querySelectorAll('div').forEach((d) => d.classList.remove('active'));
       if (f > 0 && re > 0) {
         const rz = (f * f) / (8 * re) * 1000, ra = rz / 4;
@@ -181,13 +182,25 @@
           `<p class="hint">Rz = f² / (8·rε) · 1000, Ra ≈ Rz / 4</p>`;
         $('dr-classes').querySelector(`[data-c="${c}"]`)?.classList.add('active');
       } else $('dr-out').textContent = 'Zadej posuv a rádius špičky.';
-      $('dr-rev').innerHTML = raT > 0 && re > 0
-        ? `Max. posuv pro Ra ${raT} µm: <b>f = ${Math.sqrt(raT * 32 * re / (1000 * k)).toFixed(3)} mm/ot</b>`
-        : 'Zadej cílovou Ra.';
+      $('dr-rev').innerHTML = raT > 0 && re2 > 0
+        ? `Max. posuv pro Ra ${raT} µm při rε ${re2} mm: <b>f = ${Math.sqrt(raT * 32 * re2 / (1000 * k)).toFixed(3)} mm/ot</b>`
+        : 'Zadej rádius špičky a cílovou Ra.';
     }
-    ['dr-f', 'dr-vc', 'dr-re', 'dr-ra'].forEach((id) => $(id).addEventListener('input', calc));
+    // označení tlačítka rádiusu / Ra podle napsané hodnoty
+    const zvyrazni = (cont, v) => $(cont).querySelectorAll('.chip').forEach((c) => c.classList.toggle('active', Number(c.dataset.v) === Number(String(v).replace(',', '.'))));
+    reEl.addEventListener('input', () => zvyrazni('dr-radii', reEl.value));
+    re2El.addEventListener('input', () => zvyrazni('dr-radii2', re2El.value));
+    raEl.addEventListener('input', () => zvyrazni('dr-ra-presets', raEl.value));
+    ['dr-f', 'dr-vc', 'dr-re', 'dr-re2', 'dr-ra'].forEach((id) => $(id).addEventListener('input', calc));
     ['dr-mat', 'dr-tool'].forEach((id) => $(id).addEventListener('change', calc));
     calc();
+    // sbalení / rozbalení lišt se pamatuje
+    const stavList = load('drListy', {});
+    document.querySelectorAll('#kalk-drs details').forEach((d) => {
+      const klic = d.id || 'dr-conv';
+      if (klic in stavList) d.open = !!stavList[klic];
+      d.addEventListener('toggle', () => { stavList[klic] = d.open; save('drListy', stavList); });
+    });
 
     // Převod Ra ↔ Rz (orientační poměr, výchozí 4 jako ve výpočtu výše)
     const raE = $('rr-ra'), rzE = $('rr-rz'), rrOut = $('rr-out');
