@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.77';
+const VERZE = '0.8.78';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -75,8 +75,8 @@ const MENU = [
   ['Výpočty', [['kalk', '⚙️'], ['tol', '📏'], ['kuzel', '🔺'], ['teplo', '🌡️']]],
   ['Programování', [['sinumerik', '🏭'], ['rez', '◢'], ['geo', '⌒'], ['trig', '📐'], ['calc', '🔢']]],
   ['Nástroje', [['vbd', '💎'], ['nm', '🔧'], ['prevod', '🔄']]],
-  ['Stroj', window.STROJ_KAT.map((k) => [k.id, k.ikona, k.nazev])],
-  ['Dílna', [['zakazka', '📋'], ['smena', '✅'], ['poznamky', '📝']]],
+  ['Stroj', [...window.STROJ_KAT.map((k) => [k.id, k.ikona, k.nazev]), ['zakazka', '📋']]],
+  ['Dílna', [['smena', '✅'], ['poznamky', '📝']]],
 ];
 const menu = document.getElementById('menu'), menuBtn = document.getElementById('menu-btn');
 const menuHledat = document.getElementById('menu-hledat');
