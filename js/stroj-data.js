@@ -14,7 +14,25 @@ window.STROJ_KAT = [
 ];
 
 window.STROJ_POZNAMKY = {
-  sonda: [],
+  sonda: [
+    {
+      t: 'Měření sondou',
+      p: [
+        'Menu Select → Menu 2 → tlačítko s ikonou ▲ v rámečku → měření.',
+        '',
+        'Čísla v nabídce měření:',
+        '1 – koncové měření',
+        '5 – měrný řez (dif)',
+        '9 – čelist 1',
+        '10 – čelist 2',
+        '11 – čelist 3',
+      ].join('\n'),
+    },
+    {
+      t: 'Sonda – chyba měření (K1, pozice 5)',
+      p: 'Chyba – K1 obrobek, měrné pozice 5 pod Dif: zkontrolovat rozdíl, tolerance 0,01.',
+    },
+  ],
   nastroje: [],
   reset: [
     {
