@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.61';
+const VERZE = '0.8.62';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -209,7 +209,8 @@ if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
   document.addEventListener('webkitfullscreenchange', fsStav);
 }
 
-if (!zalozkaZAdresy()) (tabBtn(store.get('tab', 'kalk')) || tabBtn('kalk')).click();
+// Po spuštění se vždy otevře kalkulačka (nejčastěji používaná); odkaz s #záložkou má přednost
+if (!zalozkaZAdresy()) tabBtn('calc').click();
 window.addEventListener('hashchange', zalozkaZAdresy);
 
 /* ---------- Tlačítko ± u polí se zápornými hodnotami (číselná klávesnice iOS nemá mínus) ---------- */
