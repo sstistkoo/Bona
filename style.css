@@ -795,3 +795,6 @@ body:has(#kalk.panel.active) > footer { display: none; }
 #kuzel .kz-forms { font-size: 0.78rem; margin: 6px 0 0; }
 #kuzel #kz-slide { margin-top: 6px; padding: 8px 10px; font-size: 0.95rem; }
 #kuzel #kz-slide b { font-size: 1.05rem; }
+/* Kužel: nadpis vlevo, ⓘ uprostřed, Vymazat vpravo */
+#kuzel .kz-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+#kuzel .kz-head .kz-clear { justify-self: end; }
