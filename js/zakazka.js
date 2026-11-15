@@ -248,7 +248,7 @@
     $('zk-seznam').innerHTML = skupiny.map((g, gi) =>
       `<h3 class="sub">${esc(g.n)}</h3><ul class="checklist">` +
       g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${esc(k)}</li>`).join('')}</ol>${(p.f || []).map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img class="zk-foto" src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</details>` : ''}</li>`).join('') +
-      `</ul><div class="row"><input type="text" data-add="${gi}" placeholder="Přidat do skupiny…"><button class="secondary" data-addbtn="${gi}">Přidat</button></div>`
+      '</ul>'
     ).join('');
   }
 
@@ -263,17 +263,7 @@
       if (VYCHOZI.some(([n, ps]) => n === g.n && ps.some((x) => x.t === p.t))) smazano.push(g.n + '|' + p.t);
       g.p.splice(d.dataset.del, 1); zmena(); return;
     }
-    const a = e.target.closest('[data-addbtn]');
-    if (a) pridej(a.dataset.addbtn);
   });
-  $('zk-seznam').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.dataset.add !== undefined) pridej(e.target.dataset.add);
-  });
-  function pridej(gi) {
-    const inp = $('zk-seznam').querySelector(`[data-add="${gi}"]`);
-    const t = inp.value.trim(); if (!t) return;
-    skupiny[gi].p.push({ t, ok: false }); zmena();
-  }
 
   // Obnovit vše: odškrtnout, vrátit smazané body, vymazat poznámku. Vlastní body a stroje zůstanou.
   $('zk-nova').addEventListener('click', () => {
