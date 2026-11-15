@@ -41,9 +41,9 @@
       {
         t: 'Kontrola kužele díry a drsnosti (W_OTVHO1)',
         d: [
-          'V programu DIRAHOT1 (SPF) najít řádek W_OTVHO1(…), např. W_OTVHO1(217.707,184.19,185.5,1,2,,,0.034,0.22,0.2,).',
-          'Zkontrolovat kužel díry.',
-          'Zkontrolovat drsnost (posuv).',
+          'V programu DIRAHOT1 (SPF) najít řádek W_OTVHO1(…), např. W_OTVHO1(217.707,184.19,185.5,1,2,,,0.034,0.22,0.2,). Parametry se zobrazí přes Zpětný překlad.',
+          'Zkontrolovat kužel díry: KONUS (_KO), v příkladu 0.034.',
+          'Zkontrolovat drsnost (posuv): POSUV (_F1) a POSUV RAD (_F2), v příkladu 0.22 a 0.2.',
         ],
       },
       {
