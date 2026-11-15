@@ -21,7 +21,7 @@ Na telefonu ji lze přidat na plochu jako aplikaci (v prohlížeči „Přidat n
 - **Sinumerik 840D** – příručka: G kódy, M kódy, příkazy, systémové proměnné, zkratky, ukázky programů, data nástrojů, alarmy, rychlý tahák pro karusel; hledání napříč vším
 - **Převodník** – mm/palce, úhly (° / rad / ° ′ ″), Ra ↔ Rz, TPI ↔ stoupání, tvrdost HRC/HB/HV, moment, síla, rychlost
 - **Nm** – vlastní seznam nožů s momenty, tabulky šroubů VBD, moment šroubu M podle VDI 2230, klíč s prodloužením, převody jednotek
-- **Stroj** – poznámky ke stroji v kategoriích Sonda, Nástroje, Reset, Korekce, Poruchy, Manipulátor; hledání napříč všemi a vlastní poznámky ke každé kategorii
+- **Stroj** – poznámky ke stroji v kategoriích Sonda, Nástroje, Reset, Korekce, Poruchy, Manipulátor, MDA; fotky obrazovek a panelů u poznámek, hledání napříč všemi a vlastní poznámky ke každé kategorii
 - **Nová zakázka** – údaje o zakázce a upravitelný kontrolní seznam chystání (podklady, upnutí, nástroje, stroj, první kus)
 - **Směna** – kontrolní seznam (lze upravit) a počítadlo kusů
 - **Poznámky** – ukládají se automaticky v prohlížeči
@@ -40,7 +40,9 @@ Na telefonu ji lze přidat na plochu jako aplikaci (v prohlížeči „Přidat n
 | `js/sinumerik.js` | příručka Sinumerik 840D |
 | `js/prevod-nm.js` | převodník, utahovací momenty |
 | `js/dilna.js` | roztažnost, korekce rε, roh a oblouk, VBD a držáky |
-| `js/stroj-data.js` | poznámky ke stroji (sem se doplňují) |
+| `js/stroj-data.js` | poznámky ke stroji (sem se doplňují; fotky v `img/`, u poznámky pole `f: ['soubor.jpg']`) |
+| `js/heslo.js` | jednoduchá přihlašovací brána (jen proti náhodným zvědavcům, web je veřejný) |
+| `img/` | fotky k poznámkám (zmenšené na šířku 1000 px) |
 | `js/stroj.js` | záložka Stroj – kategorie, hledání, vlastní poznámky |
 | `js/zakazka.js` | záložka Nová zakázka |
 | `sw.js`, `manifest.webmanifest`, `icons/` | offline režim a instalace na plochu (při změně souborů zvyš `VERZE` v `sw.js`) |

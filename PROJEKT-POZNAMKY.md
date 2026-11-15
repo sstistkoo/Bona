@@ -21,13 +21,19 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 ## Stav kategorií
 | Kategorie | Stav |
 |---|---|
-| Reset | 1 poznámka |
 | Sonda | 2 poznámky |
+| Nástroje | 6 poznámek |
+| Reset | 1 poznámka |
 | Korekce | 4 poznámky |
-| Nástroje | prázdné |
-| Poruchy | prázdné |
-| Manipulátor | prázdné |
+| Poruchy | 3 poznámky (požadavek na údržbu IWI/IFS, filtry, sonda K1) |
+| Manipulátor | 9 poznámek (volant, linka, pozice, bezpečnost, M2 ruční/automat, převoz) |
+| MDA | 3 poznámky (OSTORE2, základy MDA, RELEASE/GET/GETD) |
 | Nová zakázka | 4 skupiny hotové |
+
+## Funkce přidané navíc
+- Přihlašovací brána `js/heslo.js` (SHA-256 otisk v kódu, heslo se pamatuje v telefonu). Není to skutečná ochrana – repozitář i web jsou veřejné.
+- Fotky u poznámek: `img/` + pole `f` u poznámky (zmenšit na 1000 px, JPEG ~72).
+- Veřejnost: v poznámce Manipulátor (volant) je uvedeno heslo operátora k volantu – případně odebrat.
 
 ## Ovládání stroje – ověřené (podle autora)
 - **Nahrát** (HD→NC, Load) a **Navolit** je jeden krok.
@@ -43,6 +49,9 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 - Názvy: konus = `_KO`, posuv = `_F1/_F2`, úběr 0,03 jde do `_D1`; „íčko“ = podpěrky.
 
 ## Otevřené otázky (zatím nezodpovězeno)
+- Nástroje: ověřit klávesu „>“ (přepnutí softkláves), „<< 2× Maschine“, délky 1/2 (−50 / 120), radius FR25 (+0,2 / díra o 0,4 menší).
+- Manipulátor: S2/S3/S4 u VD4/VD5/VD6 (dle sešitu), v ruční obrazovce jsou tlačítka X a Y (v sešitu X a Z).
+- MDA OSTORE2: ověřit na stroji význam C_OFF (2) a G56.
 - „Nahrát program“ na konci „Přepsání programu“: samostatný krok, nebo duplicita?
 - Reset: je „Auto → Start“ a „2× Start“ jeden krok?
 - Sonda: význam „K1“, co dělat při rozdílu > 0,01, prázdná čísla v menu.

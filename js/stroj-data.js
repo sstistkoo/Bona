@@ -17,6 +17,28 @@ window.STROJ_KAT = [
 window.STROJ_POZNAMKY = {
   mda: [
     {
+      t: 'MDA – základy (Sinumerik 840D)',
+      p: [
+        'MDA = Manual Data Automatic: bloky G-kódu se zadávají po jednom a ihned se provedou (např. při seřizování stroje).',
+        'Spuštění: zapsat blok(y) a stisknout NC Start (Cycle Start).',
+        'Do MDA lze načíst program z Program Manageru (správce programů). Program vytvořený nebo upravený v okně MDA lze uložit do Program Manageru (např. do vlastní složky) a příště zase načíst.',
+        'Softklávesa „Smazat bloky“ smaže program zobrazený v okně MDA.',
+      ].join('\n'),
+    },
+    {
+      t: 'Výměna os a vřeten mezi kanály – RELEASE, GET, GETD',
+      p: [
+        'Osa nebo vřeteno může být v jednu chvíli jen v jednom kanálu.',
+        'RELEASE(osa) – uvolní osu do neutrálního stavu (nesmí být v transformaci).',
+        'GET(osa) – kanál převezme osu (se synchronizací, zastaví předzpracování).',
+        'GETD(osa) – převezme osu přímo z kanálu, kde je přiřazena; není potřeba předchozí RELEASE.',
+        'Vřeteno se zapisuje jako GETD(S1) nebo přes SPI(číslo vřetene).',
+        'Osa převzatá příkazem GET zůstává v kanálu i po Resetu klávesou nebo programem.',
+        'SETMS(n) – vřeteno číslo n se stává hlavním (master) vřetenem; M1=3 S1=80 = vřeteno 1 vpravo, 80 ot/min.',
+        'DIAMOF – programování v poloměru, DIAMON – programování v průměru.',
+      ].join('\n'),
+    },
+    {
       t: 'Vypnutí otočného nástroje, stůl se točí (OSTORE2)',
       p: [
         'Program SYF\\OSTORE2.SYF:',
@@ -253,7 +275,8 @@ window.STROJ_POZNAMKY = {
         'VD4 – dopravník (nakládání obrobených kol, odvoz kol).',
         'VD5 – dopravník (hotová kola; UZ = ultrazvuk, Mag. = magnetická zkouška).',
         'VD6 – dopravník (za vyvažovačkou).',
-        'S2, S3, S4 – sklady (S2 u VD4, S3 u VD5, S4 u VD6).',
+        'S2, S3, S4 – sklady (dle sešitu: S2 u VD4, S3 u VD5, S4 u VD6; k ověření).',
+        'OP4, OP5, OP6 – optické rampy (bezpečnostní schéma linky).',
         'HES3, HES4 – stroje; VDM3, VDM4 – stroje; VYV – vyvažovačka.',
         'Stroj HES4 = 123; stojan na surová kola 122, stojan na hotová kola 124.',
         '',
