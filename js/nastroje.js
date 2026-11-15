@@ -264,7 +264,7 @@
       ['C', '⌫', 'f(x)', '÷'],
       ['(', ')', '^', 'pi'],
       ['7', '8', '9', '×'], ['4', '5', '6', '−'], ['1', '2', '3', '+'],
-      ['0', '.', '='],
+      ['.', '0', '='],
     ];
     const tridy = (k) => (/^[0-9.]$/.test(k) ? ' num' : '') + (k === '=' ? ' eq wide' : '') + (k === 'C' || k === '⌫' ? ' clr' : '') + (k === 'f(x)' ? ' sci-btn' : '');
     $('calc-keys').innerHTML = keys.map((row, i) => `<div class="calc-row${i === 0 ? ' sci-row' : ''}">${row.map((k) => `<button type="button" class="ck${tridy(k)}" data-k="${k}">${k}</button>`).join('')}</div>`).join('');
