@@ -40,8 +40,8 @@ window.STROJ_POZNAMKY = {
       p: [
         '1. Menu Select → Program.',
         '2. Vybrat program: CH1 = 1. operace, CH2 = 2. operace.',
-        '3. Zjistit číslo operace.',
-        '4. Tlačítko upínač osazení (obrázek čelistí, vpravo vedle C3): zkontrolovat, popřípadě zadat číslo operace.',
+        '3. Zjistit číslo operace: v programu najít rozdělovač skoků (Sprungverteiler) – řádky IF (CUT_MEM==číslo) GOTOF …; za středníkem je název operace. Příklad z 118550_1_CH1: 0 = start programu, 10 = centrování, 50 = měření desky, 100 = VN_DIA, 200 = deska, 300 = DR_SJETI, 1205 = MESS_CUT.',
+        '4. Tlačítko upínač osazení (obrázek čelistí, vpravo vedle C3): zkontrolovat, popřípadě zadat číslo operace do pole CUT_MEM („Skok programu ke značce“).',
         '5. Tlačítko NEO: mačkat, dokud obrázek obrobku není šedý. Šedé = neobrobené, zelené = obrobené, červené = zmetek.',
         '6. Auto → Start.',
         '7. OFFSET X, Z: zkontrolovat a zapsat. Posunutí nulového bodu se vynuluje při najíždění po resetu.',
