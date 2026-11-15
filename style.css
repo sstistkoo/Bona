@@ -765,3 +765,5 @@ body:has(#kalk.panel.active) > footer { display: none; }
 .svg-pop-row button { min-height: 44px; padding: 0 12px; background: var(--code-bg); color: var(--text); border: 1px solid var(--border); }
 .svg-pop-row .svg-pop-ok { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 700; }
 .svg-pop-row .svg-pop-del { color: #dc2626; }
+#kz-zadani .kz-forms { margin: 12px 0 0; }
+#kz-zadani #kz-slide { margin-top: 8px; margin-bottom: 4px; }

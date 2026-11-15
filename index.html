@@ -205,8 +205,6 @@
         <p class="hint" style="margin-top:0">Stačí 3 údaje (D, d, délka, kuželovitost) – nebo Ø z výkresu v hloubce + délka + kuželovitost. <b>Klepni na kótu v náčrtu</b> a zadej ji, klepnutím do kužele přidáš měřicí místo.</p>
         <svg class="kz-svg" id="kz-svg" viewBox="0 0 340 390" role="img" aria-label="Náčrt kužele"></svg>
         <div class="warn" id="kz-err" hidden></div>
-        <p class="kz-forms" id="kz-forms"></p>
-        <div class="result" id="kz-slide" hidden></div>
       </div>
 
       <div class="card" id="kz-zadani">
@@ -218,6 +216,8 @@
           <label>Kuželovitost 1:x<input type="text" id="kz-K" placeholder="např. 20 nebo 7:24" autocomplete="off"></label>
           <label>Úhel α – sklon k ose [°]<input type="text" id="kz-a" inputmode="decimal" placeholder="např. 1.43" autocomplete="off"></label>
         </div>
+        <p class="kz-forms" id="kz-forms"></p>
+        <div class="result" id="kz-slide" hidden></div>
         <h3 class="sub">Ø z výkresu v hloubce <small class="hint">(nepovinné)</small></h3>
         <div class="grid">
           <label>Zadaný Ø [mm]<input type="text" id="kz-refD" inputmode="decimal" placeholder="např. 211" autocomplete="off"></label>
