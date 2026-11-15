@@ -1,7 +1,7 @@
 // Offline režim: aplikace se uloží do telefonu a funguje i bez signálu.
 // Strategie „nejdřív síť“: když je signál, načte se vždy nejnovější verze z GitHubu,
 // bez signálu se použije uložená kopie. Při změně souborů zvyš VERZE.
-const VERZE = 'bona-0.8.87';
+const VERZE = 'bona-0.8.88';
 const SOUBORY = [
   './', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest',
   'js/vypocty.js', 'js/sinumerik-data.js', 'js/nastroje.js', 'js/kuzel.js', 'js/sinumerik.js', 'js/prevod-nm.js', 'js/dilna.js', 'js/stroj-data.js',
@@ -12,7 +12,7 @@ const SOUBORY = [
 // Fotky u poznámek: názvy se najdou v datových souborech, takže nové fotky není potřeba sem dopisovat.
 const S_FOTKAMI = ['js/stroj-data.js', 'js/zakazka.js'];
 async function ulozFotky(c) {
-  const texty = await Promise.all(S_FOTKAMI.map((f) => fetch(f).then((r) => r.text()).catch(() => '')));
+  const texty = await Promise.all(S_FOTKAMI.map((f) => fetch(f, { cache: 'no-cache' }).then((r) => r.text()).catch(() => '')));
   const nazvy = [...new Set(texty.join('\n').match(/[\w.-]+\.(?:jpe?g|png|webp)/gi) || [])];
   // každá zvlášť – chybějící fotka nesmí zablokovat instalaci aplikace
   await Promise.allSettled(nazvy.map((n) => c.add('img/' + n)));
@@ -34,7 +34,7 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
   e.respondWith(
-    fetch(req)
+    fetch(req, { cache: 'no-cache' }) // vždy ověřit na serveru, ne z mezipaměti prohlížeče (jinak se míchají staré a nové soubory)
       .then((res) => {
         if (res.ok) { const kopie = res.clone(); caches.open(VERZE).then((c) => c.put(req, kopie)); }
         return res;

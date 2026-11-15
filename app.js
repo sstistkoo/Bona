@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.87';
+const VERZE = '0.8.88';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -517,6 +517,11 @@ $('verze').textContent = 'verze ' + VERZE;
 /* ---------- Offline režim (service worker) – jen na https (GitHub Pages) ---------- */
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  // Po výměně za novou verzi se stránka jednou sama obnoví, aby nezůstaly staré soubory.
+  if (navigator.serviceWorker.controller) {
+    let obnoveno = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (!obnoveno) { obnoveno = true; location.reload(); } });
+  }
 }
 // prohlížeč po načtení odroluje na #kotvu – vrátit stránku nahoru
 window.addEventListener('load', () => { if (location.hash) setTimeout(() => window.scrollTo(0, 0), 0); });
