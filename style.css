@@ -727,3 +727,5 @@ body:has(#calc.panel.active) > footer { display: none; }
 /* Řezné podmínky | Drsnost povrchu – přepínač nahoře */
 .kalk-sw { margin-bottom: 14px; background: var(--card); box-shadow: var(--shadow); }
 .kalk-sw .seg-btn { padding: 11px 6px; font-size: 0.95rem; }
+.kalk-sw .seg-btn { padding: 11px 2px; font-size: 0.88rem; }
+#rr-out small { color: var(--muted); font-size: 0.8rem; }

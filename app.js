@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.8.63';
+const VERZE = '0.8.64';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -41,17 +41,20 @@ document.querySelectorAll('.tab').forEach((btn) => {
 const tabBtn = (id) => [...document.querySelectorAll('.tab')].find((b) => b.dataset.tab === id);
 // kategorie poznámek ke stroji (#sonda, #poruchy…) otevírají záložku Stroj
 const strojKat = (id) => window.STROJ_KAT.find((k) => k.id === id);
-// Drsnost je součást sekce Řezné podmínky (přepínač nahoře) – staré odkazy #drsnost vedou tam
+// Řezné podmínky, Čas obrábění a Drsnost jsou jedna sekce s přepínačem nahoře.
+// Staré odkazy (#drsnost, #cas) a položky menu vedou na odpovídající pohled.
+const POHLEDY = { rez: null, cas: '⏱️ Čas obrábění', drs: '🔬 Drsnost povrchu' };
+const ALIAS = { drsnost: 'drs', cas: 'cas' };
 function kalkPohled(p) {
-  document.getElementById('kalk-rez').hidden = p !== 'rez';
-  document.getElementById('kalk-drs').hidden = p !== 'drs';
+  if (!(p in POHLEDY)) p = 'rez';
+  for (const k of Object.keys(POHLEDY)) document.getElementById('kalk-' + k).hidden = k !== p;
   document.querySelectorAll('[data-kpohled]').forEach((b) => b.classList.toggle('active', b.dataset.kpohled === p));
   store.set('kalkPohled', p);
-  if (typeof ukazAktualni === 'function') ukazAktualni();
+  ukazAktualni();
 }
 document.querySelectorAll('[data-kpohled]').forEach((b) => b.addEventListener('click', () => kalkPohled(b.dataset.kpohled)));
 function otevri(id) {
-  if (id === 'drsnost') { tabBtn('kalk').click(); kalkPohled('drs'); return; }
+  if (id in ALIAS) { tabBtn('kalk').click(); kalkPohled(ALIAS[id]); return; }
   const k = strojKat(id);
   if (k) {
     store.set('strojKat', k.id);
@@ -62,14 +65,14 @@ function otevri(id) {
 }
 function zalozkaZAdresy() {
   const id = decodeURIComponent(location.hash.slice(1));
-  const ok = !!(tabBtn(id) || strojKat(id) || id === 'drsnost');
+  const ok = !!(tabBtn(id) || strojKat(id) || id in ALIAS);
   if (ok) { otevri(id); window.scrollTo(0, 0); setTimeout(() => window.scrollTo(0, 0), 0); }
   return ok;
 }
 
 /* ---------- Menu ☰ – všechny nástroje na jedné obrazovce ---------- */
 const MENU = [
-  ['Výpočty', [['kalk', '⚙️'], ['cas', '⏱️'], ['tol', '📏'], ['kuzel', '🔺'], ['teplo', '🌡️']]],
+  ['Výpočty', [['kalk', '⚙️'], ['tol', '📏'], ['kuzel', '🔺'], ['teplo', '🌡️']]],
   ['Programování', [['sinumerik', '🏭'], ['rez', '◢'], ['geo', '⌒'], ['trig', '📐'], ['calc', '🔢']]],
   ['Nástroje', [['vbd', '💎'], ['nm', '🔧'], ['prevod', '🔄']]],
   ['Stroj', window.STROJ_KAT.map((k) => [k.id, k.ikona, k.nazev])],
@@ -107,9 +110,9 @@ bnav.addEventListener('click', (e) => {
 function ukazAktualni() {
   const t = document.querySelector('.tab.active')?.dataset.tab;
   const p = POLOZKY[aktualniId()] || POLOZKY[t];
-  const drs = t === 'kalk' && store.get('kalkPohled', 'rez') === 'drs';
-  document.getElementById('cur-tab').textContent = drs ? '🔬 Drsnost povrchu' : p ? p.ic + ' ' + p.txt : '';
-  document.title = drs ? 'Drsnost povrchu – Bona' : p ? p.txt + ' – Bona' : 'Bona – CNC pomocník';
+  const nazev = t === 'kalk' ? POHLEDY[store.get('kalkPohled', 'rez')] : null;
+  document.getElementById('cur-tab').textContent = nazev || (p ? p.ic + ' ' + p.txt : '');
+  document.title = nazev ? nazev.slice(3) + ' – Bona' : p ? p.txt + ' – Bona' : 'Bona – CNC pomocník';
   bnav.querySelectorAll('[data-bn]').forEach((b) => b.classList.toggle('active', b.dataset.bn === t && menu.hidden));
   zapisNedavne(aktualniId());
   zapisHistorii(aktualniId());
@@ -221,7 +224,7 @@ if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
 }
 
 // Po spuštění se vždy otevře kalkulačka (nejčastěji používaná); odkaz s #záložkou má přednost
-kalkPohled(store.get('kalkPohled', 'rez') === 'drs' ? 'drs' : 'rez'); // pamatuje si poslední pohled sekce Řezné podmínky
+kalkPohled(store.get('kalkPohled', 'rez')); // pamatuje si poslední pohled sekce Řezné podmínky
 if (!zalozkaZAdresy()) tabBtn('calc').click();
 window.addEventListener('hashchange', zalozkaZAdresy);
 

@@ -188,6 +188,24 @@
     ['dr-f', 'dr-vc', 'dr-re', 'dr-ra'].forEach((id) => $(id).addEventListener('input', calc));
     ['dr-mat', 'dr-tool'].forEach((id) => $(id).addEventListener('change', calc));
     calc();
+
+    // Převod Ra ↔ Rz (orientační poměr, výchozí 4 jako ve výpočtu výše)
+    const raE = $('rr-ra'), rzE = $('rr-rz'), rrOut = $('rr-out');
+    let kk = Number(load('drRatio', 4)) || 4, posledni = 'ra';
+    function prevod() {
+      const zdroj = posledni === 'ra' ? raE : rzE, cil = posledni === 'ra' ? rzE : raE;
+      const x = val(zdroj);
+      cil.classList.toggle('computed', x !== null);
+      if (x === null) { cil.value = ''; rrOut.textContent = 'Zadej Ra nebo Rz…'; return; }
+      if (!(x > 0)) { cil.value = ''; rrOut.textContent = 'Neplatná hodnota'; return; }
+      zdroj.classList.remove('computed');
+      const ra = posledni === 'ra' ? x : x / kk, rz = posledni === 'ra' ? x * kk : x;
+      cil.value = r(posledni === 'ra' ? rz : ra, 3);
+      rrOut.innerHTML = `Ra <b>${r(ra, 3)}</b> µm &nbsp;↔&nbsp; Rz <b>${r(rz, 3)}</b> µm<br><small>Třída drsnosti ${cls(ra)} (podle Ra) · poměr ${kk}</small>`;
+    }
+    raE.addEventListener('input', () => { posledni = 'ra'; prevod(); });
+    rzE.addEventListener('input', () => { posledni = 'rz'; prevod(); });
+    chips($('rr-k'), [4, 5, 6, 7], kk, (v) => { kk = Number(v); save('drRatio', kk); prevod(); });
   })();
 
   /* ══════════════ TRIGONOMETRIE ══════════════ */

@@ -31,7 +31,6 @@
     </div>
     <nav class="tabs" role="tablist">
       <button class="tab active" data-tab="kalk">Řezné podm.</button>
-      <button class="tab" data-tab="cas">Čas obrábění</button>
       <button class="tab" data-tab="tol">Tolerance</button>
       <button class="tab" data-tab="kuzel">Kužel</button>
       <button class="tab" data-tab="teplo">Roztažnost</button>
@@ -63,8 +62,9 @@
     <!-- KALKULAČKA -->
     <section id="kalk" class="panel active">
       <div class="seg kalk-sw" role="tablist">
-        <button class="seg-btn active" data-kpohled="rez">Řezné podmínky</button>
-        <button class="seg-btn" data-kpohled="drs">Drsnost povrchu</button>
+        <button class="seg-btn active" data-kpohled="rez">Řezné podm.</button>
+        <button class="seg-btn" data-kpohled="cas">Čas obrábění</button>
+        <button class="seg-btn" data-kpohled="drs">Drsnost</button>
       </div>
       <div id="kalk-rez">      <div class="card">
         <h2>Řezná rychlost ↔ otáčky</h2>
@@ -87,7 +87,44 @@
         <div class="result" id="p-out"></div>
       </div>
           </div>
+      <div id="kalk-cas" hidden>
+      <div class="card">
+        <h2>Čas čelního soustružení (G96 + LIMS)</h2>
+        <div class="grid">
+          <label>Vnější průměr D1 [mm]<input type="number" id="c-d1" value="920" inputmode="decimal"></label>
+          <label>Vnitřní průměr D2 [mm]<input type="number" id="c-d2" value="200" inputmode="decimal"></label>
+          <label>Vc [m/min]<input type="number" id="c-vc" value="120" inputmode="decimal"></label>
+          <label>Posuv f [mm/ot]<input type="number" id="c-f" value="0.6" step="0.05" inputmode="decimal"></label>
+          <label>LIMS [ot/min]<input type="number" id="c-lims" value="200" inputmode="decimal"></label>
+          <label>Počet třísek<input type="number" id="c-pocet" value="1" min="1" inputmode="numeric"></label>
+        </div>
+        <div class="result" id="c-out"></div>
+      </div>
+
+      <div class="card">
+        <h2>Čas podélného soustružení (G97 / konstantní D)</h2>
+        <div class="grid">
+          <label>Délka L [mm]<input type="number" id="l-l" value="135" inputmode="decimal"></label>
+          <label>Průměr D [mm]<input type="number" id="l-d" value="920" inputmode="decimal"></label>
+          <label>Vc [m/min]<input type="number" id="l-vc" value="120" inputmode="decimal"></label>
+          <label>Posuv f [mm/ot]<input type="number" id="l-f" value="0.6" step="0.05" inputmode="decimal"></label>
+          <label>Počet třísek<input type="number" id="l-pocet" value="1" min="1" inputmode="numeric"></label>
+        </div>
+        <div class="result" id="l-out"></div>
+      </div>
+      </div>
       <div id="kalk-drs" hidden>
+        <div class="card" id="dr-conv">
+          <h2>Převod Ra ↔ Rz</h2>
+          <div class="grid">
+            <label>Ra [µm]<input type="text" id="rr-ra" inputmode="decimal" placeholder="např. 1.6" autocomplete="off"></label>
+            <label>Rz [µm]<input type="text" id="rr-rz" inputmode="decimal" placeholder="např. 6.3" autocomplete="off"></label>
+          </div>
+          <p class="lbl">Poměr Rz / Ra</p>
+          <div class="chips" id="rr-k"></div>
+          <div class="result" id="rr-out">Zadej Ra nebo Rz…</div>
+          <p class="hint">Přesný převod neexistuje, závisí na tvaru profilu. Běžně Rz ≈ 4 až 7 × Ra (soustružení kolem 4, broušení výš). Výpočet drsnosti v této sekci počítá s 4.</p>
+        </div>
       <div class="card">
         <div class="grid">
           <label>Materiál obrobku<select id="dr-mat"></select></label>
@@ -393,32 +430,6 @@
     </section>
 
     <!-- ČAS OBRÁBĚNÍ -->
-    <section id="cas" class="panel">
-      <div class="card">
-        <h2>Čas čelního soustružení (G96 + LIMS)</h2>
-        <div class="grid">
-          <label>Vnější průměr D1 [mm]<input type="number" id="c-d1" value="920" inputmode="decimal"></label>
-          <label>Vnitřní průměr D2 [mm]<input type="number" id="c-d2" value="200" inputmode="decimal"></label>
-          <label>Vc [m/min]<input type="number" id="c-vc" value="120" inputmode="decimal"></label>
-          <label>Posuv f [mm/ot]<input type="number" id="c-f" value="0.6" step="0.05" inputmode="decimal"></label>
-          <label>LIMS [ot/min]<input type="number" id="c-lims" value="200" inputmode="decimal"></label>
-          <label>Počet třísek<input type="number" id="c-pocet" value="1" min="1" inputmode="numeric"></label>
-        </div>
-        <div class="result" id="c-out"></div>
-      </div>
-
-      <div class="card">
-        <h2>Čas podélného soustružení (G97 / konstantní D)</h2>
-        <div class="grid">
-          <label>Délka L [mm]<input type="number" id="l-l" value="135" inputmode="decimal"></label>
-          <label>Průměr D [mm]<input type="number" id="l-d" value="920" inputmode="decimal"></label>
-          <label>Vc [m/min]<input type="number" id="l-vc" value="120" inputmode="decimal"></label>
-          <label>Posuv f [mm/ot]<input type="number" id="l-f" value="0.6" step="0.05" inputmode="decimal"></label>
-          <label>Počet třísek<input type="number" id="l-pocet" value="1" min="1" inputmode="numeric"></label>
-        </div>
-        <div class="result" id="l-out"></div>
-      </div>
-    </section>
 
     <!-- TAHÁK -->
     <section id="sinumerik" class="panel">
