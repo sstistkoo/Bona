@@ -370,6 +370,13 @@
     });
   });
 
+  // ⓘ nápověda – rozbalí se pod nadpisem, ať nezabírá místo pořád
+  $('i').addEventListener('click', () => {
+    const open = $('info').hidden;
+    $('info').hidden = !open;
+    $('i').setAttribute('aria-expanded', String(open));
+  });
+
   /* ── Vstupy ── */
   const onSolveInput = (key, el, form) => {
     order = order.filter((x) => x !== key);
