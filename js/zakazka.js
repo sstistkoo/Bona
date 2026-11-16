@@ -48,6 +48,14 @@
         ],
       },
       {
+        t: 'Úprava spodního rádiusu díry (W_SPRAD1)',
+        d: [
+          'V programu W_OTVHO1 najít řádek W_SPRAD1 (spodní rádius díry).',
+          'Upravuje se výška náboje _Z1.',
+          'Když se délka ubere (_Z1 menší), zdvihne se dojezd – nástroj dojede výš.',
+        ],
+      },
+      {
         t: 'Kontrola VAR_DEF 1 a 2 (podpěrky, upnutí čelistí)',
         d: [
           'Zkontrolovat programy VAR_DEF_1 a VAR_DEF_2.',
