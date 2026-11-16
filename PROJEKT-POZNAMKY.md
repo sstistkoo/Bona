@@ -17,6 +17,7 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
   - Výpočet upnutí čelistí u bodu VAR_DEF: skutečná poloha ± rozsah stroje.
   - Záznamy upnutí (`stroje[].upnZ` = {d: Ø, p: skutečná poloha, t}) – v každém rozsahu čelistí (pole `cel`, CHES4 Nagel: 864-938; 1084-1158; 1304-1378) přímka nejmenších čtverců → odhad polohy pro nový Ø. Vztah zatím neověřený: Upínač otevřeno 60, zavřeno bez dílce 365 (krajní polohy táhla), Ø 926 → upnuto 173 (H2/H3 165/185), rozepnuto 99 (H8/H9 90/110). Meze = ±10 kolem středu zaokrouhleného na 5. Rozdíl 99→173 = 74 = šířka rozsahu čelisti na Ø – ověřit dalšími záznamy.
   - Otevřená otázka: konus na štítku 0,034 / 0,038 – který platí?
+  - **Přejmenování výchozího bodu** → zapsat starý název do `PREJMENOVANO` v `js/zakazka.js` (jinak se u uživatele objeví dvakrát – uložený seznam obsahuje i výchozí body). Nová pole stroje CHES4 doplní `doplnStroje` (i při kroku Zpět).
   - Jedno tlačítko „Nová zakázka – obnovit vše“ (odškrtne, vrátí smazané body, vymaže poznámku a polohu).
 - Odkazy přes hash: `#sonda`, `#reset`, `#korekce`, `#zakazka` …
 

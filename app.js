@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.10.0';
+const VERZE = '0.10.1';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -535,6 +535,8 @@ $('zal-ulozit').addEventListener('click', () => {
   $('zal-stav').textContent = `Uloženo ${Object.keys(data).length} položek do souboru ${a.download}.`;
 });
 $('zal-obnovit').addEventListener('click', () => $('zal-soubor').click());
+// po obnově znovu načíst a zůstat v Poznámkách u zálohy (jinak by se otevřela kalkulačka)
+const znovuNaZalohu = () => { try { history.replaceState(null, '', location.pathname + location.search + '#poznamky'); } catch { /* nic */ } location.reload(); };
 const PRED_OBNOVOU = 'bonaPredObnovou'; // mimo bona.*, aby ho obnova nesmazala
 function predObnovou() { try { return JSON.parse(localStorage.getItem(PRED_OBNOVOU)); } catch { return null; } }
 $('zal-zpet').hidden = !predObnovou();
@@ -547,7 +549,7 @@ $('zal-zpet').addEventListener('click', () => {
     localStorage.removeItem(PRED_OBNOVOU);
   } catch (err) { $('zal-stav').textContent = 'Nepovedlo se: ' + (err.message || err); return; }
   alert('Data vrácena. Aplikace se znovu načte.');
-  location.reload();
+  znovuNaZalohu();
 });
 $('zal-soubor').addEventListener('change', async (e) => {
   const f = e.target.files[0];
@@ -565,7 +567,7 @@ $('zal-soubor').addEventListener('change', async (e) => {
     zalKlice().forEach((k) => localStorage.removeItem(k));
     klice.forEach((k) => localStorage.setItem(k, z.data[k]));
     alert('Záloha obnovena. Aplikace se znovu načte.');
-    location.reload();
+    znovuNaZalohu();
   } catch (err) {
     $('zal-stav').textContent = 'Obnova se nepovedla: ' + (err.message || err);
   }

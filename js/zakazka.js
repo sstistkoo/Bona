@@ -90,9 +90,17 @@
   // Kroky (d) a výchozí body se berou z kódu, aby se opravy projevily i v už uloženém seznamu.
   // Ukládá se jen odškrtnutí, vlastní body a smazané výchozí body.
   let smazano = get('smazano', []);
+  // Přejmenované výchozí body: starý název → nový (jinak by starý zůstal jako vlastní bod navíc)
+  const PREJMENOVANO = {
+    'Úprava spodního rádiusu díry (W_SPRAD1)': 'Spodní rádius díry – jen když je špatně napojený (W_SPRAD1)',
+  };
+  const novyNazev = (t) => PREJMENOVANO[t] || t;
+  const prejmenujSmazane = (a) => (a || []).map((k) => { const i = k.indexOf('|'); return k.slice(0, i + 1) + novyNazev(k.slice(i + 1)); });
+  smazano = prejmenujSmazane(smazano);
   function slij(ulozene) {
     const vys = nove();
     const ok = new Map();
+    ulozene = (ulozene || []).map((g) => ({ ...g, p: g.p.map((p) => ({ ...p, t: novyNazev(p.t) })) }));
     (ulozene || []).forEach((g) => g.p.forEach((p) => ok.set(g.n + '|' + p.t, p.ok)));
     vys.forEach((g) => {
       g.p = g.p.filter((p) => !smazano.includes(g.n + '|' + p.t));
@@ -135,7 +143,9 @@
   };
   const ZAKLAD = [{ id: 'ches4', nazev: 'CHES4', h: { rozt: '0,01', ko: '0,034', r: '', f1: '0,22', f2: '0,2', ra: '', podp: '97,7', cel: '864-938; 1084-1158; 1304-1378', upn: '±10', otv: '±10', zero: '97,7', chuck: '0', op: '1' } }];
   let stroje = get('stroje', null) || JSON.parse(JSON.stringify(ZAKLAD));
-  stroje.forEach((x) => { if (x.id === 'ches4') ['cel', 'otv'].forEach((k) => { if (x.h[k] === undefined) x.h[k] = ZAKLAD[0].h[k]; }); });
+  // CHES4 uložený starší verzí nemá novější pole – doplnit výchozí hodnoty (ne přepsat)
+  const doplnStroje = (a) => { (a || []).forEach((x) => { x.h = x.h || {}; if (x.id === 'ches4') Object.keys(ZAKLAD[0].h).forEach((k) => { if (x.h[k] === undefined) x.h[k] = ZAKLAD[0].h[k]; }); }); return a; };
+  doplnStroje(stroje);
   let strojAkt = get('strojAkt', stroje[0].id);
   const stroj = () => stroje.find((x) => x.id === strojAkt) || stroje[0];
   const cislo = (v) => parseFloat(String(v ?? '').replace(',', '.'));
@@ -244,7 +254,7 @@
   }
   function nastav(json) {
     const z = JSON.parse(json);
-    smazano = z.smazano || []; skupiny = slij(z.s); stroje = z.stroje; strojAkt = z.strojAkt;
+    smazano = prejmenujSmazane(z.smazano); skupiny = slij(z.s); stroje = doplnStroje(z.stroje); strojAkt = z.strojAkt;
     posledni = json; ulozVse();
   }
   $('zk-zpet').addEventListener('click', () => { if (!zpet.length) return; vpred.push(posledni); nastav(zpet.pop()); });
