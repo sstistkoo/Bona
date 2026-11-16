@@ -250,6 +250,18 @@ window.STROJ_POZNAMKY = {
   ],
   poruchy: [
     {
+      t: 'Manipulátor nejede – kde je překážka',
+      p: [
+        '1. Na volantu na hlavní obrazovce stisknout NZ (bezpečnostní prvky linky).',
+        '2. Červeně = otevřené dveře (1c VDM3, 2c VDM4, 3c HES3, 4c HES4) nebo stlačené nouzové zastavení.',
+        '3. Žlutě = přerušená nebo nepotvrzená optická rampa (OP4, OP5, OP6) a zóny, kde je pohyb manipulátoru zakázán.',
+        '4. Zavřít dveře / odjistit tlačítko / uvolnit rampu a potvrdit.',
+        '',
+        'Podrobně: Stroj → Manipulátor → Bezpečnostní prvky linky (obrazovka).',
+      ].join('\n'),
+      f: ['volant-nz.jpg'],
+    },
+    {
       t: 'Porucha – požadavek na údržbu (IWI / IFS)',
       p: [
         'Na PC: intranet → levý panel → IWI. Pak menu Requestor → Nový požadavek. Povinná pole (hvězdička) shora dolů:',
@@ -346,7 +358,8 @@ window.STROJ_POZNAMKY = {
         'Bezpečnostní dveře: šedá = neaktivní (zavřeno), červená = otevřené dveře.',
         'Optická rampa: šedá = neaktivní, žlutá = rampa přerušena nebo nepotvrzena.',
         '',
-        'Na volantu se otevře tlačítkem NZ (nouzové zastavení) na hlavní obrazovce.',
+        'Na volantu se otevře tlačítkem NZ na hlavní obrazovce.',
+        'Když manipulátor nejede: otevřít NZ a podívat se, kde jsou otevřené dveře nebo stlačené nouzové zastavení (červeně) nebo přerušená rampa (žlutě). Zavřít / odjistit a potvrdit.',
         'Označení: tlačítka nouzového zastavení D2–D8, A1–A5, RM11c.2, RM11c.3; dveře 1c (VDM3), 2c (VDM4), 3c (HES3), 4c (HES4); optické rampy OP4, OP5, OP6.',
         'Na fotce: otevřené dveře (červeně) u VDM3, VDM4 a HES4, žluté zóny u těchto strojů a žlutá rampa OP6.',
       ].join('\n'),
