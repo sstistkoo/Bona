@@ -421,7 +421,11 @@ window.STROJ_POZNAMKY = {
         '• Naložení surových kol: stroj VDM3, VDM4, sklad S2, dopravník VD4.',
         '• Volba operace: 1 operace – 180°, 1 operace – 0°, 2 operace.',
         '• Vyložení kol: dopravník VD4, sklad S3, dopravník VD5.',
+        '',
+        'Na obrazovce jsou navíc: u VDM tlačítka MĚŘ 1.op a MĚŘ 2.op; u HES tlačítko PROTOČ, operace 1OP-0, 1OP-180, 2OP, 3OP, 4OP a vyložení také MĚŘ 1.op a MĚŘ 2.op.',
+        'Cesta: OVLÁDÁNÍ → Manipulátor M2 → AUTOMAT → VDM. Pole Typ = číslo kola (zjistí se v PŘEHLEDU kliknutím na pozici).',
       ].join('\n'),
+      f: ['man-ovladani-vdm.jpg'],
     },
     {
       t: 'M2 – automat (přesun)',
@@ -434,11 +438,15 @@ window.STROJ_POZNAMKY = {
     {
       t: 'Nastavení převozu (zjištění kola, zadání čísla)',
       p: [
-        'PŘEHLED: zjistit ve skladu pozici kola (na kterém stojanu je).',
-        'Potřeba zjistit číslo kola: kliknout na pozici dle stojanu (typ kola).',
+        '1. PŘEHLED (tlačítko na hlavní obrazovce volantu): najít stojan / pozici, na které kolo stojí. Číslo nad kolečkem = číslo pozice, číslo uvnitř = počet kol.',
+        '2. Kliknout na tu pozici – otevře se okno s informacemi o kole, kde je typ (číslo) kola.',
+        '3. OVLÁDÁNÍ (tlačítko na volantu) → Manipulátor M2 → AUTOMAT → VDM. Otevře se obrazovka VDM4, HES4, VDM3, HES3.',
+        '4. U příslušného stroje zapsat číslo kola do pole Typ (na fotce VDM4 a HES4 = 1105, VDM3 a HES3 = 105).',
+        '5. Vybrat odkud a kam se kolo veze (viz M2 – automat (VDM)).',
         '',
-        'OVLÁDÁNÍ: zadat číslo kola, pole TYP.',
+        'Když se v OVLÁDÁNÍ místo automatu dá RUČNÍ, otevře se obrazovka Manipulátor M2 pro ruční pojezd (viz M2 – ruční režim).',
       ].join('\n'),
+      f: ['man-prehled-volant.jpg', 'man-ovladani-vdm.jpg', 'man-rucni-m2-b.jpg'],
     },
   ],
 };
