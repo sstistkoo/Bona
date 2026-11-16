@@ -298,7 +298,7 @@ window.STROJ_POZNAMKY = {
     {
       t: 'Manipulátor (volant) – přihlášení a tlačítka F1–F18',
       p: [
-        'Nastavení: jméno Obsluha, heslo 100.',
+        'Nastavení: jméno Obsluha, heslo – zná obsluha (na veřejný web se nepíše).',
         '',
         'F1 – menu',
         'F2 – zpět',

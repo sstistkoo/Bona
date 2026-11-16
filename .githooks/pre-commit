@@ -1,0 +1,7 @@
+#!/bin/sh
+# Kontrola před commitem: syntaxe skriptů + testy (node --test).
+# Zapnutí v klonu repozitáře: git config core.hooksPath .githooks
+for f in app.js sw.js js/*.js scripts/*.mjs test/*.mjs; do
+  node --check "$f" || { echo "Chyba syntaxe: $f"; exit 1; }
+done
+node --test >/tmp/bona-test.log 2>&1 || { cat /tmp/bona-test.log; echo "Testy neprošly – commit zastaven."; exit 1; }

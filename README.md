@@ -45,7 +45,16 @@ Na telefonu ji lze přidat na plochu jako aplikaci (v prohlížeči „Přidat n
 | `img/` | fotky k poznámkám (zmenšené na šířku 1000 px) |
 | `js/stroj.js` | záložka Stroj – kategorie, hledání, vlastní poznámky |
 | `js/zakazka.js` | záložka Nová zakázka |
-| `sw.js`, `manifest.webmanifest`, `icons/` | offline režim a instalace na plochu (při změně souborů zvyš `VERZE` v `sw.js`) |
+| `sw.js`, `manifest.webmanifest`, `icons/` | offline režim a instalace na plochu (při změně souborů zvyš verzi: `node scripts/verze.mjs`) |
+| `test/` | testy výpočtů a kontrola vydání (`node --test`) |
+
+### Testy a vydání
+
+```
+node --test                  # testy výpočtů (ISO 286, kužel, roztažnost, kalkulačka…) a kontrola souborů
+node scripts/verze.mjs       # zvýší verzi v app.js i sw.js (minor / major / X.Y.Z)
+git config core.hooksPath .githooks   # jednou po klonování: před commitem se spustí kontrola syntaxe a testy
+```
 
 ### Aktualizace ze SKICA
 

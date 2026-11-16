@@ -121,6 +121,7 @@
     for (const s of SEKCE) {
       if (!s.data) continue;
       for (const i of s.data.items) {
+        if (skrytNe && SKRYVAT.includes(i.stav)) continue; // stejně jako v seznamu sekce
         const inTitle = norm(i.title).includes(q);
         if (inTitle || norm([i.sub, i.detail].join(' ')).includes(q)) hits.push({ s, i, score: norm(i.title) === q ? 0 : inTitle ? 1 : 2 });
       }

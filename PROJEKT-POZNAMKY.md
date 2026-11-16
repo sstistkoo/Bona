@@ -8,7 +8,7 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 - Odpovídat česky, stručně (mobil).
 
 ## Struktura aplikace
-- `index.html`, `app.js`, `style.css`, `sw.js` (service worker, network-first), `js/*.js`
+- `index.html`, `app.js`, `style.css`, `sw.js` (service worker, network-first s limitem 4 s – pak uložená kopie), `js/*.js`
 - **Stroj** (`js/stroj-data.js` + `js/stroj.js`): kategorie Sonda, Nástroje, Reset, Korekce, Poruchy, Manipulátor. Poznámky jsou `{t, p}`, `p` = víceřádkový text.
 - **Nová zakázka** (`js/zakazka.js`): checklist, výchozí kroky v kódu (`VYCHOZI`), v localStorage jen odškrtnutí a smazané položky (pole „Přidat do skupiny“ autor nechtěl – doplňky jdou do poznámky).
   - Stroje (`PAR`, `ZAKLAD` = CHES4) s hodnotami: rozteč PARAMDER, konus/posuvy DIRAHOT1 / W_OTVHO1, rádius, Ra, podpěrky VAR_DEF, upnutí ±10, Zero_Offset, Chuck_Stat, OP_Step. Tlačítko nahoře ukazuje vybraný stroj, rozbalí stroje + ＋.
@@ -23,7 +23,8 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 
 ## Postup změn
 1. Upravit data/kód, `node --check`.
-2. Zvýšit verzi: `VERZE` v `app.js` **a** cache `bona-X.Y.Z` v `sw.js`.
+2. Zvýšit verzi: `node scripts/verze.mjs` (změní `VERZE` v `app.js` i cache `bona-X.Y.Z` v `sw.js`).
+   Testy: `node --test` (spouští se i automaticky před commitem přes `.githooks/pre-commit`).
 3. Commit + push do `main` (GitHub Pages).
 
 ## Stav kategorií
@@ -47,7 +48,8 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 - Service worker stahuje s `cache: 'no-cache'` a po aktualizaci se stránka jednou sama obnoví (dřív se míchaly staré a nové soubory).
 - Mobil: spodní lišta (`BNAV` v `app.js`), menu s hledáním a „Naposledy“; na šířku karty vedle sebe.
 - `js/vypocty.js` je generovaný ze SKICA (`scripts/prevzit-ze-skici.mjs`) – needitovat ani nerozdělovat ručně.
-- Veřejnost: v poznámce Manipulátor (volant) je uvedeno heslo operátora k volantu – případně odebrat.
+- Veřejnost: heslo operátora k volantu bylo z poznámky Manipulátor odebráno (v historii gitu zůstává) – hesla do poznámek nepsat.
+- Trvalé úložiště: `navigator.storage.persist()` při startu (app.js), aby prohlížeč data sám nesmazal.
 
 ## Ovládání stroje – ověřené (podle autora)
 - **Nahrát** (HD→NC, Load) a **Navolit** je jeden krok.

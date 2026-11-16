@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.11.1';
+const VERZE = '0.11.2';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -348,10 +348,13 @@ function vypisCelni() {
   }
   const nMin = (1000 * vc) / (Math.PI * d1);
   const nMax = lims > 0 ? Math.min((1000 * vc) / (Math.PI * Math.max(d2, 0.001)), lims) : (1000 * vc) / (Math.PI * Math.max(d2, 0.001));
+  // bez LIMS rostou otáčky ke středu nade všechny meze (u D2 = 0 by tu byly miliony ot/min)
+  const bezLims = !(lims > 0) && nMax > 10 * nMin;
   $('c-out').innerHTML =
     `Čas 1 třísky: <b>${casText(t)}</b><br>` +
     `Celkem (${pocet}×): <b>${casText(t * pocet)}</b><br>` +
-    `<span class="hint">Otáčky od ${fmt(nMin, 1)} do ${fmt(nMax, 1)} ot/min. Bez najíždění a rychloposuvů.</span>`;
+    `<span class="hint">Otáčky od ${fmt(nMin, 1)} do ${fmt(nMax, 1)} ot/min. Bez najíždění a rychloposuvů.</span>` +
+    (bezLims ? '<div class="warn">Bez LIMS by otáčky ke středu rostly neomezeně – zadej LIMS stroje, jinak čas ani otáčky neodpovídají skutečnosti.</div>' : '');
 }
 ['c-d1', 'c-d2', 'c-vc', 'c-f', 'c-lims', 'c-pocet'].forEach((id) => $(id).addEventListener('input', vypisCelni));
 vypisCelni();
@@ -585,6 +588,9 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     navigator.serviceWorker.addEventListener('controllerchange', () => { if (!obnoveno) { obnoveno = true; location.reload(); } });
   }
 }
+/* Trvalé úložiště: bez něj může prohlížeč (hlavně Safari na iPhonu) data webu po pár dnech
+   nepoužívání sám smazat – poznámky, seznamy i záznamy upnutí. Prohlížeč může žádost odmítnout. */
+navigator.storage?.persisted?.().then((ano) => ano || navigator.storage.persist()).catch(() => {});
 // prohlížeč po načtení odroluje na #kotvu – vrátit stránku nahoru
 window.addEventListener('load', () => { if (location.hash) setTimeout(() => window.scrollTo(0, 0), 0); });
 
