@@ -62,6 +62,7 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 - Názvy: konus = `_KO`, posuv = `_F1/_F2`, úběr 0,03 jde do `_D1`; „íčko“ = podpěrky.
 
 ## Otevřené otázky (zatím nezodpovězeno)
+- Manipulátor (volant): co dělá TRD M7 / M8 (POZASTAVENÍ / START); MĚŘ 1.op / 2.op a PROTOČ v Ovládání VDM; 3OP a 4OP u HES; jak se potvrzuje po zavření dveří (NZ). Autor se v manipulátoru teprve zorientovává – doplňovat postupně.
 - Nástroje: ověřit klávesu „>“ (přepnutí softkláves; klávesa ^ = o úroveň zpět potvrzeno). Délky 1/2 a radius FR25 potvrzeno.
 - Manipulátor: sklady S2–S4 potvrzeny; v ruční obrazovce jsou tlačítka X a Y (v sešitu X a Z).
 - MDA OSTORE2: C_OFF (2) potvrzeno (vypnutí režimu C-osy pro osu/vřeteno 2); G56 z dokumentace.
