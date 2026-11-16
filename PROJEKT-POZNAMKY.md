@@ -31,7 +31,7 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 | Sonda | 2 poznámky |
 | Nástroje | 6 poznámek |
 | Reset | 1 poznámka |
-| Korekce | 4 poznámky |
+| Korekce | 5 poznámek (+ spodní rádius díry W_SPRAD1) |
 | Poruchy | 3 poznámky (požadavek na údržbu IWI/IFS, filtry, sonda K1) |
 | Manipulátor | 9 poznámek (volant, linka, pozice, bezpečnost, M2 ruční/automat, převoz) |
 | MDA | 3 poznámky (OSTORE2, základy MDA, RELEASE/GET/GETD) |

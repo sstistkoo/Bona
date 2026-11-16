@@ -48,8 +48,9 @@
         ],
       },
       {
-        t: 'Úprava spodního rádiusu díry (W_SPRAD1)',
+        t: 'Spodní rádius díry – jen když je špatně napojený (W_SPRAD1)',
         d: [
+          'Dělá se jen tehdy, když je rádius zespodu kola špatně napojený. Jinak bod přeskočit (odškrtnout).',
           'V programu W_OTVHO1 najít řádek W_SPRAD1 (spodní rádius díry).',
           'Upravuje se výška náboje _Z1.',
           'Když se délka ubere (_Z1 menší), zdvihne se dojezd – nástroj dojede výš.',

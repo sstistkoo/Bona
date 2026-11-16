@@ -178,6 +178,16 @@ window.STROJ_POZNAMKY = {
       ].join('\n'),
     },
     {
+      t: 'Spodní rádius díry – špatně napojený (W_SPRAD1)',
+      p: [
+        'Kdy: rádius zespodu kola je špatně napojený.',
+        '',
+        '1. V programu W_OTVHO1 najít řádek W_SPRAD1 (spodní rádius díry).',
+        '2. Upravit výšku náboje _Z1.',
+        '3. Když se délka ubere (_Z1 menší), zdvihne se dojezd – nástroj dojede výš.',
+      ].join('\n'),
+    },
+    {
       t: 'Korekce rozměru – parametry (korekce nástroje)',
       p: [
         '1. Menu Select → Parametry.',
