@@ -379,8 +379,11 @@ window.STROJ_POZNAMKY = {
         'Obrazovka informací o kole: tlačítko POZICE na hlavní obrazovce (nebo z obrazovky PŘEHLED stlačením pozice).',
         'Pozice se vybere zadáním čísla pozice, resp. stroje a pořadového čísla kola ve stohu. Údaje (EDIT / SMAZAT) lze měnit jen s administrátorskými právy.',
         'Zobrazuje: číslo pozice, stoh č., pořadí kola ve stohu, typ kola, ID a stav (kde kolo je: S1–S4 1. a 2. operace, VDM3/VDM4, HES3/HES4; UZ, MAG, VYV, KMO, KM180, ZNAČ, MĚŘENÍ, OK; D1–D6; operace 1–4; OBSAZENÁ).',
+        '',
+        'Na volantu (tlačítko POZICE, fotka): nahoře poz. (např. 223), EDIT, SMAZAT, výběr Stoh č. (44) a pořadí kola ve stohu (5); vpravo typ a ID (pod ním číslo, např. 154920).',
+        'Tlačítka stavu: VDM1–VDM4 1. a 2. op, HES1–HES4 1. a 2. op; UZ, MAG, VYV, KMO, KM180, GRAV180, GRAV0, BRAT; MER1–MER4, D5, D6, 0, PRÁZDNÁ; 1. až 6. operace, OK.',
       ].join('\n'),
-      f: ['man-info-kolo.jpg'],
+      f: ['man-info-kolo.jpg', 'man-pozice-volant.jpg'],
     },
     {
       t: 'M2 – ruční režim',
