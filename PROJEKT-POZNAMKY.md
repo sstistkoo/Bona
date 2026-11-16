@@ -33,7 +33,7 @@ Interní přehled pro tvorbu aplikace (pro Clauda i autora). Není to obsah apli
 | Reset | 1 poznámka |
 | Korekce | 5 poznámek (+ spodní rádius díry W_SPRAD1) |
 | Poruchy | 4 poznámky (manipulátor nejede → NZ, požadavek na údržbu IWI/IFS, filtry, sonda K1) |
-| Manipulátor | 9 poznámek (volant, linka, pozice, bezpečnost, M2 ruční/automat, převoz) |
+| Manipulátor | 10 poznámek (+ seřizovací režim; doplněno z manuálu LK4) (volant, linka, pozice, bezpečnost, M2 ruční/automat, převoz) |
 | MDA | 3 poznámky (OSTORE2, základy MDA, RELEASE/GET/GETD) |
 | Nová zakázka | 4 skupiny hotové |
 
