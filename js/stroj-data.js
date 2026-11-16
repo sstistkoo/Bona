@@ -300,7 +300,12 @@ window.STROJ_POZNAMKY = {
         'F17 – F18: ovládání upnutí',
         '',
         'Rotace chapadel: 0° = nákolek nahoru, 180° = nákolek dolů.',
+        '',
+        'Hlavní obrazovka (fotka): režimy pro dopravníky VD3–VD6 a manipulátory M2, M3 – AUTOMAT / RUČNÍ / SEŘÍZENÍ (zelená = zapnutý režim).',
+        'Dole: TRD M7 a TRD M8 – POZASTAVENÍ / START; NZ, Alarmy, PŘEHLED; POZICE, OVLÁDÁNÍ, NASTAVENÍ.',
+        'Nahoře stav VD1–VD6, rychlost M2 a M3 v % a čas.',
       ].join('\n'),
+      f: ['volant-rezimy.jpg'],
     },
     {
       t: 'Manipulátor – přehled linky (dopravníky, sklady, stroje)',
