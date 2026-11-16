@@ -54,6 +54,7 @@
           'Podpěrky („íčko“) jsou ve stejném programu (VAR_DEF): {podp} ({stroj}). Zjistit z předchozí zakázky, jak to má být, a přepsat do nové.',
           'Upnutí čelistí: Menu Select → Menu 1 → softklávesa Upínač. Čelisti se upnou na obrobek na nějakou hodnotu (Skutečná poloha). Od ní se nastavuje rozsah upnutí: minimum o 10 méně a maximum o 10 více, než na kolik se upnulo (pole „Dílec upnut“ – min. a max. mezní hodnota pro hlídání upínacího bodu; na fotce např. 219 a 239).',
           'Tyto hodnoty se zadávají do H2 a H3 v programu VAR_DEF (upnutí čelistí, max a min). Výpočet min a max je hned nad postupem.',
+          'Rozepnutí: v obrazovce Upínač je i Otevřít upínač – H8 (min) a H9 (max), hranice k uložení dílu. Čelisti se rozepnou na skutečnou polohu (např. 99) a meze jsou ±10 kolem ní (90 a 110).',
         ],
         f: ['upinac-menu1.jpg'],
       },
@@ -109,6 +110,7 @@
     { sk: 'Drsnost', k: 'ra', kr: 'Drsnost Ra', n: 'Drsnost Ra [µm]', kde: 'výkres' },
     { sk: 'Podpěrky', k: 'podp', kr: 'Podpěrky', n: 'Podpěrky („íčko“)', kde: 'VAR_DEF_1 / VAR_DEF_2' },
     { sk: 'Upnutí čelistí', k: 'cel', kr: 'Čelisti Ø', n: 'Rozsahy čelistí Spann-Ø (od-do; …)', kde: 'štítek na čelisti' },
+    { sk: 'Upnutí čelistí', k: 'otv', kr: 'Otevření H8/H9', n: 'Rozsah otevření H8 / H9 (min a max)', kde: 'Upínač → Otevřít upínač (uložení dílu)' },
     { sk: 'Upnutí čelistí', k: 'upn', kr: 'Upnutí H2/H3', n: 'Rozsah upnutí H2 / H3 (max a min)', kde: 'VAR_DEF (skutečná poloha z Upínače)' },
     { sk: 'Uživatelská data', k: 'zero', kr: 'Zero_Offset', n: 'Zero_Offset', kde: 'Parametry → Uživatelská data' },
     { sk: 'Uživatelská data', k: 'chuck', kr: 'Chuck_Stat', n: 'Chuck_Stat', kde: 'Parametry → Uživatelská data' },
@@ -118,12 +120,12 @@
   const HODNOTY_U_BODU = {
     'Kontrola rozteče (PARAMDER)': ['rozt'],
     'Kontrola kužele díry a drsnosti (W_OTVHO1)': ['ko', 'f1', 'f2', 'r', 'ra'],
-    'Kontrola VAR_DEF 1 a 2 (podpěrky, upnutí čelistí)': ['podp', 'upn'],
+    'Kontrola VAR_DEF 1 a 2 (podpěrky, upnutí čelistí)': ['podp', 'upn', 'otv'],
     'Přepsat uživatelská data pro novou zakázku': ['zero', 'chuck', 'op'],
   };
-  const ZAKLAD = [{ id: 'ches4', nazev: 'CHES4', h: { rozt: '0,01', ko: '0,034', r: '', f1: '0,22', f2: '0,2', ra: '', podp: '97,7', cel: '864-938; 1084-1158; 1304-1378', upn: '±10', zero: '97,7', chuck: '0', op: '1' } }];
+  const ZAKLAD = [{ id: 'ches4', nazev: 'CHES4', h: { rozt: '0,01', ko: '0,034', r: '', f1: '0,22', f2: '0,2', ra: '', podp: '97,7', cel: '864-938; 1084-1158; 1304-1378', upn: '±10', otv: '±10', zero: '97,7', chuck: '0', op: '1' } }];
   let stroje = get('stroje', null) || JSON.parse(JSON.stringify(ZAKLAD));
-  stroje.forEach((x) => { if (x.id === 'ches4' && x.h.cel === undefined) x.h.cel = ZAKLAD[0].h.cel; });
+  stroje.forEach((x) => { if (x.id === 'ches4') ['cel', 'otv'].forEach((k) => { if (x.h[k] === undefined) x.h[k] = ZAKLAD[0].h[k]; }); });
   let strojAkt = get('strojAkt', stroje[0].id);
   const stroj = () => stroje.find((x) => x.id === strojAkt) || stroje[0];
   const cislo = (v) => parseFloat(String(v ?? '').replace(',', '.'));
@@ -259,10 +261,18 @@
     });
   }
   // Výpočet rozsahu upnutí čelistí: skutečná poloha ± rozsah ze stroje (např. ±10)
+  const rozsahPar = (k) => Math.abs(cislo(String(stroj().h[k] || '10').replace('±', ''))) || 10;
+  // na stroji je střed zřejmě zaokrouhlený na pětky (173 → 165/185, 99 → 90/110)
+  const zaokr = (p, r) => { const c = Math.round(p / 5) * 5; return c === p ? '' : `<br><small>se středem zaokrouhleným na 5 (${f3(c)}): ${f3(c - r)} / ${f3(c + r)}</small>`; };
   function upnutiText(x) {
-    const p = cislo(x), r = Math.abs(cislo(String(stroj().h.upn || '10').replace('±', ''))) || 10;
-    if (!Number.isFinite(p)) return 'Zadej skutečnou polohu čelistí z obrazovky Upínač.';
-    return `min <b>${f3(p - r)}</b> · max <b>${f3(p + r)}</b> → zadat do H2 a H3 ve VAR_DEF (rozsah ±${f3(r)})`;
+    const p = cislo(x), r = rozsahPar('upn');
+    if (!Number.isFinite(p)) return 'Upnuto: zadej skutečnou polohu z obrazovky Upínač.';
+    return `Upnuto: min <b>${f3(p - r)}</b> · max <b>${f3(p + r)}</b> → H2 a H3 ve VAR_DEF (±${f3(r)})${zaokr(p, r)}`;
+  }
+  function otevreniText(x) {
+    const p = cislo(x), r = rozsahPar('otv');
+    if (!Number.isFinite(p)) return 'Rozepnuto: zadej skutečnou polohu při rozepnutí.';
+    return `Rozepnuto: min <b>${f3(p - r)}</b> · max <b>${f3(p + r)}</b> → H8 a H9 (±${f3(r)})${zaokr(p, r)}`;
   }
   /* Záznamy upnutí (Ø obrobku → skutečná poloha) u stroje, ze kterých se hledá vztah polohy a průměru */
   const rozsahyCel = () => [...String(stroj().h.cel || '').matchAll(/(\d+(?:[.,]\d+)?)\s*[-–]\s*(\d+(?:[.,]\d+)?)/g)].map((m) => [cislo(m[1]), cislo(m[2])]);
@@ -287,12 +297,14 @@
     return `${nazevRozsahu(r)}: poloha ≈ <b>${f3(p)}</b> → H2/H3 ≈ ${f3(p - roz)} / ${f3(p + roz)}<br><small>${f3(pr.b)} na 1 mm Ø · z ${body.length} záznamů · největší odchylka ${f3(pr.odch)}</small>`;
   }
   function upnutiBlok() {
-    const x = get('poloha', ''), dv = get('prumer', ''), z = zaznamy();
-    const radky = z.map((r, i) => `<li><span>Ø <b>${f3(r.d)}</b> → poloha <b>${f3(r.p)}</b> <small>${esc(nazevRozsahu(rozsahPro(r.d)))} · ${new Date(r.t).toLocaleDateString('cs-CZ')}</small></span><button type="button" class="del" data-upn-del="${i}" aria-label="Smazat záznam">✕</button></li>`).join('');
+    const x = get('poloha', ''), dv = get('prumer', ''), xo = get('polohaOtv', ''), z = zaznamy();
+    const radky = z.map((r, i) => `<li><span>Ø <b>${f3(r.d)}</b> → upnuto <b>${f3(r.p)}</b>${Number.isFinite(r.o) ? ` · rozepnuto <b>${f3(r.o)}</b>` : ''} <small>${esc(nazevRozsahu(rozsahPro(r.d)))} · ${new Date(r.t).toLocaleDateString('cs-CZ')}</small></span><button type="button" class="del" data-upn-del="${i}" aria-label="Smazat záznam">✕</button></li>`).join('');
     return `<div class="zk-upn">` +
       `<div class="zk-upn-g"><label>Ø upnutí obrobku<input type="text" inputmode="decimal" id="zk-prumer" value="${esc(dv)}" placeholder="např. 926"></label>` +
       `<label>Skutečná poloha (Upínač)<input type="text" inputmode="decimal" id="zk-poloha" value="${esc(x)}" placeholder="např. 173"></label></div>` +
       `<p class="zk-upn-v" id="zk-upn-v">${upnutiText(x)}</p>` +
+      `<label>Skutečná poloha při rozepnutí<input type="text" inputmode="decimal" id="zk-poloha-otv" value="${esc(xo)}" placeholder="např. 99"></label>` +
+      `<p class="zk-upn-v" id="zk-otv-v">${otevreniText(xo)}</p>` +
       `<button type="button" class="secondary" id="zk-upn-ulozit">💾 Zaznamenat Ø a polohu</button>` +
       `<details class="zk-upn-z"${z.length ? '' : ''}><summary>📈 Záznamy upnutí – ${esc(stroj().nazev)} (${z.length})</summary>` +
       `<p class="hint">Ze záznamů se v každém rozsahu čelistí hledá přímka poloha ↔ průměr. Rozsahy čelistí se nastaví u stroje.</p>` +
@@ -325,6 +337,7 @@
   $('zk-seznam').addEventListener('input', (e) => {
     if (e.target.id === 'zk-poloha') { set('poloha', e.target.value); $('zk-upn-v').innerHTML = upnutiText(e.target.value); }
     else if (e.target.id === 'zk-prumer') set('prumer', e.target.value);
+    else if (e.target.id === 'zk-poloha-otv') { set('polohaOtv', e.target.value); $('zk-otv-v').innerHTML = otevreniText(e.target.value); }
     else if (e.target.id === 'zk-odhad-d') $('zk-odhad-v').innerHTML = odhadText(e.target.value);
   });
   $('zk-seznam').addEventListener('change', (e) => {
@@ -335,7 +348,8 @@
     if (e.target.id === 'zk-upn-ulozit') {
       const d = cislo($('zk-prumer').value), pp = cislo($('zk-poloha').value);
       if (!Number.isFinite(d) || !Number.isFinite(pp)) { alert('Vyplň průměr upnutí i skutečnou polohu.'); return; }
-      const st = stroj(); st.upnZ = [...(st.upnZ || []), { d, p: pp, t: Date.now() }];
+      const o = cislo($('zk-poloha-otv').value);
+      const st = stroj(); st.upnZ = [...(st.upnZ || []), { d, p: pp, ...(Number.isFinite(o) ? { o } : {}), t: Date.now() }];
       zmena(); document.querySelector('.zk-upn-z')?.setAttribute('open', ''); return;
     }
     const ud = e.target.closest('[data-upn-del]');
@@ -359,12 +373,12 @@
 
   // Obnovit vše: odškrtnout, vrátit smazané body, vymazat poznámku. Vlastní body a stroje zůstanou.
   $('zk-nova').addEventListener('click', () => {
-    if (!confirm('Nová zakázka – obnovit vše?\nOdškrtne se seznam, vrátí se smazané body, vymaže se poznámka, Ø a poloha čelistí (záznamy upnutí zůstanou).\n(Seznam jde vrátit tlačítkem ↶ Zpět, poznámku tlačítkem „Vrátit smazaný text“.)')) return;
+    if (!confirm('Nová zakázka – obnovit vše?\nOdškrtne se seznam, vrátí se smazané body, vymaže se poznámka, Ø a polohy čelistí (záznamy upnutí zůstanou).\n(Seznam jde vrátit tlačítkem ↶ Zpět, poznámku tlačítkem „Vrátit smazaný text“.)')) return;
     if ($('zk-pozn').value.trim()) { try { localStorage.setItem('bona.smazanyText.zakazka', $('zk-pozn').value); } catch { /* nedostupné */ } }
     smazano = [];
     skupiny = slij(skupiny);
     skupiny.forEach((g) => g.p.forEach((p) => (p.ok = false)));
-    $('zk-pozn').value = ''; set('pozn', ''); set('poloha', ''); set('prumer', '');
+    $('zk-pozn').value = ''; set('pozn', ''); set('poloha', ''); set('prumer', ''); set('polohaOtv', '');
     stavPozn(); $('zk-pozn-box').open = false; pojistka?.obnov();
     zmena();
   });
