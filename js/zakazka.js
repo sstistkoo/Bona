@@ -51,10 +51,11 @@
         t: 'Spodní rádius díry – jen když je špatně napojený (W_SPRAD1)',
         d: [
           'Dělá se jen tehdy, když je rádius zespodu kola špatně napojený. Jinak bod přeskočit (odškrtnout).',
-          'V programu W_OTVHO1 najít řádek W_SPRAD1 (spodní rádius díry).',
-          'Upravuje se výška náboje _Z1.',
+          'V programu W_OTVHO1 najít řádek W_SPRAD1 (spodní rádius díry) a otevřít ho přes Zpětný překlad – okno W_SRAD „Cyklus pro rozváděcí drážku a spodní rádius“ (softklávesa SPOD RAD.).',
+          'Upravuje se VYSKA NABOJE _Z1 (na fotce 197.840).',
           'Když se délka ubere (_Z1 menší), zdvihne se dojezd – nástroj dojede výš.',
         ],
+        f: ['spodni-radius-w-srad.jpg'],
       },
       {
         t: 'Kontrola VAR_DEF 1 a 2 (podpěrky, upnutí čelistí)',
