@@ -52,7 +52,7 @@
         d: [
           'Dělá se jen tehdy, když je rádius zespodu kola špatně napojený. Jinak bod přeskočit (odškrtnout).',
           'V programu W_OTVHO1 najít řádek W_SPRAD1 (spodní rádius díry) a otevřít ho přes Zpětný překlad – okno W_SRAD „Cyklus pro rozváděcí drážku a spodní rádius“ (softklávesa SPOD RAD.).',
-          'Upravuje se VYSKA NABOJE _Z1 (na fotce 197.840).',
+          'Upravuje se VYSKA NABOJE _Z1 (např. 197.840).',
           'Když se délka ubere (_Z1 menší), zdvihne se dojezd – nástroj dojede výš.',
         ],
         f: ['spodni-radius-w-srad.jpg'],
@@ -62,7 +62,7 @@
         d: [
           'Zkontrolovat programy VAR_DEF_1 a VAR_DEF_2.',
           'Podpěrky („íčko“) jsou ve stejném programu (VAR_DEF): {podp} ({stroj}). Zjistit z předchozí zakázky, jak to má být, a přepsat do nové.',
-          'Upnutí čelistí: Menu Select → Menu 1 → softklávesa Upínač. Čelisti se upnou na obrobek na nějakou hodnotu (Skutečná poloha). Od ní se nastavuje rozsah upnutí: minimum o 10 méně a maximum o 10 více, než na kolik se upnulo (pole „Dílec upnut“ – min. a max. mezní hodnota pro hlídání upínacího bodu; na fotce např. 219 a 239).',
+          'Upnutí čelistí: Menu Select → Menu 1 → softklávesa Upínač. Čelisti se upnou na obrobek na nějakou hodnotu (Skutečná poloha). Od ní se nastavuje rozsah upnutí: minimum o 10 méně a maximum o 10 více, než na kolik se upnulo (pole „Dílec upnut“ – min. a max. mezní hodnota pro hlídání upínacího bodu; např. 219 a 239).',
           'Tyto hodnoty se zadávají do H2 a H3 v programu VAR_DEF (upnutí čelistí, max a min). Výpočet min a max je hned nad postupem.',
           'Rozepnutí: v obrazovce Upínač je i Otevřít upínač – H8 (min) a H9 (max), hranice k uložení dílu. Čelisti se rozepnou na skutečnou polohu (např. 99) a meze jsou ±10 kolem ní (90 a 110).',
         ],
