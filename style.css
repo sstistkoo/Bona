@@ -866,3 +866,6 @@ body:has(#kalk.panel.active) > footer { display: none; }
 .zk-upn-sez li span { flex: 1; }
 .zk-upn-sez small { display: block; color: var(--muted); }
 .zk-upn-sez .del { background: none; color: var(--muted); width: 40px; min-height: 40px; padding: 0; }
+/* režim bez fotek (heslo bez fotek) – pojistka, fotky se v něm ani nevykreslují */
+html.bez-fotek img[src^="img/"], html.bez-fotek .st-foto, html.bez-fotek .zk-foto { display: none !important; }
+#odhlasit { width: 100%; margin-top: 10px; }

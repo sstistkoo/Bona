@@ -19,7 +19,7 @@
   const poznamka = (p, kat) =>
     `<details class="ref"><summary><span class="sb">${kat ? `<span class="st-kat">${esc(kat)}</span> ` : ''}${esc(p.t)}</span></summary>` +
     `<div class="rb"><pre class="txt">${esc(p.p)}</pre>` +
-    (p.f ? `<div class="st-foto">${p.f.map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</div>` : '') +
+    (p.f && !window.BONA_BEZ_FOTEK ? `<div class="st-foto">${p.f.map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</div>` : '') +
     `</div></details>`;
 
   function vykresli() {

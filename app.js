@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.10.1';
+const VERZE = '0.11.0';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -535,6 +535,7 @@ $('zal-ulozit').addEventListener('click', () => {
   $('zal-stav').textContent = `Uloženo ${Object.keys(data).length} položek do souboru ${a.download}.`;
 });
 $('zal-obnovit').addEventListener('click', () => $('zal-soubor').click());
+$('odhlasit').addEventListener('click', () => { if (confirm('Odhlásit? Příště bude potřeba zadat heslo.')) window.bonaOdhlasit?.(); });
 // po obnově znovu načíst a zůstat v Poznámkách u zálohy (jinak by se otevřela kalkulačka)
 const znovuNaZalohu = () => { try { history.replaceState(null, '', location.pathname + location.search + '#poznamky'); } catch { /* nic */ } location.reload(); };
 const PRED_OBNOVOU = 'bonaPredObnovou'; // mimo bona.*, aby ho obnova nesmazala

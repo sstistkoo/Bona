@@ -349,7 +349,7 @@
     $('zk-postup').textContent = `Hotovo ${hotovo} z ${celkem}`;
     $('zk-seznam').innerHTML = skupiny.map((g, gi) =>
       `<h3 class="sub">${esc(g.n)}</h3><ul class="checklist">` +
-      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${hodnotyBodu(p.t)}${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${hodnotyVTextu(esc(k))}</li>`).join('')}</ol>${(p.f || []).map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img class="zk-foto" src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</details>` : ''}</li>`).join('') +
+      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${hodnotyBodu(p.t)}${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${hodnotyVTextu(esc(k))}</li>`).join('')}</ol>${(window.BONA_BEZ_FOTEK ? [] : p.f || []).map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img class="zk-foto" src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</details>` : ''}</li>`).join('') +
       '</ul>'
     ).join('');
   }
