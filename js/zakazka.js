@@ -312,6 +312,8 @@
   function odhadText(dv) {
     const d = cislo(dv); if (!Number.isFinite(d)) return 'Zadej průměr – odhadne se skutečná poloha podle záznamů.';
     const body = telesoRozsahu(d), r = rozsahPro(d), pr = primka(body);
+    // mimo nastavené rozsahy čelistí by se míchaly záznamy z různých poloh čelistí – odhad nedává smysl
+    if (!r && rozsahyCel().length) return `Ø ${f3(d)} je mimo rozsahy čelistí (${rozsahyCel().map(nazevRozsahu).join('; ')}).`;
     if (!pr) return `${nazevRozsahu(r)}: potřeba aspoň 2 záznamy s různým Ø v tomto rozsahu (teď ${body.length}).`;
     const p = pr.a + pr.b * d, roz = Math.abs(cislo(String(stroj().h.upn || '10').replace('±', ''))) || 10;
     return `${nazevRozsahu(r)}: poloha ≈ <b>${f3(p)}</b> → H2/H3 ≈ ${f3(p - roz)} / ${f3(p + roz)}<br><small>${f3(pr.b)} na 1 mm Ø · z ${body.length} záznamů · největší odchylka ${f3(pr.odch)}</small>`;
@@ -326,7 +328,7 @@
       `<label>Skutečná poloha při rozepnutí<input type="text" inputmode="decimal" id="zk-poloha-otv" value="${esc(xo)}" placeholder="např. 99"></label>` +
       `<p class="zk-upn-v" id="zk-otv-v">${otevreniText(xo)}</p>` +
       `<button type="button" class="secondary" id="zk-upn-ulozit">💾 Zaznamenat Ø a polohu</button>` +
-      `<details class="zk-upn-z"${z.length ? '' : ''}><summary>📈 Záznamy upnutí – ${esc(stroj().nazev)} (${z.length})</summary>` +
+      `<details class="zk-upn-z" data-k="upn"><summary>📈 Záznamy upnutí – ${esc(stroj().nazev)} (${z.length})</summary>` +
       `<p class="hint">Ze záznamů se v každém rozsahu čelistí hledá přímka poloha ↔ průměr. Rozsahy čelistí se nastaví u stroje.</p>` +
       `<label>Odhad polohy pro Ø<input type="text" inputmode="decimal" id="zk-odhad-d" placeholder="Ø nového obrobku"></label><p class="zk-upn-v" id="zk-odhad-v">${odhadText('')}</p>` +
       (radky ? `<ul class="zk-upn-sez">${radky}</ul>` : '<p class="hint">Zatím žádné záznamy.</p>') +
@@ -347,11 +349,16 @@
     const hotovo = skupiny.reduce((a, g) => a + g.p.filter((x) => x.ok).length, 0);
     const celkem = skupiny.reduce((a, g) => a + g.p.length, 0);
     $('zk-postup').textContent = `Hotovo ${hotovo} z ${celkem}`;
+    // co bylo rozbalené (Postup, Záznamy upnutí) a rozepsaný odhad Ø zůstane i po překreslení (např. po odškrtnutí bodu)
+    const otevrene = new Set([...$('zk-seznam').querySelectorAll('details[open][data-k]')].map((d) => d.dataset.k));
+    const odhad = $('zk-odhad-d')?.value || '';
     $('zk-seznam').innerHTML = skupiny.map((g, gi) =>
       `<h3 class="sub">${esc(g.n)}</h3><ul class="checklist">` +
-      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${hodnotyBodu(p.t)}${p.d ? `<details class="zk-d"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${hodnotyVTextu(esc(k))}</li>`).join('')}</ol>${(window.BONA_BEZ_FOTEK ? [] : p.f || []).map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img class="zk-foto" src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</details>` : ''}</li>`).join('') +
+      g.p.map((p, i) => `<li class="${p.ok ? 'done' : ''}${p.d ? ' has-d' : ''}"><label class="ck-l"><input type="checkbox" data-g="${gi}" data-i="${i}" ${p.ok ? 'checked' : ''}><span>${esc(p.t)}</span></label><button class="del" data-g="${gi}" data-del="${i}" aria-label="Smazat">✕</button>${hodnotyBodu(p.t)}${p.d ? `<details class="zk-d" data-k="${esc(g.n + '|' + p.t)}"><summary>Postup</summary><ol>${p.d.map((k) => `<li>${hodnotyVTextu(esc(k))}</li>`).join('')}</ol>${(window.BONA_BEZ_FOTEK ? [] : p.f || []).map((f) => `<a href="img/${esc(f)}" target="_blank" rel="noopener"><img class="zk-foto" src="img/${esc(f)}" loading="lazy" alt="${esc(p.t)}"></a>`).join('')}</details>` : ''}</li>`).join('') +
       '</ul>'
     ).join('');
+    $('zk-seznam').querySelectorAll('details[data-k]').forEach((d) => { if (otevrene.has(d.dataset.k)) d.open = true; });
+    if (odhad && $('zk-odhad-d')) { $('zk-odhad-d').value = odhad; $('zk-odhad-v').innerHTML = odhadText(odhad); }
   }
 
   $('zk-seznam').addEventListener('input', (e) => {
