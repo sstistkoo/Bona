@@ -387,6 +387,9 @@ body.menu-open { overflow: hidden; }
 .kz-svg .tb-sk-corner { fill: none; stroke: var(--sk-empty); stroke-width: 1.2; }
 .kz-svg .tb-sk-center { fill: var(--sk-empty); }
 .kz-svg .tb-sk-star { fill: var(--sk-ref); }
+.kz-svg .tb-star-bg { fill: var(--sk-ref); stroke: var(--sk-bg); stroke-width: 1.5; }
+.kz-svg .tb-star-t { fill: var(--sk-bg); font: bold 15px Consolas, monospace; }
+.kz-svg .tb-star-lead { stroke: var(--sk-ref); stroke-width: 1.5; }
 .kr-tabs { margin-bottom: 10px; }
 .kr-grid th { text-align: left; font-weight: 600; white-space: nowrap; }
 .kr-grid input, .kr-grid select { width: 100%; min-width: 0; box-sizing: border-box; }
