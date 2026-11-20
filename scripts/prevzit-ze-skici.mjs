@@ -60,6 +60,9 @@ v += part('Kužel (taperBoreMath.js + náčrt taperBoreSketch.js)', '  const dev
   '\n' + bonaNacrt(strip(read(J('calculators/taperBoreSketch.js')))),
   '  out.taperC = taperC; out.taperForms = taperForms; out.solveTaper = solveTaper; out.ratioToC = ratioToC;\n' +
   '  out.taper = { taperC, taperForms, solveTaper, ratioToC, computeTaperBore, isoTolerance, f3, fmtDev, drawBoreSketch };');
+v += part('Kužel – přechod R kužel ↔ čelo (taperFilletMath.js + profil taperFilletSketch.js)',
+  '  const f3 = out.taper.f3;\n' + strip(read(J('calculators/taperFilletMath.js'))) + '\n' + strip(read(J('calculators/taperFilletSketch.js'))),
+  '  out.taperFillet = { taperFillets, filletAt, coneDir, faceDir, cornerFromStart, arcExtremes, drawFilletProfile, SK_W, SK_H };');
 const tq = strip(read(J('calculators/torqueMath.js')));
 const tqNames = [...tq.matchAll(/^(?:function|const) (\w+)/gm)].map((m) => m[1]).filter((n) => n !== 'IC_ISO');
 v += part('Utahovací momenty (torqueMath.js)', tq, `  out.torque = { ${tqNames.join(', ')} };`);

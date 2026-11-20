@@ -65,3 +65,21 @@ test('Oblouk ze 3 bodů a zaoblení rohu', () => {
   blizko(r.t, 2); // pravý úhel: tečné body ve vzdálenosti R od rohu
   blizko(r.inner, 90);
 });
+
+test('kužel – přechod R (převzato ze SKICA): R12 na Ø330, α 10°', () => {
+  const TF = nactiVypocty().taperFillet;
+  const DEG = Math.PI / 180, C = 2 * Math.tan(10 * DEG);
+  const r = TF.taperFillets({ D: 330 + 100 * Math.tan(10 * DEG), d: 330, L: 50, C, bigSide: 'A',
+    edges: { B: { R: 12, face: 'in', given: 'corner', faceEndDia: 218 }, A: null } });
+  const e = r.edges.B, t = 12 / Math.tan(50 * DEG);
+  assert.ok(Math.abs(e.onFace.dia - (330 - 2 * t)) < 1e-9);          // 309.862
+  assert.ok(Math.abs(e.onCone.dia - (330 + 2 * t * Math.sin(10 * DEG))) < 1e-9);
+  assert.ok(Math.abs(50 - e.center.z - 12) < 1e-9);
+  assert.ok(Math.abs(e.faceLen - 56) < 1e-9);
+  assert.equal(e.error, '');
+  // zpětně ze začátku R na čele
+  assert.ok(Math.abs(TF.cornerFromStart(330 - 2 * t, 12, 'B', C, 'A', 'in') - 330) < 1e-9);
+  // R se na krátké čelo nevejde
+  const kratke = TF.taperFillets({ D: 340, d: 330, L: 50, C, bigSide: 'A', edges: { B: { R: 12, face: 'in', given: 'corner', faceLen: 5 } } });
+  assert.match(kratke.edges.B.error, /nevejde/);
+});

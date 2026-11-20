@@ -378,6 +378,20 @@ body.menu-open { overflow: hidden; }
 .kz-svg .sk-legend { fill: var(--sk-empty); font: 10.5px Consolas, monospace; }
 .kz-svg .sk-legend .sk-lk { fill: var(--sk-line); font-weight: bold; }
 .kz-svg .sk-legend .sk-lk-calc { fill: var(--sk-calc); }
+/* Kužel – Přechod R (js/kuzel-r.js) */
+.kz-svg .tb-fil { fill: none; stroke: var(--sk-pt); stroke-width: 2.2; }
+.kz-svg .tb-fil-face { stroke: var(--sk-empty); stroke-width: 1; stroke-dasharray: 5 3; }
+.kz-svg .tb-fil-pt { fill: var(--sk-pt); }
+.kz-svg .tb-sk-line { stroke: var(--sk-line); stroke-width: 2; }
+.kz-svg .tb-sk-rad { stroke: var(--sk-empty); stroke-width: 1; stroke-dasharray: 3 3; }
+.kz-svg .tb-sk-corner { fill: none; stroke: var(--sk-empty); stroke-width: 1.2; }
+.kz-svg .tb-sk-center { fill: var(--sk-empty); }
+.kz-svg .tb-sk-star { fill: var(--sk-ref); }
+.kr-tabs { margin-bottom: 10px; }
+.kr-grid th { text-align: left; font-weight: 600; white-space: nowrap; }
+.kr-grid input, .kr-grid select { width: 100%; min-width: 0; box-sizing: border-box; }
+.kr-grid input:disabled { opacity: .45; }
+.kr-grid .kr-flip { width: 100%; }
 .kz-big { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.9rem; color: var(--muted); }
 .kz-bigseg { flex: 1; margin: 0; }
 .kz-forms { font-family: Consolas, monospace; font-size: 0.85rem; text-align: center; margin: 4px 0 8px; word-break: break-word; }

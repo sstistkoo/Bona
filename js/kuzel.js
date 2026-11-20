@@ -23,6 +23,7 @@
   let cform = 'ratio';                            // ve kterém poli je ručně zadaná kuželovitost
   let order = [];                                  // ručně zadané veličiny z SOLVE (nejnovější na konci)
   let geo = null, lastText = '', lastNc = '';
+  const hooks = [];                                // posluchači přepočtu (js/kuzel-r.js – přechod R)
   const fieldOf = (k) => $(k === 'C' ? CF[cform] : k);
   const cFields = () => Object.values(CF).map((id) => $(id));
   const isEdited = (k) => order.includes(k);
@@ -232,6 +233,7 @@
       stForm: (f) => stOf('C') === 'val' ? (f === cform ? 'val' : 'calc') : stOf('C'),
       ref: refM, rows,
     });
+    hooks.forEach((fn) => fn({ sol, done, bigSide, kind, err, st: { D: stOf('D'), d: stOf('d'), L: stOf('L'), C: stOf('C') } }));
     svg.setAttribute('viewBox', '0 0 340 ' + geo.h);   // výška náčrtu podle počtu popisků
     // větší klikací plocha kolem každé kóty (prst je větší než rámeček 19 px), neviditelná
     svg.querySelectorAll('.sk-edit > .sk-hit').forEach((h) => {
@@ -467,5 +469,24 @@
     (st.pts || []).forEach((p) => addPoint(p[0], p[1]));
   })();
   if (!ptsEl.children.length) addPoint();
+
+  /* ── Rozhraní pro záložku Přechod R (js/kuzel-r.js) ── */
+  window.BonaKuzel = {
+    onUpdate(fn) { hooks.push(fn); update(); },
+    field: (k) => $(k),
+    get bigSide() { return bigSide; },
+    setBig(v) { if (v !== bigSide) { bigSide = v; update(); } },
+    /** Ø hrany z přechodu R: má přednost před druhým průměrem (délka a úhel zůstanou). */
+    setConeDia(side, dia) {
+      const key = side === bigSide ? 'D' : 'd', other = key === 'D' ? 'd' : 'D';
+      const el = $(key);
+      el.value = String(dia); el.classList.remove('computed');
+      order = order.filter((x) => x !== key); order.push(key);
+      if (!(num($('refD')) > 0) && order.length > 3 && order.includes(other)) { order = order.filter((x) => x !== other); clearKey(other); }
+      trimOrder();
+      update();
+    },
+    otevriOkno, zavriOkno, zapis, kopiruj,
+  };
   update();
 })();
