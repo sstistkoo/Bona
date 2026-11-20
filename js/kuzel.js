@@ -291,7 +291,7 @@
     };
     umistit();
     vv?.addEventListener('resize', umistit); vv?.addEventListener('scroll', umistit);
-    const pryc = (ev2) => { if (!el.contains(ev2.target) && !ev2.target.closest?.('[data-edit]')) zavriOkno(); };
+    const pryc = (ev2) => { if (!el.contains(ev2.target) && !ev2.target.closest?.('[data-edit], .znam-lista')) zavriOkno(); };   // lišta + − × ÷ (js/znamenka.js) patří k zadávání
     const t = setTimeout(() => document.addEventListener('pointerdown', pryc, true), 0);
     okno = { el, zrus: () => { clearTimeout(t); document.removeEventListener('pointerdown', pryc, true); vv?.removeEventListener('resize', umistit); vv?.removeEventListener('scroll', umistit); } };
 

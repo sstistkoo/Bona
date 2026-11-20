@@ -886,3 +886,12 @@ body:has(#kalk.panel.active) > footer { display: none; }
 /* režim bez fotek (heslo bez fotek) – pojistka, fotky se v něm ani nevykreslují */
 html.bez-fotek img[src^="img/"], html.bez-fotek .st-foto, html.bez-fotek .zk-foto { display: none !important; }
 #odhlasit { width: 100%; margin-top: 10px; }
+
+/* Lišta + − × ÷ ( ) = nad číselnou klávesnicí (js/znamenka.js) */
+.znam-lista { position: fixed; left: 0; top: 0; z-index: 100001; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px;
+  padding: 4px 6px; box-sizing: border-box; background: var(--card, #1f2937); border-top: 1px solid var(--border); }
+.znam-lista[hidden] { display: none; }
+.znam-k { min-height: 40px; padding: 0; border-radius: 7px; border: 1px solid var(--border); background: var(--bg); color: var(--text);
+  font: 700 20px/1 Consolas, monospace; touch-action: pan-x pan-y; -webkit-user-select: none; user-select: none; }
+.znam-k:active { transform: translateY(1px); }
+.znam-eq { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
