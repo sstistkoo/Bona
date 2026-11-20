@@ -283,12 +283,13 @@
     let ans = hist.length ? hist[hist.length - 1].v : 0;
     // Úprava výrazu před výpočtem: doplní chybějící × (2pi, 3(2), (1)(2), 2sqrt(9)) a neuzavřené závorky
     const FN = 'asin|acos|atan|sinr|cosr|tanr|sin|cos|tan|sqrt|abs|log|ln|round|floor|ceil|pi';
-    const reKrat1 = new RegExp('(\\d|\\)|pi)(?=\\(|' + FN + ')', 'gi'); // číslo / ) / pi  před ( nebo funkcí
+    const reKrat1 = new RegExp('(\\d|\\)|pi|%)(?=\\(|' + FN + ')', 'gi'); // číslo / ) / pi / %  před ( nebo funkcí
     const reKrat2 = /(\)|pi)(?=[\d.])/gi;                                    // ) / pi  před číslem
     function prep(v) {
       let x = String(v).replace(/ans/gi, '(' + ans + ')').replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/').replace(/\s+/g, '');
       x = x.replace(/(\d+(?:\.\d*)?)e([+-]?\d+)/gi, '($1*10^($2))'); // velké výsledky typu 1e+22
       x = x.replace(reKrat1, '$1*').replace(reKrat2, '$1*');
+      x = x.replace(/%/g, '/100');                                          // 50% = 0,5 (200×10% = 20)
       const chybi = (x.match(/\(/g) || []).length - (x.match(/\)/g) || []).length;
       if (chybi > 0) x += ')'.repeat(chybi);
       return x;
@@ -300,14 +301,26 @@
       ['C', '⌫', 'f(x)', '÷'],
       ['(', ')', '^', 'pi'],
       ['7', '8', '9', '×'], ['4', '5', '6', '−'], ['1', '2', '3', '+'],
-      ['.', '0', '='],
+      ['.', '0', '%', '='],
     ];
-    const tridy = (k) => (/^[0-9.]$/.test(k) ? ' num' : '') + (k === '=' ? ' eq wide' : '') + (k === 'C' || k === '⌫' ? ' clr' : '') + (k === 'f(x)' ? ' sci-btn' : '');
+    const tridy = (k) => (/^[0-9.]$/.test(k) ? ' num' : '') + (k === '=' ? ' eq' : '') + (k === 'C' || k === '⌫' ? ' clr' : '') + (k === 'f(x)' ? ' sci-btn' : '');
     $('calc-keys').innerHTML = keys.map((row, i) => `<div class="calc-row${i === 0 ? ' sci-row' : ''}">${row.map((k) => `<button type="button" class="ck${tridy(k)}" data-k="${k}">${k}</button>`).join('')}</div>`).join('');
     // vědecká řada: zapamatuje se, jestli byla otevřená
     let sci = load('calcSci', false);
     const ukazSci = () => { $('calc-keys').querySelector('.sci-row').hidden = !sci; $('calc-keys').querySelector('.sci-btn').classList.toggle('on', sci); };
     ukazSci();
+
+    // 📋 Kopírovat výsledek (jako ve SKICA) – výsledek výrazu, jinak obsah displeje
+    const kop = document.createElement('button');
+    kop.type = 'button'; kop.className = 'secondary calc-kop'; kop.textContent = '📋'; kop.title = 'Kopírovat výsledek';
+    resEl.before(kop);
+    kop.addEventListener('click', () => {
+      const s = inEl.value.trim();
+      const v = s ? ev(prep(s)) : NaN;
+      const t = Number.isFinite(v) ? String(parseFloat(v.toFixed(10))) : s;
+      if (!t || !navigator.clipboard) return;
+      navigator.clipboard.writeText(t).then(() => { kop.textContent = '✓'; setTimeout(() => (kop.textContent = '📋'), 1200); });
+    });
 
     function kresliHist() {
       // historie pod klávesnicí, nejnovější nahoře – klávesy se neposouvají
@@ -332,7 +345,7 @@
     }
     // Po „=“: číslo / funkce začne nový příklad, znaménko pokračuje s výsledkem (jako běžná kalkulačka)
     let hotovo = false;
-    const POKRACUJE = new Set(['+', '−', '×', '÷', '^', ')']);
+    const POKRACUJE = new Set(['+', '−', '×', '÷', '^', ')', '%']);
     function novyPoVysledku(k) { if (hotovo && !POKRACUJE.has(k)) inEl.value = ''; hotovo = false; }
     // Znaménko hned po znaménku nahradí to předchozí (5 × × 2 dřív dalo 5² = 25).
     // Výjimka: minus po × ÷ ^ ( = záporné číslo (5×-2).
