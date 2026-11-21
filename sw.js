@@ -2,7 +2,7 @@
 // Strategie „nejdřív síť“: když je signál, načte se vždy nejnovější verze z GitHubu,
 // bez signálu (nebo když síť neodpoví do LIMIT) se použije uložená kopie.
 // Při změně souborů zvyš verzi: node scripts/verze.mjs (změní VERZE tady i v app.js).
-const VERZE = 'bona-0.11.11';
+const VERZE = 'bona-0.11.12';
 const SOUBORY = [
   './', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest',
   'js/vypocty.js', 'js/znamenka.js', 'js/sinumerik-data.js', 'js/nastroje.js', 'js/kuzel.js', 'js/kuzel-r.js', 'js/roztec.js', 'js/sinumerik.js', 'js/prevod-nm.js', 'js/dilna.js', 'js/stroj-data.js',

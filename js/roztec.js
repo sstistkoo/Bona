@@ -48,13 +48,14 @@
   const val = (id) => { const e = $(id); return e.value.trim() === '' ? null : ev(e.value); };
   const f = (x, d = 2) => { const s = String(parseFloat(Number(x).toFixed(d))); return s === '-0' ? '0' : s; };
   const sg = (x) => (x > 0 ? '+' : '') + f(x);
-  const IDS = ['rz-d', 'rz-m', 'rz-k', 'rz-t', 'rz-mode', 'rz-holes', 'rz-n', 'rz-ao', 'rz-ai', 'rz-vp', 'rz-vo', 'rz-vi'];
+  const IDS = ['rz-d', 'rz-m', 'rz-k', 'rz-holes', 'rz-n', 'rz-ao', 'rz-ai', 'rz-vp', 'rz-vo', 'rz-vi'];
   const KEY = 'bona.roztec';
   let text = '';
 
   function save() { try { const o = {}; IDS.forEach((id) => { o[id] = $(id).value; }); localStorage.setItem(KEY, JSON.stringify(o)); } catch { /* nic */ } }
   function restore() {
-    try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (o) IDS.forEach((id) => { if (o[id] != null) $(id).value = o[id]; }); } catch { /* nic */ }
+    try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (o) IDS.forEach((id) => { if (o[id] != null) $(id).value = o[id]; });
+      if (!['opp', 'adj'].includes($('rz-holes').value)) $('rz-holes').value = 'opp'; } catch { /* nic */ }
   }
 
   function sketch(pcd, oz) {
@@ -85,15 +86,16 @@
   }
 
   function update() {
-    $('rz-n-pozn').textContent = $('rz-holes').value === 'adj' ? '' : '(u lichého nutné)';
+    const adj = $('rz-holes').value === 'adj';
+    document.querySelectorAll('[data-rzh]').forEach((b) => b.classList.toggle('active', b.dataset.rzh === $('rz-holes').value));
+    $('rz-n-pozn').textContent = adj ? 'nutné' : 'jen když je lichý';
     const d = val('rz-d'), m = val('rz-m'), k = val('rz-k');
-    const mode = $('rz-mode').value, holes = $('rz-holes').value, n = val('rz-n'), t = val('rz-t');
-    $('rz-k').closest('label').style.opacity = mode === 'in' ? '0.5' : '';
+    const mode = 'out', holes = $('rz-holes').value, n = val('rz-n');
     const out1 = $('rz-out1'), out2 = $('rz-out2');
     const lines = [];
-    const spatne = [['rz-d', 'Ø díry'], ['rz-m', 'posuvka'], ['rz-k', 'šířka tlapek'], ['rz-t', 'tloušťka tlapky'], ['rz-n', 'počet děr'], ['rz-ao', 'ven'], ['rz-ai', 'dovnitř'], ['rz-vp', 'výkres rozteč'], ['rz-vo', 'výkres vnější'], ['rz-vi', 'výkres vnitřní']]
+    const spatne = [['rz-d', 'Ø díry'], ['rz-m', 'posuvka'], ['rz-k', 'šířka tlapek'], ['rz-n', 'počet děr'], ['rz-ao', 'ven'], ['rz-ai', 'dovnitř'], ['rz-vp', 'výkres rozteč'], ['rz-vo', 'výkres vnější'], ['rz-vi', 'výkres vnitřní']]
       .filter(([id]) => Number.isNaN(val(id))).map(([, n2]) => n2);
-    let r = roztecDer({ d, m, k, mode, holes, n, t });
+    let r = roztecDer({ d, m, k, mode, holes, n });
     if (mode === 'out' && k === null && !r.err) r = { err: 'Zadej šířku tlapek (běžně 20 = 2 × 10).' };
     let pcd = null, oz = null;
     if (r.err) {
@@ -101,13 +103,12 @@
       if (spatne.length) out1.innerHTML += `<br><b>Neplatné číslo:</b> ${spatne.join(', ')}`;
     } else {
       pcd = r.pcd;
-      const ec = r.e > 0 ? ` ${mode === 'in' ? '−' : '+'} 2 × ${f(r.e, 3)} (rohy ploché tlapky)` : '';
-      const vzorec = (mode === 'in' ? `${f(m)} + ${f(d)} (Ø díry)` : `${f(m)} + ${f(k)} (tlapky) − ${f(d)} (Ø díry)`) + ec;
+      const vzorec = `${f(m)} + ${f(k)} (tlapky) − ${f(d)} (Ø díry)`;
       out1.innerHTML = `Rozteč <b>Ø ${f(pcd)}</b> mm` +
         `<br><span class="hint">${holes === 'adj' ? `vzdálenost středů ${vzorec} = ${f(r.tetiva)}; rozteč = ${f(r.tetiva)} / sin(180° / ${n})`
           : r.liche ? `lichý počet děr – vzdálenost středů ${vzorec} = ${f(r.tetiva)}; rozteč = ${f(r.tetiva)} / cos(90° / ${n})` : vzorec}</span>`;
       if (spatne.length) out1.innerHTML += `<br><b>Neplatné číslo:</b> ${spatne.join(', ')} – nepočítá se s ním.`;
-      lines.push(`Rozteč děr: Ø${f(pcd)} (díra Ø${f(d)}, posuvka ${f(m)}${mode === 'in' ? ', vnitřní hrany' : ', tlapky ' + f(k)})`);
+      lines.push(`Rozteč děr: Ø${f(pcd)} (díra Ø${f(d)}, posuvka ${f(m)}${', tlapky ' + f(k)})`);
       const vp = val('rz-vp');
       if (Number.isFinite(vp)) out1.innerHTML += `<br>proti výkresu Ø ${f(vp)}: <b>${sg(pcd - vp)}</b> mm`;
     }
@@ -140,6 +141,7 @@
     save();
   }
 
+  document.querySelectorAll('[data-rzh]').forEach((b) => b.addEventListener('click', () => { $('rz-holes').value = b.dataset.rzh; update(); }));
   IDS.forEach((id) => { const e = $(id); e.addEventListener(e.tagName === 'SELECT' ? 'change' : 'input', update); });
   $('rz-copy').addEventListener('click', (e) => {
     if (!text || !navigator.clipboard) return;
@@ -147,7 +149,7 @@
     navigator.clipboard.writeText(text).then(() => { const o = b.textContent; b.textContent = '✓ Zkopírováno'; setTimeout(() => (b.textContent = o), 1200); });
   });
   $('rz-clear').addEventListener('click', () => {
-    IDS.forEach((id) => { const e = $(id); if (e.tagName !== 'SELECT') e.value = id === 'rz-k' ? '20' : ''; });
+    IDS.forEach((id) => { const e = $(id); if (id !== 'rz-holes') e.value = id === 'rz-k' ? '20' : ''; });
     update();
   });
   restore();
