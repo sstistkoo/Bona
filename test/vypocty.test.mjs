@@ -113,3 +113,11 @@ test('rozteč děr a osazení (kolo vagonu)', async () => {
   const jen = R.osazeni({ pcd: 670, b: 30, aOut: 25, aIn: null });
   assert.equal(jen.in, undefined);
 });
+
+test('kalkulačka – procenta jako na běžné kalkulačce', async () => {
+  const { vytahniFunkci } = await import('./pomocne.mjs');
+  const procenta = vytahniFunkci('js/nastroje.js', 'procenta');
+  const p = (s) => V.safeEvalMath(procenta(s).replace(/(\d+(?:\.\d*)?|\.\d+)%/g, '($1/100)'));
+  blizko(p('200+10%'), 220); blizko(p('200-10%'), 180); blizko(p('200*10%'), 20);
+  blizko(p('200/10%'), 2000); blizko(p('3*(200+10%)'), 660); blizko(p('5*-10%'), -0.5);
+});

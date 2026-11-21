@@ -1,10 +1,14 @@
 'use strict';
 
-const VERZE = '0.11.13';
+const VERZE = '0.11.14';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
-const num = (id) => parseFloat(String($(id).value).replace(',', '.'));
+// výraz (50/2, 120*0,9) se počítá hned při psaní; rozepsaný (50/) zatím bere číslo na začátku
+const num = (id) => {
+  const t = String($(id).value), v = window.Vypocty ? window.Vypocty.safeEvalMath(t) : NaN;
+  return Number.isFinite(v) ? v : parseFloat(t.replace(',', '.'));
+};
 const fmt = (x, d = 1) => (Number.isFinite(x) ? x.toLocaleString('cs-CZ', { maximumFractionDigits: d, minimumFractionDigits: d }) : '–');
 
 const store = {

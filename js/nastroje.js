@@ -285,11 +285,32 @@
     const FN = 'asin|acos|atan|sinr|cosr|tanr|sin|cos|tan|sqrt|abs|log|ln|round|floor|ceil|pi';
     const reKrat1 = new RegExp('(\\d|\\)|pi|%)(?=\\(|' + FN + ')', 'gi'); // číslo / ) / pi / %  před ( nebo funkcí
     const reKrat2 = /(\)|pi)(?=[\d.])/gi;                                    // ) / pi  před číslem
+    // Procenta jako na běžné kalkulačce: A + B% = A·(1 + B/100), A − B% = A·(1 − B/100).
+    // A je vše před znaménkem až k otevřené závorce. Po × ÷ ^ ( zůstává B% = B/100.
+    function procenta(x) {
+      const re = /([+-])(\d+(?:\.\d*)?|\.\d+)%/g;
+      let m;
+      while ((m = re.exec(x))) {
+        const i = m.index;
+        if (i === 0 || !/[\d.)%i]/.test(x[i - 1])) continue;               // unární minus (5×-10%)
+        let hl = 0, start = 0;
+        for (let j = i - 1; j >= 0; j--) {
+          if (x[j] === ')') hl++;
+          else if (x[j] === '(') { if (hl === 0) { start = j + 1; break; } hl--; }
+        }
+        const vlevo = x.slice(start, i);
+        const nove = `(${vlevo})*(1${m[1]}${m[2]}/100)`;
+        x = x.slice(0, start) + nove + x.slice(i + m[0].length);
+        re.lastIndex = start + nove.length;
+      }
+      return x;
+    }
     function prep(v) {
       let x = String(v).replace(/ans/gi, '(' + ans + ')').replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/').replace(/\s+/g, '');
       x = x.replace(/(\d+(?:\.\d*)?)e([+-]?\d+)/gi, '($1*10^($2))'); // velké výsledky typu 1e+22
       x = x.replace(reKrat1, '$1*').replace(reKrat2, '$1*');
-      x = x.replace(/%/g, '/100');                                          // 50% = 0,5 (200×10% = 20)
+      x = procenta(x);                                                      // 200+10% = 220, 200−10% = 180
+      x = x.replace(/(\d+(?:\.\d*)?|\.\d+)%/g, '($1/100)').replace(/%/g, '/100'); // 50% = 0,5; 200÷10% = 2000
       const chybi = (x.match(/\(/g) || []).length - (x.match(/\)/g) || []).length;
       if (chybi > 0) x += ')'.repeat(chybi);
       return x;
