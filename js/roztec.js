@@ -7,24 +7,28 @@
 //    dají tětivu: rozteč = tětiva / sin(180° / počet děr). Při lichém počtu děr
 //    neleží žádné dvě díry přesně naproti: nejvzdálenější dvojice dá tětivu
 //    rozteč · cos(90° / n).
+//    Plochá tlapka tloušťky t se v kulaté díře opře rohy dřív než o nejzazší bod
+//    stěny: chybí e = r − √(r² − (t/2)²) na každé díře (r = d/2).
 // 2) Osazení: metrem od okraje díry (kulatina v díře je jen doraz pro metr)
 //    ven a dovnitř k hraně osazení:
 //    Ø vnější = rozteč + d + 2·a_ven,  Ø vnitřní = rozteč − d − 2·a_dovnitř.
 
 (function () {
   /* ── Výpočet (bez DOM – testuje test/vypocty.test.mjs) ── */
-  function roztecDer({ d, m, k = 0, mode = 'out', holes = 'opp', n = 0 }) {
+  function roztecDer({ d, m, k = 0, mode = 'out', holes = 'opp', n = 0, t = 0 }) {
     if (!(d > 0) || !(m > 0)) return { err: 'Zadej Ø díry a údaj z posuvky.' };
-    const tetiva = mode === 'in' ? m + d : m + k - d;    // vzdálenost středů děr
+    if (t > 0 && t >= d) return { err: 'Tloušťka tlapky je větší než díra – do díry se nevejde.' };
+    const e = t > 0 ? d / 2 - Math.sqrt(d * d / 4 - t * t / 4) : 0;  // opření rohy ploché tlapky
+    const tetiva = mode === 'in' ? m + d - 2 * e : m + k - d + 2 * e;    // vzdálenost středů děr
     if (!(tetiva > 0)) return { err: 'Vzdálenost středů vychází ≤ 0 – zkontroluj údaj, šířku tlapek a Ø díry.' };
     const nOk = n >= 2 && Math.round(n) === n;
     if (holes === 'opp') {
       if (n != null && n !== 0 && !nOk) return { err: 'Počet děr musí být celé číslo ≥ 2.' };
-      if (nOk && n % 2 === 1) return { pcd: tetiva / Math.cos(Math.PI / (2 * n)), tetiva, liche: true };
-      return { pcd: tetiva, tetiva };
+      if (nOk && n % 2 === 1) return { pcd: tetiva / Math.cos(Math.PI / (2 * n)), tetiva, e, liche: true };
+      return { pcd: tetiva, tetiva, e };
     }
     if (!nOk) return { err: 'U sousedních děr zadej počet děr dokola (celé číslo ≥ 2).' };
-    return { pcd: tetiva / Math.sin(Math.PI / n), tetiva };
+    return { pcd: tetiva / Math.sin(Math.PI / n), tetiva, e };
   }
   function osazeni({ pcd, b, aOut, aIn }) {
     const r = {};
@@ -44,7 +48,7 @@
   const val = (id) => { const e = $(id); return e.value.trim() === '' ? null : ev(e.value); };
   const f = (x, d = 2) => { const s = String(parseFloat(Number(x).toFixed(d))); return s === '-0' ? '0' : s; };
   const sg = (x) => (x > 0 ? '+' : '') + f(x);
-  const IDS = ['rz-d', 'rz-m', 'rz-k', 'rz-mode', 'rz-holes', 'rz-n', 'rz-ao', 'rz-ai', 'rz-vp', 'rz-vo', 'rz-vi'];
+  const IDS = ['rz-d', 'rz-m', 'rz-k', 'rz-t', 'rz-mode', 'rz-holes', 'rz-n', 'rz-ao', 'rz-ai', 'rz-vp', 'rz-vo', 'rz-vi'];
   const KEY = 'bona.roztec';
   let text = '';
 
@@ -83,13 +87,13 @@
   function update() {
     $('rz-n-pozn').textContent = $('rz-holes').value === 'adj' ? '' : '(u lichého nutné)';
     const d = val('rz-d'), m = val('rz-m'), k = val('rz-k');
-    const mode = $('rz-mode').value, holes = $('rz-holes').value, n = val('rz-n');
+    const mode = $('rz-mode').value, holes = $('rz-holes').value, n = val('rz-n'), t = val('rz-t');
     $('rz-k').closest('label').style.opacity = mode === 'in' ? '0.5' : '';
     const out1 = $('rz-out1'), out2 = $('rz-out2');
     const lines = [];
-    const spatne = [['rz-d', 'Ø díry'], ['rz-m', 'posuvka'], ['rz-k', 'šířka tlapek'], ['rz-n', 'počet děr'], ['rz-ao', 'ven'], ['rz-ai', 'dovnitř'], ['rz-vp', 'výkres rozteč'], ['rz-vo', 'výkres vnější'], ['rz-vi', 'výkres vnitřní']]
+    const spatne = [['rz-d', 'Ø díry'], ['rz-m', 'posuvka'], ['rz-k', 'šířka tlapek'], ['rz-t', 'tloušťka tlapky'], ['rz-n', 'počet děr'], ['rz-ao', 'ven'], ['rz-ai', 'dovnitř'], ['rz-vp', 'výkres rozteč'], ['rz-vo', 'výkres vnější'], ['rz-vi', 'výkres vnitřní']]
       .filter(([id]) => Number.isNaN(val(id))).map(([, n2]) => n2);
-    let r = roztecDer({ d, m, k, mode, holes, n });
+    let r = roztecDer({ d, m, k, mode, holes, n, t });
     if (mode === 'out' && k === null && !r.err) r = { err: 'Zadej šířku tlapek (běžně 20 = 2 × 10).' };
     let pcd = null, oz = null;
     if (r.err) {
@@ -97,7 +101,8 @@
       if (spatne.length) out1.innerHTML += `<br><b>Neplatné číslo:</b> ${spatne.join(', ')}`;
     } else {
       pcd = r.pcd;
-      const vzorec = mode === 'in' ? `${f(m)} + ${f(d)} (Ø díry)` : `${f(m)} + ${f(k)} (tlapky) − ${f(d)} (Ø díry)`;
+      const ec = r.e > 0 ? ` ${mode === 'in' ? '−' : '+'} 2 × ${f(r.e, 3)} (rohy ploché tlapky)` : '';
+      const vzorec = (mode === 'in' ? `${f(m)} + ${f(d)} (Ø díry)` : `${f(m)} + ${f(k)} (tlapky) − ${f(d)} (Ø díry)`) + ec;
       out1.innerHTML = `Rozteč <b>Ø ${f(pcd)}</b> mm` +
         `<br><span class="hint">${holes === 'adj' ? `vzdálenost středů ${vzorec} = ${f(r.tetiva)}; rozteč = ${f(r.tetiva)} / sin(180° / ${n})`
           : r.liche ? `lichý počet děr – vzdálenost středů ${vzorec} = ${f(r.tetiva)}; rozteč = ${f(r.tetiva)} / cos(90° / ${n})` : vzorec}</span>`;

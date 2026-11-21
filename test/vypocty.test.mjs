@@ -103,6 +103,11 @@ test('rozteč děr a osazení (kolo vagonu)', async () => {
   blizko(R.roztecDer({ d: 30, m: t5 - 20 + 30, k: 20, n: 5 }).pcd, 670);
   blizko(R.roztecDer({ d: 30, m: 680, k: 20, n: 6 }).pcd, 670);
   assert.ok(R.roztecDer({ d: 30, m: 680, k: 20, n: 5.5 }).err);
+  // plochá tlapka t=8 v díře Ø30: e = 15 − √(225 − 16)
+  const e = 15 - Math.sqrt(209);
+  blizko(R.roztecDer({ d: 30, m: 680, k: 20, t: 8 }).pcd, 670 + 2 * e);
+  blizko(R.roztecDer({ d: 30, m: 640, mode: 'in', t: 8 }).pcd, 670 - 2 * e);
+  assert.ok(R.roztecDer({ d: 30, m: 680, k: 20, t: 30 }).err);
   const o = R.osazeni({ pcd: 670, b: 30, aOut: 25, aIn: 40 });
   blizko(o.out, 750); blizko(o.in, 560); blizko(o.sirka, 95);
   const jen = R.osazeni({ pcd: 670, b: 30, aOut: 25, aIn: null });
