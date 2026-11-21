@@ -4,7 +4,9 @@
 //    (tlapky od sebe) je údaj + šířka tlapek = vzdálenost vnějších hran
 //    = rozteč + Ø díry → rozteč = M + K − d. Přes vnitřní hrany (tlapky k sobě)
 //    je údaj přímo vzdálenost vnitřních hran → rozteč = M + d. Sousední díry
-//    dají tětivu: rozteč = tětiva / sin(180° / počet děr).
+//    dají tětivu: rozteč = tětiva / sin(180° / počet děr). Při lichém počtu děr
+//    neleží žádné dvě díry přesně naproti: nejvzdálenější dvojice dá tětivu
+//    rozteč · cos(90° / n).
 // 2) Osazení: metrem od okraje díry (kulatina v díře je jen doraz pro metr)
 //    ven a dovnitř k hraně osazení:
 //    Ø vnější = rozteč + d + 2·a_ven,  Ø vnitřní = rozteč − d − 2·a_dovnitř.
@@ -15,8 +17,13 @@
     if (!(d > 0) || !(m > 0)) return { err: 'Zadej Ø díry a údaj z posuvky.' };
     const tetiva = mode === 'in' ? m + d : m + k - d;    // vzdálenost středů děr
     if (!(tetiva > 0)) return { err: 'Vzdálenost středů vychází ≤ 0 – zkontroluj údaj, šířku tlapek a Ø díry.' };
-    if (holes === 'opp') return { pcd: tetiva, tetiva };
-    if (!(n >= 2) || Math.round(n) !== n) return { err: 'U sousedních děr zadej počet děr dokola (celé číslo ≥ 2).' };
+    const nOk = n >= 2 && Math.round(n) === n;
+    if (holes === 'opp') {
+      if (n != null && n !== 0 && !nOk) return { err: 'Počet děr musí být celé číslo ≥ 2.' };
+      if (nOk && n % 2 === 1) return { pcd: tetiva / Math.cos(Math.PI / (2 * n)), tetiva, liche: true };
+      return { pcd: tetiva, tetiva };
+    }
+    if (!nOk) return { err: 'U sousedních děr zadej počet děr dokola (celé číslo ≥ 2).' };
     return { pcd: tetiva / Math.sin(Math.PI / n), tetiva };
   }
   function osazeni({ pcd, b, aOut, aIn }) {
@@ -74,22 +81,28 @@
   }
 
   function update() {
-    $('rz-n-w').hidden = $('rz-holes').value !== 'adj';
-    const d = val('rz-d'), m = val('rz-m'), k = val('rz-k') ?? 0;
+    $('rz-n-pozn').textContent = $('rz-holes').value === 'adj' ? '' : '(u lichého nutné)';
+    const d = val('rz-d'), m = val('rz-m'), k = val('rz-k');
     const mode = $('rz-mode').value, holes = $('rz-holes').value, n = val('rz-n');
     $('rz-k').closest('label').style.opacity = mode === 'in' ? '0.5' : '';
     const out1 = $('rz-out1'), out2 = $('rz-out2');
     const lines = [];
-    const r = roztecDer({ d, m, k, mode, holes, n });
+    const spatne = [['rz-d', 'Ø díry'], ['rz-m', 'posuvka'], ['rz-k', 'šířka tlapek'], ['rz-n', 'počet děr'], ['rz-ao', 'ven'], ['rz-ai', 'dovnitř'], ['rz-vp', 'výkres rozteč'], ['rz-vo', 'výkres vnější'], ['rz-vi', 'výkres vnitřní']]
+      .filter(([id]) => Number.isNaN(val(id))).map(([, n2]) => n2);
+    let r = roztecDer({ d, m, k, mode, holes, n });
+    if (mode === 'out' && k === null && !r.err) r = { err: 'Zadej šířku tlapek (běžně 20 = 2 × 10).' };
     let pcd = null, oz = null;
     if (r.err) {
       out1.innerHTML = d || m ? r.err : 'Zadej Ø díry a co ukazuje posuvka.';
+      if (spatne.length) out1.innerHTML += `<br><b>Neplatné číslo:</b> ${spatne.join(', ')}`;
     } else {
       pcd = r.pcd;
       const vzorec = mode === 'in' ? `${f(m)} + ${f(d)} (Ø díry)` : `${f(m)} + ${f(k)} (tlapky) − ${f(d)} (Ø díry)`;
       out1.innerHTML = `Rozteč <b>Ø ${f(pcd)}</b> mm` +
-        `<br><span class="hint">${holes === 'adj' ? `vzdálenost středů ${vzorec} = ${f(r.tetiva)}; rozteč = ${f(r.tetiva)} / sin(180° / ${n})` : vzorec}</span>`;
-      lines.push(`Roztec der: O${f(pcd)} (d ${f(d)}, posuvka ${f(m)}${mode === 'in' ? ', vnitrni hrany' : ', tlapky ' + f(k)})`);
+        `<br><span class="hint">${holes === 'adj' ? `vzdálenost středů ${vzorec} = ${f(r.tetiva)}; rozteč = ${f(r.tetiva)} / sin(180° / ${n})`
+          : r.liche ? `lichý počet děr – vzdálenost středů ${vzorec} = ${f(r.tetiva)}; rozteč = ${f(r.tetiva)} / cos(90° / ${n})` : vzorec}</span>`;
+      if (spatne.length) out1.innerHTML += `<br><b>Neplatné číslo:</b> ${spatne.join(', ')} – nepočítá se s ním.`;
+      lines.push(`Rozteč děr: Ø${f(pcd)} (díra Ø${f(d)}, posuvka ${f(m)}${mode === 'in' ? ', vnitřní hrany' : ', tlapky ' + f(k)})`);
       const vp = val('rz-vp');
       if (Number.isFinite(vp)) out1.innerHTML += `<br>proti výkresu Ø ${f(vp)}: <b>${sg(pcd - vp)}</b> mm`;
     }
@@ -105,14 +118,15 @@
       if (oz.out !== undefined) {
         h += `Osazení vnější (začátek) <b>Ø ${f(oz.out)}</b> mm <span class="hint">= ${f(pcd)} + ${f(b)} (Ø díry) + 2 × ${f(aOut)}</span>`;
         if (Number.isFinite(vo)) h += ` · proti výkresu <b>${sg(oz.out - vo)}</b>`;
-        lines.push(`Osazeni vnejsi: O${f(oz.out)}`);
+        lines.push(`Osazení vnější: Ø${f(oz.out)}`);
       }
       if (oz.in !== undefined) {
         h += (h ? '<br>' : '') + `Osazení vnitřní (konec) <b>Ø ${f(oz.in)}</b> mm <span class="hint">= ${f(pcd)} − ${f(b)} (Ø díry) − 2 × ${f(aIn)}</span>`;
         if (Number.isFinite(vi)) h += ` · proti výkresu <b>${sg(oz.in - vi)}</b>`;
-        lines.push(`Osazeni vnitrni: O${f(oz.in)}`);
+        lines.push(`Osazení vnitřní: Ø${f(oz.in)}`);
       }
-      if (oz.sirka !== undefined) { h += `<br>šířka osazení (radiálně) ${f(oz.sirka)} mm`; lines.push(`Sirka osazeni: ${f(oz.sirka)}`); }
+      if (oz.sirka !== undefined) { h += `<br>šířka osazení (radiálně) ${f(oz.sirka)} mm`; lines.push(`Šířka osazení: ${f(oz.sirka)}`); }
+      if ((Number.isFinite(aOut) && aOut < 0) || (Number.isFinite(aIn) && aIn < 0)) h += '<br><b>Pozor:</b> záporná vzdálenost – zkontroluj zadání.';
       if (oz.err) h += '<br>' + oz.err;
       out2.innerHTML = h;
     }

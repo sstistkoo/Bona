@@ -98,6 +98,11 @@ test('rozteč děr a osazení (kolo vagonu)', async () => {
   blizko(R.roztecDer({ d: 30, m: 345, k: 20, holes: 'adj', n: 6 }).pcd, 670);
   assert.ok(R.roztecDer({ d: 30, m: 345, holes: 'adj' }).err);
   assert.ok(R.roztecDer({ d: 30 }).err);
+  // lichý počet (5 děr): nejvzdálenější dvojice = rozteč·cos(18°)
+  const t5 = 670 * Math.cos(Math.PI / 10);
+  blizko(R.roztecDer({ d: 30, m: t5 - 20 + 30, k: 20, n: 5 }).pcd, 670);
+  blizko(R.roztecDer({ d: 30, m: 680, k: 20, n: 6 }).pcd, 670);
+  assert.ok(R.roztecDer({ d: 30, m: 680, k: 20, n: 5.5 }).err);
   const o = R.osazeni({ pcd: 670, b: 30, aOut: 25, aIn: 40 });
   blizko(o.out, 750); blizko(o.in, 560); blizko(o.sirka, 95);
   const jen = R.osazeni({ pcd: 670, b: 30, aOut: 25, aIn: null });
