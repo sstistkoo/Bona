@@ -5,9 +5,9 @@
 //    = rozteč + Ø díry → rozteč = M + K − d. Přes vnitřní hrany (tlapky k sobě)
 //    je údaj přímo vzdálenost vnitřních hran → rozteč = M + d. Sousední díry
 //    dají tětivu: rozteč = tětiva / sin(180° / počet děr).
-// 2) Osazení: kulatina Ø b v díře (střed díry leží na rozteči), metrem od
-//    kulatiny ven a dovnitř k hraně osazení:
-//    Ø vnější = rozteč + b + 2·a_ven,  Ø vnitřní = rozteč − b − 2·a_dovnitř.
+// 2) Osazení: metrem od okraje díry (kulatina v díře je jen doraz pro metr)
+//    ven a dovnitř k hraně osazení:
+//    Ø vnější = rozteč + d + 2·a_ven,  Ø vnitřní = rozteč − d − 2·a_dovnitř.
 
 (function () {
   /* ── Výpočet (bez DOM – testuje test/vypocty.test.mjs) ── */
@@ -37,7 +37,7 @@
   const val = (id) => { const e = $(id); return e.value.trim() === '' ? null : ev(e.value); };
   const f = (x, d = 2) => { const s = String(parseFloat(Number(x).toFixed(d))); return s === '-0' ? '0' : s; };
   const sg = (x) => (x > 0 ? '+' : '') + f(x);
-  const IDS = ['rz-d', 'rz-m', 'rz-k', 'rz-mode', 'rz-holes', 'rz-n', 'rz-b', 'rz-ao', 'rz-ai', 'rz-vp', 'rz-vo', 'rz-vi'];
+  const IDS = ['rz-d', 'rz-m', 'rz-k', 'rz-mode', 'rz-holes', 'rz-n', 'rz-ao', 'rz-ai', 'rz-vp', 'rz-vo', 'rz-vi'];
   const KEY = 'bona.roztec';
   let text = '';
 
@@ -94,27 +94,25 @@
       if (Number.isFinite(vp)) out1.innerHTML += `<br>proti výkresu Ø ${f(vp)}: <b>${sg(pcd - vp)}</b> mm`;
     }
     // Osazení
-    const bRaw = val('rz-b'), b = Number.isFinite(bRaw) ? bRaw : d;
+    const b = d;
     const aOut = val('rz-ao'), aIn = val('rz-ai');
     if (!pcd) out2.innerHTML = 'Nejdřív roztečná kružnice (krok 1).';
-    else if (!Number.isFinite(aOut) && !Number.isFinite(aIn)) out2.innerHTML = 'Zadej, kolik je od kulatiny k osazení ven / dovnitř.';
-    else if (!(b >= 0)) out2.innerHTML = 'Zadej Ø kulatiny (nebo Ø díry).';
+    else if (!Number.isFinite(aOut) && !Number.isFinite(aIn)) out2.innerHTML = 'Zadej, kolik je od okraje díry k osazení ven / dovnitř.';
     else {
       oz = osazeni({ pcd, b, aOut, aIn });
       let h = '';
       const vo = val('rz-vo'), vi = val('rz-vi');
       if (oz.out !== undefined) {
-        h += `Osazení vnější (začátek) <b>Ø ${f(oz.out)}</b> mm <span class="hint">= ${f(pcd)} + ${f(b)} + 2 × ${f(aOut)}</span>`;
+        h += `Osazení vnější (začátek) <b>Ø ${f(oz.out)}</b> mm <span class="hint">= ${f(pcd)} + ${f(b)} (Ø díry) + 2 × ${f(aOut)}</span>`;
         if (Number.isFinite(vo)) h += ` · proti výkresu <b>${sg(oz.out - vo)}</b>`;
         lines.push(`Osazeni vnejsi: O${f(oz.out)}`);
       }
       if (oz.in !== undefined) {
-        h += (h ? '<br>' : '') + `Osazení vnitřní (konec) <b>Ø ${f(oz.in)}</b> mm <span class="hint">= ${f(pcd)} − ${f(b)} − 2 × ${f(aIn)}</span>`;
+        h += (h ? '<br>' : '') + `Osazení vnitřní (konec) <b>Ø ${f(oz.in)}</b> mm <span class="hint">= ${f(pcd)} − ${f(b)} (Ø díry) − 2 × ${f(aIn)}</span>`;
         if (Number.isFinite(vi)) h += ` · proti výkresu <b>${sg(oz.in - vi)}</b>`;
         lines.push(`Osazeni vnitrni: O${f(oz.in)}`);
       }
       if (oz.sirka !== undefined) { h += `<br>šířka osazení (radiálně) ${f(oz.sirka)} mm`; lines.push(`Sirka osazeni: ${f(oz.sirka)}`); }
-      if (!Number.isFinite(bRaw)) h += '<br><span class="hint">Kulatina = Ø díry (sedí bez vůle).</span>';
       if (oz.err) h += '<br>' + oz.err;
       out2.innerHTML = h;
     }

@@ -441,7 +441,7 @@
     <section id="roztec" class="panel">
       <div class="card">
         <h2>Rozteč děr a osazení</h2>
-        <p class="hint">Kolo s dírami dokola: posuvkou přes dvě díry změříš roztečnou kružnici, pak od kulatiny v díře metrem začátek a konec osazení. Vše vyjde v průměru.</p>
+        <p class="hint">Kolo s dírami dokola: posuvkou přes dvě díry změříš roztečnou kružnici, pak metrem od okraje díry (o kulatinu v ní opřeš metr) začátek a konec osazení. Vše vyjde v průměru.</p>
         <svg class="kz-svg rz-svg" id="rz-svg" viewBox="0 0 340 240" role="img" aria-label="Náčrt měření"></svg>
         <h3 class="sub">1) Roztečná kružnice – posuvka přes díry</h3>
         <div class="grid">
@@ -453,11 +453,10 @@
           <label id="rz-n-w" hidden>Počet děr dokola<input type="text" id="rz-n" inputmode="decimal" placeholder="např. 6"></label>
         </div>
         <div class="result" id="rz-out1"></div>
-        <h3 class="sub">2) Osazení – kulatina v díře, měřeno metrem</h3>
+        <h3 class="sub">2) Osazení – metrem od okraje díry <small>(kulatina v díře jen jako doraz)</small></h3>
         <div class="grid">
-          <label>Ø kulatiny v díře [mm]<input type="text" id="rz-b" inputmode="decimal" placeholder="= Ø díry"></label>
-          <label>Ven k osazení [mm] <small>od kulatiny k většímu Ø</small><input type="text" id="rz-ao" inputmode="decimal"></label>
-          <label>Dovnitř k osazení [mm] <small>od kulatiny k menšímu Ø</small><input type="text" id="rz-ai" inputmode="decimal"></label>
+          <label>Ven k osazení [mm] <small>od okraje díry k většímu Ø</small><input type="text" id="rz-ao" inputmode="decimal"></label>
+          <label>Dovnitř k osazení [mm] <small>od okraje díry k menšímu Ø</small><input type="text" id="rz-ai" inputmode="decimal"></label>
         </div>
         <div class="result" id="rz-out2"></div>
         <details class="rz-vykres">
@@ -472,7 +471,7 @@
           <button type="button" class="secondary" id="rz-copy">📋 Kopírovat</button>
           <button type="button" class="secondary" id="rz-clear">🗑 Vymazat</button>
         </div>
-        <p class="hint">Kulatina má v díře sedět bez vůle – vůle v díře se promítne do průměru osazení (až o vůli). Metr měř kolmo k osazení (ve směru ke středu kola); chyba čtení metru ±0,5 mm = ±1 mm na průměru.</p>
+        <p class="hint">Kulatina slouží jen jako doraz pro metr – má v díře sedět bez vůle, aby její kraj byl na okraji díry (vůle v díře se promítne do průměru osazení). Metr měř kolmo k osazení (ve směru ke středu kola); chyba čtení metru ±0,5 mm = ±1 mm na průměru.</p>
       </div>
     </section>
 
