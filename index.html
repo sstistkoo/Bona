@@ -442,37 +442,37 @@
       <div class="card">
         <h2>Rozteč děr a osazení</h2>
         <p class="hint">Tlapky posuvky dej do dvou děr a roztáhni k vnějším hranám. Pak od okraje díry (o kulatinu v díře opřeš metr) změř ven a dovnitř k osazení. Vše vyjde v průměru.</p>
-        <svg class="kz-svg rz-svg" id="rz-svg" viewBox="0 0 340 240" role="img" aria-label="Náčrt měření"></svg>
+        <svg class="kz-svg rdz-svg" id="rdz-svg" viewBox="0 0 340 240" role="img" aria-label="Náčrt měření"></svg>
         <h3 class="sub">1) Rozteč – posuvkou přes dvě díry</h3>
         <div class="seg">
           <button type="button" class="seg-btn active" data-rzh="opp">Protilehlé díry</button>
           <button type="button" class="seg-btn" data-rzh="adj">Sousední díry</button>
         </div>
-        <input type="hidden" id="rz-holes" value="opp">
+        <input type="hidden" id="rdz-holes" value="opp">
         <div class="grid">
-          <label>Ø díry [mm]<input type="text" id="rz-d" inputmode="decimal" placeholder="např. 25"></label>
-          <label>Na posuvce [mm]<input type="text" id="rz-m" inputmode="decimal" placeholder="údaj"></label>
-          <label>Počet děr dokola <small id="rz-n-pozn">jen když je lichý</small><input type="text" id="rz-n" inputmode="decimal" placeholder="např. 8"></label>
-          <label>Tlapky [mm] <small>2 × 10</small><input type="text" id="rz-k" inputmode="decimal" value="20"></label>
+          <label>Ø díry [mm]<input type="text" id="rdz-d" inputmode="decimal" placeholder="např. 25"></label>
+          <label>Na posuvce [mm]<input type="text" id="rdz-m" inputmode="decimal" placeholder="údaj"></label>
+          <label>Počet děr dokola <small id="rdz-n-pozn">jen když je lichý</small><input type="text" id="rdz-n" inputmode="decimal" placeholder="např. 8"></label>
+          <label>Tlapky [mm] <small>2 × 10</small><input type="text" id="rdz-k" inputmode="decimal" value="20"></label>
         </div>
-        <div class="result" id="rz-out1"></div>
+        <div class="result" id="rdz-out1"></div>
         <h3 class="sub">2) Osazení – metrem od okraje díry</h3>
         <div class="grid">
-          <label>Ven [mm] <small>k většímu Ø</small><input type="text" id="rz-ao" inputmode="decimal"></label>
-          <label>Dovnitř [mm] <small>k menšímu Ø</small><input type="text" id="rz-ai" inputmode="decimal"></label>
+          <label>Ven [mm] <small>k většímu Ø</small><input type="text" id="rdz-ao" inputmode="decimal"></label>
+          <label>Dovnitř [mm] <small>k menšímu Ø</small><input type="text" id="rdz-ai" inputmode="decimal"></label>
         </div>
-        <div class="result" id="rz-out2"></div>
-        <details class="rz-vykres">
+        <div class="result" id="rdz-out2"></div>
+        <details class="rdz-vykres">
           <summary>Porovnat s výkresem (nepovinné)</summary>
           <div class="grid">
-            <label>Rozteč podle výkresu<input type="text" id="rz-vp" inputmode="decimal"></label>
-            <label>Ø osazení vnější<input type="text" id="rz-vo" inputmode="decimal"></label>
-            <label>Ø osazení vnitřní<input type="text" id="rz-vi" inputmode="decimal"></label>
+            <label>Rozteč podle výkresu<input type="text" id="rdz-vp" inputmode="decimal"></label>
+            <label>Ø osazení vnější<input type="text" id="rdz-vo" inputmode="decimal"></label>
+            <label>Ø osazení vnitřní<input type="text" id="rdz-vi" inputmode="decimal"></label>
           </div>
         </details>
         <div class="row" style="margin-top:12px; flex-wrap:wrap">
-          <button type="button" class="secondary" id="rz-copy">📋 Kopírovat</button>
-          <button type="button" class="secondary" id="rz-clear">🗑 Vymazat</button>
+          <button type="button" class="secondary" id="rdz-copy">📋 Kopírovat</button>
+          <button type="button" class="secondary" id="rdz-clear">🗑 Vymazat</button>
         </div>
         <p class="hint">Kulatina má v díře sedět bez vůle (vůle se promítne do průměru osazení). Metr měř kolmo k osazení (ve směru ke středu kola); chyba čtení metru ±0,5 mm = ±1 mm na průměru.</p>
       </div>

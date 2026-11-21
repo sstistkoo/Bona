@@ -50,7 +50,7 @@
     const dmsParse = (t) => {
       const p = String(t).trim().replace(/[°′″'"]/g, ' ').replace(/,/g, '.').split(/\s+/).filter(Boolean).map(Number);
       if (!p.length || p.some((x) => !Number.isFinite(x))) return NaN;
-      const sg = p[0] < 0 ? -1 : 1;
+      const sg = /^\s*-/.test(String(t)) ? -1 : 1; // i „-0 30“ = −0,5°
       return sg * (Math.abs(p[0]) + (p[1] || 0) / 60 + (p[2] || 0) / 3600);
     };
 
@@ -76,7 +76,7 @@
     $('conv-ratio').addEventListener('click', (e) => {
       const b = e.target.closest('.chip'); if (!b) return;
       $('conv-ratio').querySelectorAll('.chip').forEach((x) => x.classList.toggle('active', x === b));
-      ratio = +b.dataset.v; if (c('ra').value) prepocti(skupiny[2], 'ra');
+      ratio = +b.dataset.v; if (c('ra').value.trim()) prepocti(skupiny[2], 'ra'); else if (c('rz').value.trim()) prepocti(skupiny[2], 'rz');
     });
 
     // Tvrdost: HRC 20–68 ↔ HB ↔ HV

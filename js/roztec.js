@@ -48,14 +48,14 @@
   const val = (id) => { const e = $(id); return e.value.trim() === '' ? null : ev(e.value); };
   const f = (x, d = 2) => { const s = String(parseFloat(Number(x).toFixed(d))); return s === '-0' ? '0' : s; };
   const sg = (x) => (x > 0 ? '+' : '') + f(x);
-  const IDS = ['rz-d', 'rz-m', 'rz-k', 'rz-holes', 'rz-n', 'rz-ao', 'rz-ai', 'rz-vp', 'rz-vo', 'rz-vi'];
+  const IDS = ['rdz-d', 'rdz-m', 'rdz-k', 'rdz-holes', 'rdz-n', 'rdz-ao', 'rdz-ai', 'rdz-vp', 'rdz-vo', 'rdz-vi'];
   const KEY = 'bona.roztec';
   let text = '';
 
   function save() { try { const o = {}; IDS.forEach((id) => { o[id] = $(id).value; }); localStorage.setItem(KEY, JSON.stringify(o)); } catch { /* nic */ } }
   function restore() {
-    try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (o) IDS.forEach((id) => { if (o[id] != null) $(id).value = o[id]; });
-      if (!['opp', 'adj'].includes($('rz-holes').value)) $('rz-holes').value = 'opp'; } catch { /* nic */ }
+    try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (o) IDS.forEach((id) => { const v = o[id] ?? o[id.replace('rdz-', 'rz-')]; if (v != null) $(id).value = v; }); // rz- = starší uložení
+      if (!['opp', 'adj'].includes($('rdz-holes').value)) $('rdz-holes').value = 'opp'; } catch { /* nic */ }
   }
 
   function sketch(pcd, oz) {
@@ -65,35 +65,35 @@
     const ln = (x1, y1, x2, y2, cls) => `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
     const L = C.x - RP, P = C.x + RP;
     let s = '';
-    s += `<circle class="rz-face" cx="${C.x}" cy="${C.y}" r="${RO}"/>`;
-    s += `<circle class="rz-inner" cx="${C.x}" cy="${C.y}" r="${RI}"/>`;
-    s += `<circle class="rz-pcd" cx="${C.x}" cy="${C.y}" r="${RP}"/>`;
-    s += `<circle class="rz-hole" cx="${L}" cy="${C.y}" r="${rh}"/><circle class="rz-hole" cx="${P}" cy="${C.y}" r="${rh}"/>`;
-    s += `<circle class="rz-bar" cx="${P}" cy="${C.y}" r="${rh - 2}"/>`;
+    s += `<circle class="rdz-face" cx="${C.x}" cy="${C.y}" r="${RO}"/>`;
+    s += `<circle class="rdz-inner" cx="${C.x}" cy="${C.y}" r="${RI}"/>`;
+    s += `<circle class="rdz-pcd" cx="${C.x}" cy="${C.y}" r="${RP}"/>`;
+    s += `<circle class="rdz-hole" cx="${L}" cy="${C.y}" r="${rh}"/><circle class="rdz-hole" cx="${P}" cy="${C.y}" r="${rh}"/>`;
+    s += `<circle class="rdz-bar" cx="${P}" cy="${C.y}" r="${rh - 2}"/>`;
     // posuvka přes vnější hrany děr
     const py = C.y - 30;
-    s += ln(L - rh, C.y, L - rh, py - 4, 'rz-cal') + ln(P + rh, C.y, P + rh, py - 4, 'rz-cal') + ln(L - rh, py, P + rh, py, 'rz-cal');
+    s += ln(L - rh, C.y, L - rh, py - 4, 'rdz-cal') + ln(P + rh, C.y, P + rh, py - 4, 'rdz-cal') + ln(L - rh, py, P + rh, py, 'rdz-cal');
     s += t(C.x, py - 6, 'posuvka přes díry', 'sk-legend');
     // rozteč
     s += t(C.x, C.y + 4, 'Ø ' + (pcd ? f(pcd) : '?') + ' rozteč', pcd ? 'sk-calc' : 'sk-empty');
     // metr od kulatiny ven a dovnitř (pod osou)
     const my = C.y + 18;
-    s += ln(P + rh - 2, my, C.x + RO, my, 'rz-tape') + ln(C.x + RI, my, P - rh + 2, my, 'rz-tape');
+    s += ln(P + rh - 2, my, C.x + RO, my, 'rdz-tape') + ln(C.x + RI, my, P - rh + 2, my, 'rdz-tape');
     s += t(C.x + RO + 4, my + 4, 'ven', 'sk-legend', 'start') + t(C.x + RI - 4, my + 4, 'dovnitř', 'sk-legend', 'end');
     s += t(C.x, C.y - RO + 18, 'Ø ' + (oz && oz.out ? f(oz.out) : '?') + ' vnější', oz && oz.out ? 'sk-calc' : 'sk-empty');
     s += t(C.x, C.y + 26, 'Ø ' + (oz && oz.in ? f(oz.in) : '?') + ' vnitřní', oz && oz.in ? 'sk-calc' : 'sk-empty');
-    $('rz-svg').innerHTML = s;
+    $('rdz-svg').innerHTML = s;
   }
 
   function update() {
-    const adj = $('rz-holes').value === 'adj';
-    document.querySelectorAll('[data-rzh]').forEach((b) => b.classList.toggle('active', b.dataset.rzh === $('rz-holes').value));
-    $('rz-n-pozn').textContent = adj ? 'nutné' : 'jen když je lichý';
-    const d = val('rz-d'), m = val('rz-m'), k = val('rz-k');
-    const mode = 'out', holes = $('rz-holes').value, n = val('rz-n');
-    const out1 = $('rz-out1'), out2 = $('rz-out2');
+    const adj = $('rdz-holes').value === 'adj';
+    document.querySelectorAll('[data-rzh]').forEach((b) => b.classList.toggle('active', b.dataset.rzh === $('rdz-holes').value));
+    $('rdz-n-pozn').textContent = adj ? 'nutné' : 'jen když je lichý';
+    const d = val('rdz-d'), m = val('rdz-m'), k = val('rdz-k');
+    const mode = 'out', holes = $('rdz-holes').value, n = val('rdz-n');
+    const out1 = $('rdz-out1'), out2 = $('rdz-out2');
     const lines = [];
-    const spatne = [['rz-d', 'Ø díry'], ['rz-m', 'posuvka'], ['rz-k', 'šířka tlapek'], ['rz-n', 'počet děr'], ['rz-ao', 'ven'], ['rz-ai', 'dovnitř'], ['rz-vp', 'výkres rozteč'], ['rz-vo', 'výkres vnější'], ['rz-vi', 'výkres vnitřní']]
+    const spatne = [['rdz-d', 'Ø díry'], ['rdz-m', 'posuvka'], ['rdz-k', 'šířka tlapek'], ['rdz-n', 'počet děr'], ['rdz-ao', 'ven'], ['rdz-ai', 'dovnitř'], ['rdz-vp', 'výkres rozteč'], ['rdz-vo', 'výkres vnější'], ['rdz-vi', 'výkres vnitřní']]
       .filter(([id]) => Number.isNaN(val(id))).map(([, n2]) => n2);
     let r = roztecDer({ d, m, k, mode, holes, n });
     if (mode === 'out' && k === null && !r.err) r = { err: 'Zadej šířku tlapek (běžně 20 = 2 × 10).' };
@@ -109,18 +109,18 @@
           : r.liche ? `lichý počet děr – vzdálenost středů ${vzorec} = ${f(r.tetiva)}; rozteč = ${f(r.tetiva)} / cos(90° / ${n})` : vzorec}</span>`;
       if (spatne.length) out1.innerHTML += `<br><b>Neplatné číslo:</b> ${spatne.join(', ')} – nepočítá se s ním.`;
       lines.push(`Rozteč děr: Ø${f(pcd)} (díra Ø${f(d)}, posuvka ${f(m)}${', tlapky ' + f(k)})`);
-      const vp = val('rz-vp');
+      const vp = val('rdz-vp');
       if (Number.isFinite(vp)) out1.innerHTML += `<br>proti výkresu Ø ${f(vp)}: <b>${sg(pcd - vp)}</b> mm`;
     }
     // Osazení
     const b = d;
-    const aOut = val('rz-ao'), aIn = val('rz-ai');
+    const aOut = val('rdz-ao'), aIn = val('rdz-ai');
     if (!pcd) out2.innerHTML = 'Nejdřív roztečná kružnice (krok 1).';
     else if (!Number.isFinite(aOut) && !Number.isFinite(aIn)) out2.innerHTML = 'Zadej, kolik je od okraje díry k osazení ven / dovnitř.';
     else {
       oz = osazeni({ pcd, b, aOut, aIn });
       let h = '';
-      const vo = val('rz-vo'), vi = val('rz-vi');
+      const vo = val('rdz-vo'), vi = val('rdz-vi');
       if (oz.out !== undefined) {
         h += `Osazení vnější (začátek) <b>Ø ${f(oz.out)}</b> mm <span class="hint">= ${f(pcd)} + ${f(b)} (Ø díry) + 2 × ${f(aOut)}</span>`;
         if (Number.isFinite(vo)) h += ` · proti výkresu <b>${sg(oz.out - vo)}</b>`;
@@ -141,15 +141,15 @@
     save();
   }
 
-  document.querySelectorAll('[data-rzh]').forEach((b) => b.addEventListener('click', () => { $('rz-holes').value = b.dataset.rzh; update(); }));
+  document.querySelectorAll('[data-rzh]').forEach((b) => b.addEventListener('click', () => { $('rdz-holes').value = b.dataset.rzh; update(); }));
   IDS.forEach((id) => { const e = $(id); e.addEventListener(e.tagName === 'SELECT' ? 'change' : 'input', update); });
-  $('rz-copy').addEventListener('click', (e) => {
+  $('rdz-copy').addEventListener('click', (e) => {
     if (!text || !navigator.clipboard) return;
     const b = e.currentTarget;
     navigator.clipboard.writeText(text).then(() => { const o = b.textContent; b.textContent = '✓ Zkopírováno'; setTimeout(() => (b.textContent = o), 1200); });
   });
-  $('rz-clear').addEventListener('click', () => {
-    IDS.forEach((id) => { const e = $(id); if (id !== 'rz-holes') e.value = id === 'rz-k' ? '20' : ''; });
+  $('rdz-clear').addEventListener('click', () => {
+    IDS.forEach((id) => { const e = $(id); if (id !== 'rdz-holes') e.value = id === 'rdz-k' ? '20' : ''; });
     update();
   });
   restore();

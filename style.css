@@ -898,17 +898,17 @@ html.bez-fotek img[src^="img/"], html.bez-fotek .st-foto, html.bez-fotek .zk-fot
 .znam-eq { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
 
 /* Rozteč děr a osazení */
-.rz-svg .rz-face { fill: var(--sk-hatch, rgba(127,127,127,.12)); fill-opacity: .35; stroke: var(--sk-line); stroke-width: 1.5; }
-.rz-svg .rz-inner { fill: var(--sk-bg); stroke: var(--sk-line); stroke-width: 1.5; }
-.rz-svg .rz-pcd { fill: none; stroke: var(--sk-ref); stroke-width: 1; stroke-dasharray: 10 3 2 3; }
-.rz-svg .rz-hole { fill: var(--sk-bg); stroke: var(--sk-line); stroke-width: 1.2; }
-.rz-svg .rz-bar { fill: var(--sk-empty); }
-.rz-svg .rz-cal { stroke: var(--sk-ref); stroke-width: 2; }
-.rz-svg .rz-tape { stroke: var(--sk-dim); stroke-width: 2.5; }
-.rz-svg text { font-size: 11px; }
-.rz-svg .sk-calc, .rz-svg .sk-empty, .rz-svg .sk-legend { paint-order: stroke; stroke: var(--sk-bg); stroke-width: 3px; }
-.rz-svg .sk-calc { fill: var(--sk-calc); font-weight: 700; }
-.rz-svg .sk-empty { fill: var(--sk-empty); }
-.rz-svg .sk-legend { fill: var(--sk-line); }
-.rz-vykres { margin-top: 10px; }
-.rz-vykres summary { cursor: pointer; color: var(--accent); }
+.rdz-svg .rdz-face { fill: var(--sk-hatch, rgba(127,127,127,.12)); fill-opacity: .35; stroke: var(--sk-line); stroke-width: 1.5; }
+.rdz-svg .rdz-inner { fill: var(--sk-bg); stroke: var(--sk-line); stroke-width: 1.5; }
+.rdz-svg .rdz-pcd { fill: none; stroke: var(--sk-ref); stroke-width: 1; stroke-dasharray: 10 3 2 3; }
+.rdz-svg .rdz-hole { fill: var(--sk-bg); stroke: var(--sk-line); stroke-width: 1.2; }
+.rdz-svg .rdz-bar { fill: var(--sk-empty); }
+.rdz-svg .rdz-cal { stroke: var(--sk-ref); stroke-width: 2; }
+.rdz-svg .rdz-tape { stroke: var(--sk-dim); stroke-width: 2.5; }
+.rdz-svg text { font-size: 11px; }
+.rdz-svg .sk-calc, .rdz-svg .sk-empty, .rdz-svg .sk-legend { paint-order: stroke; stroke: var(--sk-bg); stroke-width: 3px; }
+.rdz-svg .sk-calc { fill: var(--sk-calc); font-weight: 700; }
+.rdz-svg .sk-empty { fill: var(--sk-empty); }
+.rdz-svg .sk-legend { fill: var(--sk-line); }
+.rdz-vykres { margin-top: 10px; }
+.rdz-vykres summary { cursor: pointer; color: var(--accent); }

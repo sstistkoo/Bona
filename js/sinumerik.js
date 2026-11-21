@@ -64,6 +64,7 @@
   }
 
   function kresliSeznam() {
+    if (!akt || !akt.data) return; // rozcestník / tahák – není co kreslit
     const d = akt.data;
     const q = norm($('sn-hledat').value.trim());
     let items = d.items;
