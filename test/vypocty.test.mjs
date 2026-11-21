@@ -83,3 +83,23 @@ test('kužel – přechod R (převzato ze SKICA): R12 na Ø330, α 10°', () => 
   const kratke = TF.taperFillets({ D: 340, d: 330, L: 50, C, bigSide: 'A', edges: { B: { R: 12, face: 'in', given: 'corner', faceLen: 5 } } });
   assert.match(kratke.edges.B.error, /nevejde/);
 });
+
+test('rozteč děr a osazení (kolo vagonu)', async () => {
+  const vm = await import('node:vm');
+  const { cti } = await import('./pomocne.mjs');
+  const ctx = { window: {} }; vm.createContext(ctx);
+  vm.runInContext(cti('js/roztec.js'), ctx);
+  const R = ctx.window.RoztecMath;
+  // naproti sobě, vnější hrany: 680 + 20 − 30 = 670
+  blizko(R.roztecDer({ d: 30, m: 680, k: 20 }).pcd, 670);
+  // vnitřní hrany: 640 + 30 = 670
+  blizko(R.roztecDer({ d: 30, m: 640, mode: 'in' }).pcd, 670);
+  // sousední díry, 6 děr: tětiva = rozteč/2
+  blizko(R.roztecDer({ d: 30, m: 345, k: 20, holes: 'adj', n: 6 }).pcd, 670);
+  assert.ok(R.roztecDer({ d: 30, m: 345, holes: 'adj' }).err);
+  assert.ok(R.roztecDer({ d: 30 }).err);
+  const o = R.osazeni({ pcd: 670, b: 30, aOut: 25, aIn: 40 });
+  blizko(o.out, 750); blizko(o.in, 560); blizko(o.sirka, 95);
+  const jen = R.osazeni({ pcd: 670, b: 30, aOut: 25, aIn: null });
+  assert.equal(jen.in, undefined);
+});

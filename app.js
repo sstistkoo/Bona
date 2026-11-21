@@ -1,6 +1,6 @@
 'use strict';
 
-const VERZE = '0.11.7';
+const VERZE = '0.11.8';
 
 /* ---------- Pomocné funkce ---------- */
 const $ = (id) => document.getElementById(id);
@@ -106,7 +106,7 @@ function zalozkaZAdresy() {
 
 /* ---------- Menu ☰ – všechny nástroje na jedné obrazovce ---------- */
 const MENU = [
-  ['Výpočty', [['kalk', '⚙️'], ['tol', '📏'], ['kuzel', '🔺'], ['teplo', '🌡️']]],
+  ['Výpočty', [['kalk', '⚙️'], ['tol', '📏'], ['kuzel', '🔺'], ['roztec', '⭕'], ['teplo', '🌡️']]],
   ['Programování', [['sinumerik', '🏭'], ['rez', '◢'], ['geo', '⌒'], ['trig', '📐'], ['calc', '🔢']]],
   ['Nástroje', [['vbd', '💎'], ['nm', '🔧'], ['prevod', '🔄']]],
   ['Stroj', [...window.STROJ_KAT.map((k) => [k.id, k.ikona, k.nazev]), ['zakazka', '📋']]],

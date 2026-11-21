@@ -33,6 +33,7 @@
       <button class="tab active" data-tab="kalk">Řezné podm.</button>
       <button class="tab" data-tab="tol">Tolerance</button>
       <button class="tab" data-tab="kuzel">Kužel</button>
+      <button class="tab" data-tab="roztec">Rozteč děr</button>
       <button class="tab" data-tab="teplo">Roztažnost</button>
       <button class="tab" data-tab="sinumerik">Sinumerik 840D</button>
       <button class="tab" data-tab="rez">Korekce rε</button>
@@ -436,6 +437,45 @@
       </div>
     </section>
 
+    <!-- ROZTEČ DĚR A OSAZENÍ -->
+    <section id="roztec" class="panel">
+      <div class="card">
+        <h2>Rozteč děr a osazení</h2>
+        <p class="hint">Kolo s dírami dokola: posuvkou přes dvě díry změříš roztečnou kružnici, pak od kulatiny v díře metrem začátek a konec osazení. Vše vyjde v průměru.</p>
+        <svg class="kz-svg rz-svg" id="rz-svg" viewBox="0 0 340 240" role="img" aria-label="Náčrt měření"></svg>
+        <h3 class="sub">1) Roztečná kružnice – posuvka přes díry</h3>
+        <div class="grid">
+          <label>Ø díry d [mm]<input type="text" id="rz-d" inputmode="decimal" placeholder="např. 30"></label>
+          <label>Naměřeno posuvkou [mm]<input type="text" id="rz-m" inputmode="decimal" placeholder="údaj na posuvce"></label>
+          <label>Šířka tlapek [mm] <small>2 × 10</small><input type="text" id="rz-k" inputmode="decimal" value="20"></label>
+          <label>Měřím hrany děr<select id="rz-mode"><option value="out">vnější (tlapky od sebe)</option><option value="in">vnitřní (tlapky k sobě)</option></select></label>
+          <label>Díry<select id="rz-holes"><option value="opp">naproti sobě (přes střed)</option><option value="adj">sousední</option></select></label>
+          <label id="rz-n-w" hidden>Počet děr dokola<input type="text" id="rz-n" inputmode="decimal" placeholder="např. 6"></label>
+        </div>
+        <div class="result" id="rz-out1"></div>
+        <h3 class="sub">2) Osazení – kulatina v díře, měřeno metrem</h3>
+        <div class="grid">
+          <label>Ø kulatiny v díře [mm]<input type="text" id="rz-b" inputmode="decimal" placeholder="= Ø díry"></label>
+          <label>Ven k osazení [mm] <small>od kulatiny k většímu Ø</small><input type="text" id="rz-ao" inputmode="decimal"></label>
+          <label>Dovnitř k osazení [mm] <small>od kulatiny k menšímu Ø</small><input type="text" id="rz-ai" inputmode="decimal"></label>
+        </div>
+        <div class="result" id="rz-out2"></div>
+        <details class="rz-vykres">
+          <summary>Porovnat s výkresem (nepovinné)</summary>
+          <div class="grid">
+            <label>Rozteč podle výkresu<input type="text" id="rz-vp" inputmode="decimal"></label>
+            <label>Ø osazení vnější<input type="text" id="rz-vo" inputmode="decimal"></label>
+            <label>Ø osazení vnitřní<input type="text" id="rz-vi" inputmode="decimal"></label>
+          </div>
+        </details>
+        <div class="row" style="margin-top:12px; flex-wrap:wrap">
+          <button type="button" class="secondary" id="rz-copy">📋 Kopírovat</button>
+          <button type="button" class="secondary" id="rz-clear">🗑 Vymazat</button>
+        </div>
+        <p class="hint">Kulatina má v díře sedět bez vůle – vůle v díře se promítne do průměru osazení (až o vůli). Metr měř kolmo k osazení (ve směru ke středu kola); chyba čtení metru ±0,5 mm = ±1 mm na průměru.</p>
+      </div>
+    </section>
+
     <!-- ČAS OBRÁBĚNÍ -->
 
     <!-- TAHÁK -->
@@ -639,6 +679,7 @@
   <script src="js/nastroje.js"></script>
   <script src="js/kuzel.js"></script>
   <script src="js/kuzel-r.js"></script>
+  <script src="js/roztec.js"></script>
   <script src="js/sinumerik.js"></script>
   <script src="js/prevod-nm.js"></script>
   <script src="js/dilna.js"></script>
